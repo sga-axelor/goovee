@@ -89,7 +89,7 @@ export interface ListEvent {
     } | null;
     color?: string;
   }[];
-  eventStartDateTime?: Date;
+  eventStartDateTime: Date;
   eventAllDay?: boolean;
   eventEndDateTime?: Date;
   registrationDeadlineDateTime?: Date;

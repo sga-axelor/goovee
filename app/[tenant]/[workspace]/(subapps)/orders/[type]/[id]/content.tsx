@@ -24,6 +24,7 @@ import {
   Total,
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
+import {formatDate} from '@/lib/core/locale/formatters';
 
 const Content = ({order}: {order: any}) => {
   const {
@@ -92,7 +93,9 @@ const Content = ({order}: {order: any}) => {
                   <div key={record.id} className="flex flex-col gap-2 py-2">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 truncate">{record.invoiceId}</div>
-                      <div className="flex-1">{record.createdOn}</div>
+                      <div className="flex-1">
+                        {formatDate(record.createdOn)}
+                      </div>
                       <div className="flex justify-end">
                         <DownloadButton
                           downloadURL={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${id}/invoice/${record.id}`}
@@ -118,7 +121,9 @@ const Content = ({order}: {order: any}) => {
                       <div className="flex-1 truncate">
                         {record.stockMoveSeq}
                       </div>
-                      <div className="flex-1">{record.createdOn}</div>
+                      <div className="flex-1">
+                        {formatDate(record.createdOn)}
+                      </div>
                       <div className="flex justify-end">
                         <DownloadButton
                           title={i18n.t(DOWNLOAD_PDF)}

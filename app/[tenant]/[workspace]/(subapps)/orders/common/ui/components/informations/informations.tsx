@@ -7,10 +7,11 @@ import {MdOutlineFileDownload} from 'react-icons/md';
 import {Separator, Button, Chip} from '@/ui/components';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {SUBAPP_CODES} from '@/constants';
+import {formatDate} from '@/lib/core/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
-import {SUBAPP_CODES} from '@/constants';
 
 export const Informations = ({
   createdOn,
@@ -42,7 +43,7 @@ export const Informations = ({
             <h5 className="text-sm font-medium mb-0">
               {i18n.t('Created on')}:
             </h5>
-            <p className="text-sm">{createdOn}</p>
+            <p className="text-sm">{formatDate(createdOn)}</p>
           </div>
           <div className="flex items-center gap-2">
             <h5 className="text-sm font-medium mb-0">

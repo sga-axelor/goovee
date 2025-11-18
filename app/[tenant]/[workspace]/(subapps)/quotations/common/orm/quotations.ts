@@ -9,7 +9,7 @@ import {
 import {getPageInfo, getSkipInfo} from '@/utils';
 import type {ID, PortalWorkspace} from '@/types';
 import {manager} from '@/tenant';
-import {formatDate, formatNumber} from '@/locale/server/formatters';
+import {formatNumber} from '@/locale/server/formatters';
 import {and} from '@/utils/orm';
 
 // ---- LOCAL IMPORTS ---- //
@@ -88,7 +88,6 @@ export const fetchQuotations = async ({
   for (const quotation of quotations) {
     const $quotation = {
       ...quotation,
-      createdOn: await formatDate(quotation?.createdOn!),
     };
     $quotations.push($quotation);
   }
@@ -261,7 +260,6 @@ export async function findQuotation({
 
   return {
     ...quotation,
-    endOfValidityDate: await formatDate(quotation?.endOfValidityDate),
     displayExTaxTotal: await formatNumber(exTaxTotal, {
       scale,
       currency: currencySymbol,
