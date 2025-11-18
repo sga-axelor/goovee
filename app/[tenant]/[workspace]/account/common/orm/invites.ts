@@ -220,7 +220,7 @@ export async function createInvite({
   role: Role;
   email: string;
   apps: InviteAppsConfig;
-  partnerId: string;
+  partnerId: Partner['id'];
 }) {
   if (!(workspace?.id && tenantId && role && email && apps && partnerId)) {
     return null;

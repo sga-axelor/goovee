@@ -1,7 +1,8 @@
+// ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
 import {AOSPortalAppConfig} from '@/goovee/.generated/models';
 import {ID, Partner, PortalWorkspace, User} from '@/types';
-import {clone} from '@/utils';
+import {clone, getPartnerId} from '@/utils';
 import {SelectOptions} from '@goovee/orm';
 
 export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
@@ -462,7 +463,7 @@ export async function findWorkspace({
   let workspaceConfig;
 
   if (user) {
-    const partnerId = user.isContact ? user.mainPartnerId : user.id;
+    const partnerId = getPartnerId(user);
 
     const partnerWorkspaceConfig = await findPartnerWorkspaceConfig({
       partnerId,
