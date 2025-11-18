@@ -20,6 +20,7 @@ export const Informations = ({
   variant,
   orderId,
   orderReport,
+  orderType,
 }: any) => {
   const {workspaceURL} = useWorkspace();
   const showShippingLink = [ORDER_TYPE.SHIPPED, ORDER_TYPE.DELIVERED].includes(
@@ -65,7 +66,7 @@ export const Informations = ({
                 variant="outline"
                 className="flex items-center gap-2 bg-white hover:bg-white text-success hover:text-success border-success !font-medium basis-full md:basis-0">
                 <a
-                  href={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${orderId}/attachment`}>
+                  href={`${workspaceURL}/${SUBAPP_CODES.orders}/api/order/${orderType}/${orderId}/attachment`}>
                   <MdOutlineFileDownload className="text-2xl" />{' '}
                   {i18n.t('Download order')}
                 </a>

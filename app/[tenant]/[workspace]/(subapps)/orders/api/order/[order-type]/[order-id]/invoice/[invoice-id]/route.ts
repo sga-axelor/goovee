@@ -1,16 +1,18 @@
 import {NextRequest, NextResponse} from 'next/server';
 
 // ---- CORE IMPORTS ---- //
-import {SUBAPP_CODES} from '@/constants';
+import {RELATED_MODELS, SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/lib/core/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import {findFile, streamFile} from '@/utils/download';
+import {findLatestDMSFileByName, streamFile} from '@/utils/download';
 import {workspacePathname} from '@/utils/workspace';
 import {getWhereClauseForEntity} from '@/utils/filters';
 import {PartnerKey} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findOrder} from '@/subapps/orders/common/orm/orders';
+import {OrderType} from '@/subapps/orders/common/types/orders';
+import {ORDER} from '@/subapps/orders/common/constants/orders';
 
 export async function GET(
   request: NextRequest,
@@ -20,23 +22,29 @@ export async function GET(
     params: {
       tenant: string;
       workspace: string;
+      'order-type': OrderType;
       'order-id': string;
+      'invoice-id': string;
     };
   },
 ) {
   const {workspaceURL, tenant: tenantId} = workspacePathname(params);
-  const {'order-id': orderId} = params;
+  const {
+    'order-type': orderType,
+    'order-id': orderId,
+    'invoice-id': invoiceId,
+  } = params;
+  const isCompleted = orderType === ORDER.COMPLETED;
 
   const session = await getSession();
-
-  const user = session!.user;
-
-  if (!user) {
+  if (!session?.user) {
     return new NextResponse('Unauthorized', {status: 401});
   }
 
+  const user = session.user;
+
   const workspace = await findWorkspace({
-    user: session?.user,
+    user,
     url: workspaceURL,
     tenantId,
   });
@@ -53,7 +61,7 @@ export async function GET(
   });
 
   if (!subapp?.installed) {
-    return new NextResponse('Unauthorized', {status: 401});
+    return new NextResponse('Access denied', {status: 401});
   }
 
   const orderWhereClause = getWhereClauseForEntity({
@@ -68,16 +76,27 @@ export async function GET(
     tenantId,
     workspaceURL,
     params: {where: orderWhereClause},
+    isCompleted,
   });
 
   if (!order) {
     return new NextResponse('Order not found', {status: 404});
   }
 
-  const file = await findFile({
+  const invoice = order.invoices?.find(
+    invoice => String(invoice.id) === String(invoiceId),
+  );
+
+  if (!invoice) {
+    return new NextResponse('Invoice not found', {status: 404});
+  }
+
+  const file = await findLatestDMSFileByName({
     tenant: tenantId,
-    id: order.orderReport.id,
-    meta: true,
+    user,
+    relatedId: invoice.id,
+    relatedModel: RELATED_MODELS.INVOICE,
+    name: invoice.invoiceId || '',
   });
 
   if (!file) {
