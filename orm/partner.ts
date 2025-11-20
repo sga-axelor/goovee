@@ -21,8 +21,8 @@ const partnerFields = {
   isContact: true,
   name: true,
   password: true,
-  emailAddress: true,
-  picture: true,
+  emailAddress: {address: true},
+  picture: {id: true},
   mainPartner: {
     id: true,
     simpleFullName: true,
@@ -30,7 +30,7 @@ const partnerFields = {
       select: {
         isInvoicingAddr: true,
         isDefaultAddr: true,
-        address: true,
+        address: {formattedFullName: true},
       },
     },
   },
@@ -57,7 +57,7 @@ const partnerFields = {
         url: true,
       },
       isAdmin: true,
-      partner: true,
+      partner: {id: true, name: true},
     },
   },
   localization: {
@@ -70,12 +70,11 @@ const partnerFields = {
   isActivatedOnPortal: true,
   createdFromSelect: true,
   canSubscribeNoPublicEvent: true,
-  mainAddress: true,
   partnerAddressList: {
     select: {
       isInvoicingAddr: true,
       isDefaultAddr: true,
-      address: true,
+      address: {formattedFullName: true},
     },
   },
 } satisfies SelectOptions<AOSPartner>;
@@ -166,6 +165,7 @@ export async function findEmailAddress(email: string, tenantId: Tenant['id']) {
     where: {
       address: email,
     },
+    select: {id: true},
   });
 }
 
@@ -257,9 +257,7 @@ export async function updatePartner({
         ...data,
         id: String(data.id),
       },
-      select: {
-        localization: true,
-      },
+      select: {id: true},
     })
     .then(clone);
 
@@ -339,13 +337,16 @@ export async function registerContact({
     data.defaultWorkspace = {select: [{id: contactConfig.id}]};
   }
 
-  const contact = await client.aOSPartner.create({data}).then(clone);
+  const contact = await client.aOSPartner
+    .create({data, select: {id: true}})
+    .then(clone);
   await client.aOSPartner.update({
     data: {
       id: mainPartner.id,
       version: mainPartner.version,
       contactPartnerSet: {select: {id: contact.id}},
     },
+    select: {id: true},
   });
   return contact;
 }
@@ -436,11 +437,14 @@ export async function registerPartner({
         id,
         version,
       },
+      select: {id: true},
     });
 
     return udpatedPartner;
   }
 
-  const partner = await client.aOSPartner.create({data}).then(clone);
+  const partner = await client.aOSPartner
+    .create({data, select: {id: true}})
+    .then(clone);
   return partner;
 }
