@@ -5,7 +5,7 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
+import {DEFAULT_CURRENCY_CODE, MAIN_PRICE, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/middleware';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -155,21 +155,23 @@ async function createOrder({
       }).toString();
     }
 
+    const isAtiPricing = workspace?.config?.mainPrice === MAIN_PRICE.ATI;
     const payload = {
       partnerId,
       contactId,
       shipping: 0,
       total,
-      inAti: workspace?.config?.mainPrice === 'ati',
+      inAti: isAtiPricing,
       items: $cart.items.map((i: any) => {
         const {computedProduct, note, quantity} = i;
         if (!computedProduct) return null;
         const {product, price} = computedProduct;
+
         return {
           productId: product?.id,
           note: note || '',
           quantity,
-          price: price?.ati,
+          price: isAtiPricing ? price?.ati : price?.wt,
         };
       }),
       workspaceId: workspace.id,
