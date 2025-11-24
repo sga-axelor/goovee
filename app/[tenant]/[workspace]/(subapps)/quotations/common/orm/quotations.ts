@@ -254,6 +254,15 @@ export async function findQuotation({
         currency: currencySymbol,
         type: 'DECIMAL',
       }),
+      taxLineSet: await Promise.all(
+        list.taxLineSet.map(async (taxLine: any) => ({
+          ...taxLine,
+          value: await formatNumber(taxLine.value, {
+            scale,
+            type: 'DECIMAL',
+          }),
+        })),
+      ),
     };
     $saleOrderLineList.push(line);
   }

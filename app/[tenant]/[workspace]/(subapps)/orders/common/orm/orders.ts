@@ -421,6 +421,15 @@ async function processSaleOrderLineList(
         currency: currencySymbol,
         type: 'DECIMAL',
       }),
+      taxLineSet: await Promise.all(
+        line.taxLineSet.map(async (taxLine: any) => ({
+          ...taxLine,
+          value: await formatNumber(taxLine.value, {
+            scale,
+            type: 'DECIMAL',
+          }),
+        })),
+      ),
     })),
   );
 }
