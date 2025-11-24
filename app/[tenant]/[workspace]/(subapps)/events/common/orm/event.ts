@@ -327,6 +327,7 @@ export async function findEvent({
       code: productsFromWS?.currencyCode,
     },
     eventLink,
+    priceScale: scale,
   };
 }
 
