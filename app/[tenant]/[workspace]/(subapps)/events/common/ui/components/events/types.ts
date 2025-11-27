@@ -42,6 +42,7 @@ export interface Event {
   maxParticipantPerEvent: number;
   maxParticipantPerRegistration: number;
   additionalFieldSet: any[];
+  priceScale: number;
 }
 export interface EventsProps {
   events: Event[];
