@@ -8,7 +8,8 @@ import {clone} from '@/utils';
 import {getSession} from '@/lib/core/auth';
 import {t} from '@/locale/server';
 
-export default async function Chat({params}: {params: {tenant: string}}) {
+export default async function Chat(props: {params: Promise<{tenant: string}>}) {
+  const params = await props.params;
   const session = await getSession();
   const user = session?.user;
   const {data: mmuser, token} = await getAuthToken(user?.email, user?.email);
