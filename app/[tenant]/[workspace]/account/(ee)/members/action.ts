@@ -36,7 +36,8 @@ async function canUpdate({workspaceURL}: {workspaceURL: string}) {
     return false;
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return false;
@@ -77,7 +78,8 @@ export async function updateInviteApplication({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -184,7 +186,8 @@ export async function updateInviteAuthentication({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -277,7 +280,8 @@ export async function deleteMember({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -352,7 +356,8 @@ export async function updateMemberApplication({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -471,7 +476,8 @@ export async function updateMemberAuthentication({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));

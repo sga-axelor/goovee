@@ -5,7 +5,8 @@ import {manager} from '@/lib/core/tenant';
 import {TENANT_HEADER} from '@/proxy';
 
 export async function getModelData(model: string) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   const tenant = await manager.getTenant(tenantId as string);
   const aos = tenant?.config?.aos;
@@ -23,7 +24,8 @@ export async function getModelData(model: string) {
 }
 
 export async function getModelFields(model: string) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   const tenant = await manager.getTenant(tenantId as string);
   const aos = tenant?.config?.aos;

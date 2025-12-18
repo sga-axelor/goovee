@@ -7,7 +7,7 @@ import {revalidatePath} from 'next/cache';
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
 import {t} from '@/locale/server';
-import {TENANT_HEADER} from '@/proxy';
+import {TENANT_HEADER} from '@/middleware';
 import {
   findContactByEmail,
   findGooveeUserByEmail,
@@ -58,7 +58,8 @@ export async function deleteInvite({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -133,7 +134,8 @@ export async function sendInvites({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));

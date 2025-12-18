@@ -25,6 +25,22 @@ import {
   OrderAlert,
 } from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
 
+function ErrorFallback({
+  error,
+  resetErrorBoundary,
+}: {
+  error: {message: string};
+  resetErrorBoundary: () => void;
+}) {
+  return (
+    <div role="alert">
+      <h2>Something went wrong:</h2>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  );
+}
+
 async function Categories({tenant, user, workspace}: any) {
   const categories = await findCategories({
     workspace,
@@ -150,11 +166,9 @@ function ShopSkeleton() {
   );
 }
 
-export default async function Page(
-  props: {
-    params: Promise<{tenant: string; workspace: string}>;
-  }
-) {
+export default async function Page(props: {
+  params: Promise<{tenant: string; workspace: string}>;
+}) {
   const params = await props.params;
   return (
     <>

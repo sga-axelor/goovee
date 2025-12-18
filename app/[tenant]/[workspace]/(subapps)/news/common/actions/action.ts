@@ -28,7 +28,8 @@ export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
   const session = await getSession();
   const user = session?.user;
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -142,7 +143,8 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Unauthorized')};
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('TenantId is required')};
   }
@@ -221,7 +223,8 @@ export const fetchComments: FetchComments = async props => {
 
   const user = session?.user;
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {

@@ -34,7 +34,8 @@ export async function changePassword({
     };
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {

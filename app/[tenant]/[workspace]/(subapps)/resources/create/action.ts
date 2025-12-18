@@ -61,7 +61,8 @@ export async function upload(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {

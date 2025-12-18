@@ -26,7 +26,8 @@ export async function findProduct({
   id: Product['id'];
   workspace?: PortalWorkspace;
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return null;
@@ -81,7 +82,8 @@ async function requestOrder({
   workspace: PortalWorkspace;
   type?: 'quotation' | 'order';
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return null;

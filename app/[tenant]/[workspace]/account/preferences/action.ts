@@ -26,7 +26,8 @@ export async function updatePreference({
   defaultWorkspace?: string;
   localization?: string;
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await 'Bad request');
@@ -100,7 +101,8 @@ export async function updatePreference({
 }
 
 export async function fetchPreference() {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await 'Bad request');
@@ -129,7 +131,8 @@ export async function fetchPreference() {
 }
 
 export async function fetchWorkspaces() {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await 'Bad request');
@@ -164,7 +167,8 @@ export async function fetchWorkspaces() {
 }
 
 export async function fetchLocalizations() {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headersList = await headers();
+  const tenantId = headersList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await 'Bad request');
