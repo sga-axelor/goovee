@@ -36,7 +36,8 @@ export async function getLocaleRedirectionURL({
   const session = await getSession();
   const user = session?.user;
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -174,8 +175,8 @@ export async function updateWikiContent({
       message: await t('Unauthorized'),
     };
   }
-
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {

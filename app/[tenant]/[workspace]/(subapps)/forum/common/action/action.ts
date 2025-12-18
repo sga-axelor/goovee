@@ -94,7 +94,8 @@ export async function pinGroup({
   groupID: string;
   workspaceURL: string;
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -182,7 +183,8 @@ export async function exitGroup({
   groupID: string;
   workspaceURL: string;
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -262,7 +264,8 @@ export async function joinGroup({
   userId: string;
   workspaceURL: string;
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -354,7 +357,8 @@ export async function addGroupNotification({
   notificationType: string;
   workspaceURL: string;
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -437,7 +441,8 @@ export async function addPost({
   workspaceURL,
   formData,
 }: any) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -590,7 +595,8 @@ export async function findMedia({
   workspaceURL: string;
   archived?: boolean;
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -672,7 +678,8 @@ export async function fetchPosts({
   memberGroupIDs?: Array<String>;
   groupIDs?: ID[];
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
   if (!tenantId) {
     return {
       error: true,
@@ -708,7 +715,8 @@ export async function fetchPosts({
 }
 
 async function uploadAttachment(formData: FormData): Promise<any> {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -790,7 +798,8 @@ export async function fetchGroupsByMembers({
   orderBy?: any;
   workspaceID: PortalWorkspace['id'];
 }) {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   const session = await getSession();
 
@@ -820,7 +829,8 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Unauthorized')};
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('TenantId is required')};
   }
@@ -949,7 +959,8 @@ export const fetchComments: FetchComments = async props => {
 
   const session = await getSession();
   const user = session?.user;
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {error: true, message: await t('TenantId is required')};
@@ -1024,7 +1035,8 @@ export const getSubscribersByGroup = async ({
     return {error: true, message: await t('Workspace not provided!')};
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
   if (!tenantId) {
     return {
       error: true,

@@ -20,7 +20,8 @@ export async function searchEntries({
   search?: string;
   workspaceURL: string;
 }): ActionResponse<Cloned<ListEntry>[]> {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {

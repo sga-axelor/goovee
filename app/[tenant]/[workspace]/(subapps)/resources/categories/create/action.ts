@@ -45,7 +45,8 @@ export async function create(formData: FormData, workspaceURL: string) {
     };
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {

@@ -30,8 +30,8 @@ export const createComment: CreateComment = async formData => {
   if (!user) {
     return {error: true, message: await t('Unauthorized')};
   }
-
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('TenantId is required')};
   }
@@ -120,7 +120,8 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('Unauthorized')};
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return {

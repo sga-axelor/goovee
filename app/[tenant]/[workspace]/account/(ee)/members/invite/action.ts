@@ -58,7 +58,8 @@ export async function deleteInvite({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -133,7 +134,8 @@ export async function sendInvites({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));

@@ -13,11 +13,9 @@ import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {inverseTransformLocale} from '@/locale/utils';
 import type {Website} from '@/types';
 
-export default async function Page(
-  props: {
-    params: Promise<{tenant: string; workspace: string}>;
-  }
-) {
+export default async function Page(props: {
+  params: Promise<{tenant: string; workspace: string}>;
+}) {
   const params = await props.params;
   const {tenant} = params;
 
@@ -30,7 +28,9 @@ export default async function Page(
   let locale = user?.locale;
 
   if (!locale) {
-    const acceptLanguage = (await headers()).get('Accept-Language')!;
+    const headerList = await headers();
+
+    const acceptLanguage = headerList.get('Accept-Language')!;
     const acceptLanguageLocale = acceptLanguage?.split(',')?.[0];
 
     if (acceptLanguageLocale) {

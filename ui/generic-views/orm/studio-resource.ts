@@ -14,7 +14,8 @@ export async function findView({
   name: string;
   schemaType: SchemaType;
 }): Promise<{schema?: ViewSchema; metaFields?: any[]}> {
-  const tenantId = (await headers()).get(TENANT_HEADER);
+  const headerList = await headers();
+  const tenantId = headerList.get(TENANT_HEADER);
 
   if (!tenantId) return {};
 

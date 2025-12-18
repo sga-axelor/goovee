@@ -23,8 +23,10 @@ export async function getTranslation(
   key: string,
   ...interpolations: string[]
 ) {
+  const headerList = await headers();
+
   if (!tenant) {
-    tenant = (await headers()).get(TENANT_HEADER) as string;
+    tenant = headerList.get(TENANT_HEADER) as string;
   }
 
   if (!user) {
@@ -36,7 +38,7 @@ export async function getTranslation(
   }
 
   if (!locale) {
-    const acceptLanguage = (await headers()).get('Accept-Language')!;
+    const acceptLanguage = headerList.get('Accept-Language')!;
     const acceptLanguageLocale = acceptLanguage?.split(',')?.[0];
 
     if (acceptLanguageLocale) {
