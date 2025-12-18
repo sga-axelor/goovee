@@ -16,12 +16,10 @@ const nextConfig = {
       },
     ],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
+  turbopack: {},
   reactStrictMode: false,
   webpack: (config, context) => {
     const svgrules = config.module.rules.find(r => r.test?.test?.('.svg'));
@@ -58,9 +56,6 @@ const nextConfig = {
     };
 
     return config;
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
