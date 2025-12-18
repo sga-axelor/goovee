@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -13,7 +17,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -21,27 +25,73 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@/subapps/*": ["./app/[tenant]/[workspace]/(subapps)/*"],
-      "@/core/*": ["./lib/core"],
-      "@/auth": ["./lib/core/auth/index"],
-      "@/auth/*": ["./lib/core/auth/*"],
-      "@/payment/*": ["./lib/core/payment/*"],
-      "@/locale": ["./lib/core/locale/index"],
-      "@/locale/*": ["./lib/core/locale/*"],
-      "@/tenant": ["./lib/core/tenant/index"],
-      "@/tenant/*": ["./lib/core/tenant/*"],
-      "@/storage/*": ["./lib/core/storage/*"],
-      "@/notification": ["./lib/core/notification/index"],
-      "@/notification/*": ["./lib/core/notification/*"],
-      "@/otp": ["./lib/core/otp/index"],
-      "@/otp/*": ["./lib/core/otp/*"],
-      "@/comments": ["./lib/core/comments/index"],
-      "@/comments/*": ["./lib/core/comments/*"],
-      "@/environment": ["./lib/core/environment/index"],
-      "@/environment/*": ["./lib/core/environment/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@/subapps/*": [
+        "./app/[tenant]/[workspace]/(subapps)/*"
+      ],
+      "@/core/*": [
+        "./lib/core"
+      ],
+      "@/auth": [
+        "./lib/core/auth/index"
+      ],
+      "@/auth/*": [
+        "./lib/core/auth/*"
+      ],
+      "@/payment/*": [
+        "./lib/core/payment/*"
+      ],
+      "@/locale": [
+        "./lib/core/locale/index"
+      ],
+      "@/locale/*": [
+        "./lib/core/locale/*"
+      ],
+      "@/tenant": [
+        "./lib/core/tenant/index"
+      ],
+      "@/tenant/*": [
+        "./lib/core/tenant/*"
+      ],
+      "@/storage/*": [
+        "./lib/core/storage/*"
+      ],
+      "@/notification": [
+        "./lib/core/notification/index"
+      ],
+      "@/notification/*": [
+        "./lib/core/notification/*"
+      ],
+      "@/otp": [
+        "./lib/core/otp/index"
+      ],
+      "@/otp/*": [
+        "./lib/core/otp/*"
+      ],
+      "@/comments": [
+        "./lib/core/comments/index"
+      ],
+      "@/comments/*": [
+        "./lib/core/comments/*"
+      ],
+      "@/environment": [
+        "./lib/core/environment/index"
+      ],
+      "@/environment/*": [
+        "./lib/core/environment/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
