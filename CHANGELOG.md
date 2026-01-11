@@ -1,3 +1,16 @@
+# 1.4.1 (2026-01-11)
+
+## Fixes
+
+### Core Platform
+
+- Fix image fetching in next 14.2.35 by patch – #106254
+  <details>
+    <summary>Details</summary>
+
+  Fetching image optimizer issue by adding headers
+  </details>
+
 # 1.4.0 (2025-12-29)
 
 ## Features
