@@ -1,0 +1,6 @@
+{
+  "title": "Fix image fetching in next 14.2.35 by patch",
+  "type": "fix",
+  "description": "Fetching image optimizer issue by adding headers",
+  "scope": ["core"]
+}
