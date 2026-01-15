@@ -5,13 +5,8 @@ import {getSession} from '@/auth';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
-import {findWorkspaces} from '@/orm/workspace';
-import {
-  ALLOW_ALL_REGISTRATION,
-  ALLOW_AOS_ONLY_REGISTRATION,
-  DEFAULT_TENANT,
-  SEARCH_PARAMS,
-} from '@/constants';
+import {canRegisterForWorkspace} from '@/orm/workspace';
+import {DEFAULT_TENANT, SEARCH_PARAMS} from '@/constants';
 import {TenancyType, manager} from '@/tenant';
 
 export default async function Page({
@@ -53,12 +48,10 @@ export default async function Page({
   let canRegister;
 
   if (workspaceURL) {
-    const workspaces = await findWorkspaces({url: workspaceURL, tenantId});
-    const workspace = workspaces.find((w: any) => w.url === workspaceURL);
-    canRegister = [
-      ALLOW_ALL_REGISTRATION,
-      ALLOW_AOS_ONLY_REGISTRATION,
-    ].includes(workspace?.allowRegistrationSelect);
+    canRegister = await canRegisterForWorkspace({
+      url: workspaceURL,
+      tenantId,
+    });
   }
 
   const showGoogleOauth = process.env.SHOW_GOOGLE_OAUTH === 'true';

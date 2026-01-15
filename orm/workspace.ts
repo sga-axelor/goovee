@@ -4,7 +4,11 @@ import {AOSPortalAppConfig} from '@/goovee/.generated/models';
 import {ID, Partner, PortalWorkspace, User} from '@/types';
 import {clone, getPartnerId} from '@/utils';
 import {SelectOptions} from '@goovee/orm';
-import {SUBAPP_CODES} from '@/constants';
+import {
+  ALLOW_ALL_REGISTRATION,
+  ALLOW_AOS_ONLY_REGISTRATION,
+  SUBAPP_CODES,
+} from '@/constants';
 
 export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
   name: true,
@@ -782,6 +786,52 @@ export async function findWorkspaceByURL({
       allowRegistrationSelect: true,
     },
   });
+}
+
+export async function canRegisterForWorkspace({
+  url,
+  tenantId,
+}: {
+  url: PortalWorkspace['url'];
+  tenantId: Tenant['id'];
+}): Promise<boolean> {
+  if (!(url && tenantId)) {
+    return false;
+  }
+
+  const client = await manager.getClient(tenantId);
+
+  try {
+    const workspace = await client.aOSPortalWorkspace.findOne({
+      where: {
+        url: {
+          like: `${url}%`,
+        },
+        AND: [
+          {
+            OR: [
+              {
+                allowRegistrationSelect: ALLOW_ALL_REGISTRATION,
+              },
+              {
+                allowRegistrationSelect: ALLOW_AOS_ONLY_REGISTRATION,
+              },
+            ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        allowRegistrationSelect: true,
+      },
+    });
+
+    if (workspace?.id) {
+      return true;
+    }
+  } catch (err) {}
+
+  return false;
 }
 
 export async function findWorkspaces({

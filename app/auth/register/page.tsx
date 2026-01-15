@@ -1,14 +1,13 @@
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {findWorkspaces} from '@/orm/workspace';
+import {canRegisterForWorkspace, findWorkspaces} from '@/orm/workspace';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import Navigation from './navigation';
 import {extractSearchParams, isExistingUser} from './common/utils';
 import {UserExists} from './common/ui/components';
-import {ALLOW_ALL_REGISTRATION, ALLOW_AOS_ONLY_REGISTRATION} from '@/constants';
 
 export default async function Page({
   searchParams,
@@ -38,10 +37,10 @@ export default async function Page({
 
   const workspace = workspaces.find((w: any) => w.url === workspaceURL);
 
-  const canRegister = [
-    ALLOW_ALL_REGISTRATION,
-    ALLOW_AOS_ONLY_REGISTRATION,
-  ].includes(workspace?.allowRegistrationSelect);
+  const canRegister = await canRegisterForWorkspace({
+    url: workspaceURL,
+    tenantId,
+  });
 
   if (!canRegister) {
     return notFound();
