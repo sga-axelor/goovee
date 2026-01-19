@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 
 // ---- CORE IMPORTS ---- //
 import {COUNTRY_NAMES} from '@/constants/country';
+import {NormalizedBankDetails} from '@/ui/components/payment/types';
 
 export type BankTransferType = 'eu_bank_transfer' | 'us_bank_transfer';
 
@@ -114,7 +115,7 @@ export function getBankTransferConfig(
 
 export function getBankDetailsFromInstructions(
   instructions?: Stripe.PaymentIntent.NextAction.DisplayBankTransferInstructions,
-) {
+): NormalizedBankDetails | null {
   const financialAddress = instructions?.financial_addresses?.[0];
   if (!financialAddress) return null;
 
@@ -122,29 +123,27 @@ export function getBankDetailsFromInstructions(
     case 'iban': {
       const iban = financialAddress.iban;
       if (!iban) return null;
-      const country = getCountryName(iban.country);
       return {
         type: 'iban',
         iban: iban.iban,
         swiftCode: iban.bic,
         accountHolderName: iban.account_holder_name,
-        country,
-        bankName: iban?.bank_name ?? '',
-        bankAddress: iban?.bank_address ?? '',
-        accountHolderAddress: iban?.account_holder_address ?? '',
+        country: getCountryName(iban.country),
+        bankName: iban.bank_name ?? undefined,
+        bankAddress: iban.bank_address ?? undefined,
+        accountHolderAddress: iban.account_holder_address ?? undefined,
       };
     }
 
     case 'aba': {
       const aba = financialAddress.aba;
       if (!aba) return null;
-
       return {
         type: 'aba',
         routingNumber: aba.routing_number,
         accountNumber: aba.account_number,
-        bankName: aba.bank_name,
-        accountType: aba?.account_type ?? '',
+        bankName: aba.bank_name ?? undefined,
+        accountType: aba.account_type ?? undefined,
       };
     }
 

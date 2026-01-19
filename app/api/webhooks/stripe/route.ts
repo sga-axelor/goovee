@@ -8,10 +8,14 @@ import {
   CONTEXT_STATUS,
   findPaymentContext,
   markPaymentAsFailed,
+  markPaymentAsProcessed,
 } from '@/lib/core/payment/common/orm';
 import {PaymentOption} from '@/types';
 import {PAYMENT_SOURCE} from '@/lib/core/payment/common/type';
 import {getAmountFromStripe} from '@/utils/stripe';
+
+// --- LOCAL IMPORTS ---- //
+import {updateInvoice} from '@/subapps/invoices/common/webservice';
 
 async function handleWebhookPaymentFailure({
   paymentContext,
@@ -101,7 +105,27 @@ export async function POST(req: Request) {
         );
 
         switch (source) {
-          case PAYMENT_SOURCE.INVOICES:
+          case PAYMENT_SOURCE.INVOICES: {
+            const result = await updateInvoice({
+              tenantId,
+              amount: paidAmount,
+              invoiceId: sourceId,
+            });
+
+            if (result?.error) {
+              console.error('Invoice update failed: ', result.error);
+              break;
+            }
+
+            await markPaymentAsProcessed({
+              contextId: paymentContext.id,
+              version: paymentContext.version,
+              tenantId,
+            });
+
+            break;
+          }
+
           case PAYMENT_SOURCE.SHOP:
           case PAYMENT_SOURCE.EVENTS:
             console.warn('Source not implemented:', source);

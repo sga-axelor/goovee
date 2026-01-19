@@ -22,23 +22,16 @@ import {
 } from '@/ui/components';
 import {formatDate} from '@/lib/core/locale/formatters';
 import {BankTransferDetails} from './bank-transfer-details';
-
-export type BankTransfer = {
-  id: string;
-  contextId: string;
-  reference: string;
-  amount: string;
-  initiatedDate: string | Date;
-};
+import {BankTransferDetailsType} from '../types';
 
 type BankTransferItemProps = {
-  transfer: BankTransfer;
-  onCancel: (transfer: BankTransfer) => Promise<void>;
+  transfer: BankTransferDetailsType;
+  onCancel: (transfer: BankTransferDetailsType) => Promise<void>;
 };
 
 type BankTransferListProps = {
-  bankTransfers: BankTransfer[];
-  onCancelTransfer: (transfer: BankTransfer) => Promise<void>;
+  bankTransfers: BankTransferDetailsType[];
+  onCancelTransfer: (transfer: BankTransferDetailsType) => Promise<void>;
 };
 
 export function BankTransferList({
@@ -69,7 +62,7 @@ function BankTransferItem({transfer, onCancel}: BankTransferItemProps) {
   const [isCanceling, setIsCanceling] = useState<boolean>(false);
   const [openCancelDialog, setOpenCancelDialog] = useState<boolean>(false);
   const [bankTransferDetails, setBankTransferDetails] =
-    useState<BankTransfer | null>(null);
+    useState<BankTransferDetailsType | null>(null);
 
   const handleCopyReference = () => {
     navigator.clipboard.writeText(transfer.reference);
@@ -91,7 +84,7 @@ function BankTransferItem({transfer, onCancel}: BankTransferItemProps) {
     }
   };
 
-  const handleBankTransferDetails = (transfer: BankTransfer) => {
+  const handleBankTransferDetails = (transfer: BankTransferDetailsType) => {
     setBankTransferDetails(transfer);
   };
 

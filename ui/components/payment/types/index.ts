@@ -47,6 +47,8 @@ export type BankTransferDetailsType = {
   reference: string;
   formattedAmount: string;
   bankDetails: NormalizedBankDetails;
+  contextId: string;
+  initiatedDate: Date;
 };
 
 export type BankAddress = {

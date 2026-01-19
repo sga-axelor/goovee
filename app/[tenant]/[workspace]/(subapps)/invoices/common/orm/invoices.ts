@@ -1,6 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {manager, type Tenant} from '@/tenant';
 import {
+  DEFAULT_CURRENCY_CODE,
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
   DEFAULT_PAGE,
@@ -9,6 +10,14 @@ import {
 import {clone, getPageInfo, getSkipInfo} from '@/utils';
 import {formatNumber} from '@/locale/server/formatters';
 import type {Partner, PortalWorkspace} from '@/types';
+import {CONTEXT_STATUS} from '@/lib/core/payment/common/orm';
+import {findStripePaymentIntent} from '@/lib/core/payment/stripe/actions';
+import {getAmountFromStripe} from '@/utils/stripe';
+import {getBankDetailsFromInstructions} from '@/lib/core/payment/stripe/utils';
+import type {
+  BankTransferDetailsType,
+  NormalizedBankDetails,
+} from '@/ui/components/payment/types';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Invoice} from '@/subapps/invoices/common/types/invoices';
@@ -74,6 +83,7 @@ export const findInvoices = async ({
     const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
     const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
     const isUnpaid = Number(amountRemaining) !== 0;
+
     const $invoice = {
       ...invoice,
       isUnpaid,
@@ -150,6 +160,7 @@ export const findInvoice = async ({
             addressl6: true,
             country: {
               name: true,
+              alpha2Code: true,
             },
           },
           partner: {
@@ -200,8 +211,10 @@ export const findInvoice = async ({
     taxTotal,
     invoicePaymentList,
   } = invoice;
+
   const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+  const currencyCode = currency.code || DEFAULT_CURRENCY_CODE;
 
   const $invoicePaymentList: any = [];
   for (const list of invoicePaymentList || []) {
@@ -215,6 +228,69 @@ export const findInvoice = async ({
     };
     $invoicePaymentList.push(line);
   }
+
+  const pendingStripeBankTransferPayments =
+    await findPendingStripeBankTransfers({tenantId, invoiceId: invoice.id});
+
+  const resolved = await Promise.all(
+    pendingStripeBankTransferPayments?.map(async ctx => ({
+      ...ctx,
+      data: await ctx.data,
+    })) || [],
+  );
+
+  const pendingStripeBankTransferIntents: BankTransferDetailsType[] = (
+    await Promise.all(
+      resolved?.map(async res => {
+        try {
+          const paymentIntent = await findStripePaymentIntent(
+            res.data?.paymentIntent as string,
+          );
+
+          if (!paymentIntent || !paymentIntent.next_action) return null;
+
+          const instructions =
+            paymentIntent.next_action.display_bank_transfer_instructions;
+          if (!instructions) return null;
+
+          const bankDetails: NormalizedBankDetails | null =
+            getBankDetailsFromInstructions(instructions);
+          if (!bankDetails) return null;
+
+          const paymentIntentAmount = getAmountFromStripe(
+            instructions.amount_remaining!,
+            currencyCode,
+          );
+          const formattedIntentAmount = await formatNumber(
+            paymentIntentAmount,
+            {
+              scale,
+              currency: currencySymbol,
+              type: 'DECIMAL',
+            },
+          );
+          const bankTransferInfo: BankTransferDetailsType = {
+            id: paymentIntent.id,
+            amount: paymentIntentAmount,
+            currency: instructions.currency!,
+            reference: instructions.reference!,
+            bankDetails,
+            contextId: res.id,
+            formattedAmount: String(formattedIntentAmount),
+            initiatedDate: new Date(paymentIntent.created * 1000), // Stripe timestamps are in seconds; JS Date expects milliseconds
+          };
+
+          return bankTransferInfo;
+        } catch (error) {
+          console.error(
+            `Error retrieving payment intent ${res.data?.paymentIntent}:`,
+            error,
+          );
+          return null;
+        }
+      }) || [],
+    )
+  ).filter(Boolean) as BankTransferDetailsType[];
 
   return {
     ...invoice,
@@ -244,5 +320,34 @@ export const findInvoice = async ({
     }),
     invoicePaymentList: $invoicePaymentList,
     isUnpaid: Number(invoice.amountRemaining) !== 0,
+    pendingStripeBankTransferIntents,
   };
 };
+
+async function findPendingStripeBankTransfers({
+  tenantId,
+  invoiceId,
+}: {
+  tenantId: Tenant['id'];
+  invoiceId: Invoice['id'];
+}) {
+  if (!invoiceId) return null;
+
+  const client = await manager.getClient(tenantId);
+
+  const result = await client.paymentContext.find({
+    where: {
+      mode: 'stripe',
+      status: CONTEXT_STATUS.pending,
+      AND: [
+        {data: {path: 'id', eq: invoiceId}},
+        {data: {path: 'paymentType', eq: 'bank_transfer'}},
+        {data: {path: 'paymentIntent', ne: null}},
+      ],
+    },
+    select: {data: true, createdOn: true},
+    orderBy: {createdOn: 'DESC'},
+  });
+
+  return result;
+}
