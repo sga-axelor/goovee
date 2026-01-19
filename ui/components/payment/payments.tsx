@@ -5,6 +5,7 @@ import {ID, PaymentOption, PortalWorkspace} from '@/types';
 import {ErrorResponse, SuccessResponse} from '@/types/action';
 import {Paybox, Paypal, Stripe} from '@/ui/components/payment';
 import {isPaymentOptionAvailable} from '@/utils/payment';
+import {NormalizedBankDetails} from './types';
 
 export function Payments({
   workspace,
@@ -21,6 +22,7 @@ export function Payments({
   successMessage = '',
   errorMessage = '',
   skipSuccessToast,
+  onCreateBankTransferIntent,
 }: {
   workspace: PortalWorkspace;
   disabled?: boolean;
@@ -40,6 +42,17 @@ export function Payments({
   successMessage?: string;
   errorMessage?: string;
   skipSuccessToast?: boolean;
+  onCreateBankTransferIntent?: () => Promise<
+    | ErrorResponse
+    | SuccessResponse<{
+        id: string;
+        amount: number;
+        currency: string;
+        reference: string;
+        bankDetails: NormalizedBankDetails | null;
+        formattedAmount: string;
+      }>
+  >;
 }) {
   const config = workspace?.config;
   const allowOnlinePayment = config?.allowOnlinePaymentForEcommerce;
@@ -92,6 +105,7 @@ export function Payments({
           successMessage={successMessage}
           errorMessage={errorMessage}
           skipSuccessToast={skipSuccessToast}
+          onCreateBankTransferIntent={onCreateBankTransferIntent}
         />
       )}
       {allowPaybox && (
