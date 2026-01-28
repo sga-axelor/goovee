@@ -52,10 +52,10 @@ const formSchema = z
   .object({
     type: z.enum([UserType.company, UserType.individual]),
     companyName: z.string().superRefine((val, ctx) => {}),
-    indentificationNumber: z.string(),
+    identificationNumber: z.string(),
     companyNumber: z.string(),
     firstName: z.string(),
-    otp: z.string().min(1, {message: i18n.t('OTP is required')}),
+    otp: z.string().min(1, {message: i18n.t('Validation code is required')}),
     name: z.string(),
     email: z.string().min(1, {message: i18n.t('Email is required')}),
     phone: z.string(),
@@ -103,16 +103,50 @@ const formSchema = z
   );
 
 export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
+  const {data: session} = useSession();
+  const user = session?.user;
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const getParam = (key: string) => searchParams.get(key);
+
+  const searchQuery = new URLSearchParams(searchParams).toString();
+
+  const tenantId = getParam(SEARCH_PARAMS.TENANT_ID);
+  const typeParam = getParam(SEARCH_PARAMS.USER_TYPE);
+
+  let $email = '';
+  let companyName = '';
+  let identificationNumber = '';
+
+  const isValidUserType = Object.values(UserType).includes(
+    typeParam as UserType,
+  );
+
+  const isTypeLocked = isValidUserType;
+  const defaultType = isValidUserType
+    ? (typeParam as UserType)
+    : UserType.individual;
+
+  const $isCompany = defaultType === UserType.company;
+
+  if ($isCompany) {
+    $email = getParam(SEARCH_PARAMS.EMAIL) || '';
+    companyName = getParam(SEARCH_PARAMS.COMPANY_NAME) || '';
+    identificationNumber = getParam(SEARCH_PARAMS.IDENTIFICATION_NUMBER) || '';
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: UserType.individual,
-      companyName: '',
-      indentificationNumber: '',
+      type: defaultType,
+      companyName,
+      identificationNumber,
       companyNumber: '',
       firstName: '',
       name: '',
-      email: '',
+      email: $email,
       otp: '',
       phone: '',
       password: '',
@@ -126,13 +160,6 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
     },
   });
 
-  const {data: session} = useSession();
-  const user = session?.user;
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const searchQuery = new URLSearchParams(searchParams).toString();
-  const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
   const {timeRemaining, isExpired, reset} = useCountDown(0);
 
   const showDirectoryControls = form.watch(
@@ -278,7 +305,8 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                   <FormLabel>{i18n.t('Type')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value?.toString()}>
+                    defaultValue={field.value?.toString()}
+                    disabled={isTypeLocked}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
@@ -331,7 +359,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                 />
                 <FormField
                   control={form.control}
-                  name="indentificationNumber"
+                  name="identificationNumber"
                   render={({field}) => (
                     <FormItem>
                       <FormLabel>{i18n.t('Identification number')}</FormLabel>
@@ -367,44 +395,43 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
             )}
 
             <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>{i18n.t('First name')}</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value}
-                        placeholder={i18n.t('Enter first Name')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               {!isCompany ? (
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>
-                        {i18n.t('Last name')}
-                        {!isCompany && '*'}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value}
-                          placeholder={i18n.t('Enter Last Name')}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <>
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({field}) => (
+                      <FormItem>
+                        <FormLabel>{i18n.t('First name')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            value={field.value}
+                            placeholder={i18n.t('Enter first Name')}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({field}) => (
+                      <FormItem>
+                        <FormLabel>{i18n.t('Last name')}*</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            value={field.value}
+                            placeholder={i18n.t('Enter Last Name')}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
               ) : (
                 <div />
               )}
@@ -431,32 +458,31 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                 className={cn('grid grid-cols-2 gap-4 items-end', {
                   'items-center': form.formState.errors.otp,
                 })}>
+                <Button
+                  variant="outline-success"
+                  type="button"
+                  disabled={!email || !isExpired || !isValidEmail}
+                  onClick={handleGenerateOTP}>
+                  {i18n.t('Generate code')}
+                </Button>
                 <FormField
                   control={form.control}
                   name="otp"
                   render={({field}) => (
                     <FormItem>
-                      <FormLabel>{i18n.t('OTP')}*</FormLabel>
+                      <FormLabel>{i18n.t('Validation code')}*</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           type="password"
                           value={field.value}
-                          placeholder={i18n.t('Enter OTP')}
+                          placeholder={i18n.t('Enter Validation code')}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                <Button
-                  variant="outline-success"
-                  type="button"
-                  disabled={!email || !isExpired || !isValidEmail}
-                  onClick={handleGenerateOTP}>
-                  {i18n.t('Generate OTP')}
-                </Button>
               </div>
             </div>
             <div
@@ -464,7 +490,7 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
                 hidden: isExpired,
               })}>
               <p>
-                {i18n.t('Resend OTP in ')}
+                {i18n.t('Resend validation code in ')}
                 {timeRemaining.minutes}:{timeRemaining.seconds}
               </p>
             </div>
