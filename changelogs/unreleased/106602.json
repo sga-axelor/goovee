@@ -1,6 +1,0 @@
-{
-  "title": "Support new params in subscription URL",
-  "type": "feature",
-  "description": "Add support for type of partner, company name, identification number and email in subscription URL",
-  "scope": ["core"]
-}

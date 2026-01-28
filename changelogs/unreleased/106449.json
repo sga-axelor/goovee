@@ -1,6 +1,0 @@
-{
-  "title": "Improve registration support for private workspace based on scope",
-  "type": "fix",
-  "description": "Consider both public and private workspace for registration based on scope",
-  "scope": ["core"]
-}

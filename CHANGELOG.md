@@ -1,3 +1,101 @@
+# 1.5.0 (2026-01-28)
+
+## Features
+
+### Core Platform
+
+- Add bank-transfer support for Stripe payments – #105908
+  <details>
+    <summary>Details</summary>
+
+  Introduced support for Stripe bank transfers, including pending transfer handling, cancellation flow, and UI feedback during async operations.
+  </details>
+
+- Add term of use acceptance text before subscription – #107151
+  <details>
+    <summary>Details</summary>
+
+  The HTML text termsOfUseAcceptanceText needs to be displayed if necessary in subscription form
+  </details>
+
+- Hyperlink on the Homepage – #106490
+  <details>
+    <summary>Details</summary>
+
+  Add a selection of hyperlinks represented by logos to the homepage
+  </details>
+
+- Mattermost user creation – #106814
+  <details>
+    <summary>Details</summary>
+
+  Use a new variable environnement to create matterost user
+  </details>
+
+- Support new params in subscription URL – #106602
+  <details>
+    <summary>Details</summary>
+
+  Add support for type of partner, company name, identification number and email in subscription URL
+  </details>
+
+## Fixes
+
+### Core Platform
+
+- Account settings and translation update – #107074
+  <details>
+    <summary>Details</summary>
+
+  Hide first name on personal settings for company and update identification number translation
+  </details>
+
+- Consider partner scope for admin contact when yesForAll registration e – #106755
+  <details>
+    <summary>Details</summary>
+
+  Fix missing partner scope for getting admin contact when registration scope is yesForAll
+  </details>
+
+- Disallow contact registration as admin when partner already registered – #106818
+  <details>
+    <summary>Details</summary>
+
+  Contact registeration as admin is now checked against partner activation on portal instead of password because partner could also initially register itself by google or other providers
+  </details>
+
+- Displaying Google authentication – #106697
+  <details>
+    <summary>Details</summary>
+
+  SHOW_GOOGLE_OAUTH variable is not taken into account in certain places, such as during registration.
+  </details>
+
+- Fix registration for contacts – #106687
+  <details>
+    <summary>Details</summary>
+
+  Set partner's default workspace as default workspace for contacts
+  </details>
+
+- Fix registration support for workspace without default guest workspace – #106670
+  <details>
+    <summary>Details</summary>
+
+  Remove open workspace check and consider only scope of registration for allowing registration
+  </details>
+
+- Improve registration support for private workspace based on scope – #106449
+  <details>
+    <summary>Details</summary>
+
+  Consider both public and private workspace for registration based on scope
+  </details>
+
+### Directory
+
+- Set image to contain within the card – #107084
+
 # 1.4.1 (2026-01-11)
 
 ## Fixes

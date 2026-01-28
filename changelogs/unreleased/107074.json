@@ -1,6 +1,0 @@
-{
-  "title": "Account settings and translation update",
-  "type": "fix",
-  "description": "Hide first name on personal settings for company and update identification number translation",
-  "scope": ["core"]
-}

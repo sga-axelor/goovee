@@ -1,6 +1,0 @@
-{
-  "title": "Mattermost user creation",
-  "type": "feature",
-  "description": "Use a new variable environnement to create matterost user",
-  "scope": ["core"]
-}
