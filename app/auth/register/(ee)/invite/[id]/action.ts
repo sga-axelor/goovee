@@ -19,6 +19,8 @@ import {findOne, isValid} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
 
 import {findInviteById} from '../../../common/orm/register';
+import {withMattermostSync} from '@/lib/core/mattermost';
+import {INVITE_REGISTER} from '@/constants';
 
 function error(message: string) {
   return {
@@ -47,7 +49,7 @@ export async function register({
   inviteId,
   locale,
 }: RegisterDTO) {
-  if (!(name && tenantId && inviteId)) {
+  if (!(name && firstName && tenantId && inviteId)) {
     return error(await t('Bad request'));
   }
 
@@ -83,6 +85,23 @@ export async function register({
 
   if (!localization) {
     localization = await findRegistrationLocalization({locale, tenantId});
+  }
+  if (password) {
+    try {
+      await withMattermostSync({
+        tenantId,
+        email,
+        password,
+        name,
+        firstName,
+        context: INVITE_REGISTER,
+      });
+    } catch (err: any) {
+      return {
+        message: await t('Error registering contact. Try again.'),
+        success: false,
+      };
+    }
   }
 
   try {

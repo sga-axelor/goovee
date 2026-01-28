@@ -9,6 +9,8 @@ import {t} from '@/locale/server';
 import {findGooveeUserByEmail} from '@/orm/partner';
 import {TENANT_HEADER} from '@/middleware';
 import {manager} from '@/tenant';
+import {withMattermostSync} from '@/lib/core/mattermost';
+import {CHANGE_PASSWORD} from '@/constants';
 
 export async function changePassword({
   oldPassword,
@@ -65,6 +67,22 @@ export async function changePassword({
     return {
       error: true,
       message: await t('Invalid old password'),
+    };
+  }
+
+  try {
+    await withMattermostSync({
+      tenantId,
+      email: user.email,
+      password: newPassword,
+      name: partner.name || 'user',
+      firstName: partner.firstName || 'user',
+      context: CHANGE_PASSWORD,
+    });
+  } catch (err) {
+    return {
+      message: await t('Error setting new password. Try again.'),
+      success: false,
     };
   }
 

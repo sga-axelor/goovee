@@ -5,10 +5,10 @@ import {getTranslation} from '@/locale/server';
 import {create as createOTP, findOne, isValid} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
 import {findGooveeUserByEmail} from '@/orm/partner';
-import {shouldCreateMattermostUser} from '@/orm/workspace';
 import NotificationManager, {NotificationType} from '@/notification';
 import {manager, type Tenant} from '@/tenant';
-import {syncMattermostPassword} from '@/lib/core/mattermost';
+import {withMattermostSync} from '@/lib/core/mattermost';
+import {RESET_PASSWORD} from '@/constants';
 
 function error(message: string) {
   return {
@@ -223,41 +223,23 @@ export async function resetPassword({
 
     const hashedPassword = await hash(password);
 
-    const shouldSyncMattermost = await shouldCreateMattermostUser(
-      user.id,
-      tenantId,
-    );
-
-    if (shouldSyncMattermost) {
-      const mattermostResult = await syncMattermostPassword(
-        user.emailAddress?.address || email,
+    try {
+      await withMattermostSync({
+        tenantId,
+        email: user.emailAddress?.address || email,
         password,
-      );
-
-      if (mattermostResult.success) {
-        if (mattermostResult.synced) {
-          console.log({
-            email: user.emailAddress?.address || email,
-            partnerId: user.id,
-          });
-        }
-      } else {
-        console.error(
-          '[MATTERMOST] Password sync failed during password reset:',
-          {
-            email: user.emailAddress?.address || email,
-            partnerId: user.id,
-            error: mattermostResult.error,
-            message: mattermostResult.message,
-          },
-        );
-        return error(
-          await getTranslation(
-            {tenant: tenantId},
-            'Error resetting password. Try again.',
-          ),
-        );
-      }
+        name: user.name || 'user',
+        firstName: user.firstName || 'user',
+        context: RESET_PASSWORD,
+      });
+    } catch (err: any) {
+      return {
+        message: await getTranslation(
+          {tenant: tenantId},
+          'Error resetting password. Try again.',
+        ),
+        success: false,
+      };
     }
 
     const client = await manager.getClient(tenantId);
