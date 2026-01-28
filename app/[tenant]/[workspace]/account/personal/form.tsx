@@ -366,41 +366,43 @@ export default function Personal({
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({field}) => (
-                    <FormItem>
-                      <FormLabel>{i18n.t('First name')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value}
-                          placeholder={i18n.t('Enter first Name')}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 {!isCompany ? (
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({field}) => (
-                      <FormItem>
-                        <FormLabel>{i18n.t('Last name')}</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            value={field.value}
-                            placeholder={i18n.t('Enter Last Name')}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({field}) => (
+                        <FormItem>
+                          <FormLabel>{i18n.t('First name')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              value={field.value}
+                              placeholder={i18n.t('Enter first Name')}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({field}) => (
+                        <FormItem>
+                          <FormLabel>{i18n.t('Last name')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              value={field.value}
+                              placeholder={i18n.t('Enter Last Name')}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
                 ) : (
                   <div />
                 )}
