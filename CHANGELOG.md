@@ -1,3 +1,11 @@
+# 1.5.1 (2026-02-02)
+
+## Fixes
+
+### Core Platform
+
+- Allow existing contact to register via invite – #107351
+
 # 1.5.0 (2026-01-28)
 
 ## Features
