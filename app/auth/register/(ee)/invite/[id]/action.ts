@@ -73,10 +73,22 @@ export async function register({
     return error(await 'Invalid workspace');
   }
 
-  const contact = await findContactByEmail(email, tenantId);
+  const gooveeUser = await findGooveeUserByEmail(email, tenantId);
 
-  if (contact) {
-    return error(await 'Already registered, try login and subscribing invite');
+  if (gooveeUser) {
+    return error(
+      await t('Already registered, try login and subscribing invite'),
+    );
+  }
+
+  const existingRecord = await findPartnerByEmail(email, tenantId);
+
+  if (
+    existingRecord &&
+    existingRecord.mainPartner &&
+    existingRecord.mainPartner.id !== invite.partner.id
+  ) {
+    return error(await t('Contact already exists with another partner.'));
   }
 
   const contactConfig = invite?.contactAppPermissionList?.[0];
@@ -112,6 +124,7 @@ export async function register({
       password,
       tenantId,
       contactConfig,
+      existingRecord,
       partnerId: invite.partner.id,
       localizationId: localization?.id,
     });
