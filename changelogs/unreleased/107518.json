@@ -1,0 +1,6 @@
+{
+  "title": "Ignore partner on invitation",
+  "type": "fix",
+  "description": "Allow contact creation during an invitation even if a partner with the same email address already exists",
+  "scope": ["core"]
+}
