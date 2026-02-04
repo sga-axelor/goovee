@@ -1,3 +1,23 @@
+# 1.5.2 (2026-02-04)
+
+## Fixes
+
+### Core Platform
+
+- Ignore partner on invitation – #107518
+  <details>
+    <summary>Details</summary>
+
+  Allow contact creation during an invitation even if a partner with the same email address already exists
+  </details>
+
+- Partner and Contact registration with same email address – #107481
+  <details>
+    <summary>Details</summary>
+
+  If two partners exist with the same email address, we will look for the one who is allowed to register during registration
+  </details>
+
 # 1.5.1 (2026-02-02)
 
 ## Fixes
