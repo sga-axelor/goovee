@@ -37,7 +37,7 @@ import {getInitials} from '@/utils/names';
 import {getPartnerImageURL} from '@/utils/files';
 import {SUBAPP_WITH_ROLES} from '@/constants';
 import {useToast} from '@/ui/hooks';
-import {useSession} from 'next-auth/react';
+import {authClient} from '@/lib/auth-client';
 
 // ---- LOCAL IMPORTS ---- //
 import {Authorization, Role} from '../../common/types';
@@ -52,10 +52,10 @@ import {
 } from './action';
 
 function Members({members, availableApps}: any) {
-  const {data: session} = useSession();
+  const {data: session} = authClient.useSession();
   const user = session?.user;
 
-  const {workspaceURL, tenant} = useWorkspace();
+  const {workspaceURI, workspaceURL, tenant} = useWorkspace();
   const {toast} = useToast();
   const router = useRouter();
 
@@ -76,6 +76,7 @@ function Members({members, availableApps}: any) {
         app,
         value,
         workspaceURL,
+        workspaceURI,
       });
 
       if (!result || 'error' in result) {
@@ -95,6 +96,7 @@ function Members({members, availableApps}: any) {
         app,
         value,
         workspaceURL,
+        workspaceURI,
       });
 
       if (!result || 'error' in result) {
@@ -115,6 +117,7 @@ function Members({members, availableApps}: any) {
       (await deleteMember({
         member: {id, email},
         workspaceURL,
+        workspaceURI,
       })) || ({error: true} as any);
 
     if (!result || 'error' in result) {
@@ -349,6 +352,7 @@ function Invited({invites, availableApps}: any) {
         app,
         value,
         workspaceURL,
+        workspaceURI,
       });
 
       if (result) {
@@ -370,6 +374,7 @@ function Invited({invites, availableApps}: any) {
         app,
         value,
         workspaceURL,
+        workspaceURI,
       });
 
       if (result) {

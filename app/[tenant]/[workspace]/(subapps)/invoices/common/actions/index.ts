@@ -13,7 +13,7 @@ import {
   SUBAPP_PAGE,
 } from '@/constants';
 import {t} from '@/locale/server';
-import {TENANT_HEADER} from '@/middleware';
+import {TENANT_HEADER} from '@/proxy';
 import {findGooveeUserByEmail} from '@/orm/partner';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
@@ -56,7 +56,7 @@ export async function paypalCreateOrder({
   amount: string;
   workspaceURL: string;
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Tenant is missing')};
   }
@@ -132,7 +132,7 @@ export async function paypalCaptureOrder({
     };
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {
       error: true,
@@ -295,7 +295,7 @@ export async function createStripeCheckoutSession({
   amount: string;
   workspaceURL: string;
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Tenant is missing')};
   }
@@ -381,7 +381,7 @@ export async function validateStripePayment({
     return {error: true, message: await t('Workspace not provided!')};
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Invalid tenant')};
   }
@@ -535,7 +535,9 @@ export async function createStripeBankTransferIntent({
   amount: string;
   workspaceURL: string;
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const $headers = await headers();
+
+  const tenantId = $headers.get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Tenant is missing')};
   }
@@ -617,10 +619,12 @@ export async function cancelStripeBankTransferPaymentIntent({
   id,
   contextId,
   workspaceURL,
+  workspaceURI,
 }: {
   id: string;
   contextId: string;
   workspaceURL: string;
+  workspaceURI: string;
 }) {
   if (!id) {
     return {error: true, message: await t('Missing stripe payment id!')};
@@ -633,8 +637,9 @@ export async function cancelStripeBankTransferPaymentIntent({
   if (!workspaceURL) {
     return {error: true, message: await t('Workspace not provided!')};
   }
+  const $headers = await headers();
+  const tenantId = $headers.get(TENANT_HEADER);
 
-  const tenantId = headers().get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Invalid tenant')};
   }
@@ -751,7 +756,7 @@ export async function cancelStripeBankTransferPaymentIntent({
     });
 
     revalidatePath(
-      `${workspaceURL}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.unpaid}/${$invoice.id}`,
+      `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.unpaid}/${$invoice.id}`,
     );
   } catch (error) {
     console.error('Error Cancelling:', error);
@@ -780,7 +785,7 @@ export async function payboxCreateOrder({
     };
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Tenant is missing')};
   }
@@ -857,7 +862,7 @@ export async function validatePayboxPayment({
     return {error: true, message: await t('Workspace not provided!')};
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Invalid tenant')};
   }

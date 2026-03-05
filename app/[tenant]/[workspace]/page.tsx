@@ -9,11 +9,10 @@ import {getLoginURL} from '@/utils/url';
 import {ClientRedirection} from './client';
 import {Home} from './home';
 
-export default async function Page({
-  params,
-}: {
-  params: {workspace: string; tenant: string};
+export default async function Page(props: {
+  params: Promise<{workspace: string; tenant: string}>;
 }) {
+  const params = await props.params;
   const {tenant} = params;
   const session = await getSession();
 
@@ -63,5 +62,5 @@ export default async function Page({
   }
 
   const defaultApp = apps[0];
-  return <ClientRedirection url={`${workspaceURL}/${defaultApp.code}`} />;
+  return <ClientRedirection url={`${workspaceURI}/${defaultApp.code}`} />;
 }

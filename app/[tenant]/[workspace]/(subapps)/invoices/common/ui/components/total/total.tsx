@@ -34,7 +34,13 @@ import {
 import {InvoicePayments} from '@/subapps/invoices/common/ui/components';
 import {cancelStripeBankTransferPaymentIntent} from '@/app/[tenant]/[workspace]/(subapps)/invoices/common/actions';
 
-export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
+export function Total({
+  isUnpaid,
+  workspace,
+  invoice,
+  invoiceType,
+  workspaceURI,
+}: TotalProps) {
   const {
     inTaxTotal,
     exTaxTotal,
@@ -107,7 +113,7 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
   }, [form]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
+    const value = e.target.value;
 
     if (/^\d*\.?\d{0,2}$/.test(value) || value === '') {
       form.setValue('amount', value);
@@ -133,6 +139,7 @@ export function Total({isUnpaid, workspace, invoice, invoiceType}: TotalProps) {
         id,
         contextId,
         workspaceURL,
+        workspaceURI,
       });
 
       if (response?.error) {

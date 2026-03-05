@@ -16,15 +16,20 @@ import {
 } from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
-import {useForum} from '@/subapps/forum/common/ui/context';
+import {ForumGroup} from '@/subapps/forum/common/types/forum';
 import {SearchItem} from '@/subapps/forum/common/ui/components';
 import {fetchPosts} from '@/subapps/forum/common/action/action';
+import {PortalWorkspace} from '@/types';
 
-export function Hero() {
+export function Hero({
+  selectedGroup,
+  workspace,
+}: {
+  selectedGroup: ForumGroup | null;
+  workspace: PortalWorkspace | null;
+}) {
   const [forceClose, setForceClose] = useState(false);
   const [_searchValue, setSearchValue] = useState<string>('');
-
-  const {selectedGroup, workspace} = useForum();
   const {workspaceURI, workspaceURL} = useWorkspace();
   const {update} = useSearchParams();
 
@@ -114,7 +119,7 @@ export function Hero() {
       image={imageURL}
       groupImg={
         selectedGroup?.image?.id &&
-        `${workspaceURL}/${SUBAPP_CODES.forum}/api/group/${selectedGroup?.id}/image`
+        `${workspaceURI}/${SUBAPP_CODES.forum}/api/group/${selectedGroup?.id}/image`
       }
       background={workspace?.config?.forumHeroOverlayColorSelect || 'default'}
       blendMode={

@@ -4,14 +4,13 @@ import {redirect} from 'next/navigation';
 import {workspacePathname} from '@/utils/workspace';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 
-export default function Page({
-  params,
-}: {
-  params: {tenant: string; workspace: string};
+export default async function Page(props: {
+  params: Promise<{tenant: string; workspace: string}>;
 }) {
-  const {workspaceURL} = workspacePathname(params);
+  const params = await props.params;
+  const {workspaceURI} = workspacePathname(params);
 
   return redirect(
-    `${workspaceURL}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.unpaid}`,
+    `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.unpaid}`,
   );
 }

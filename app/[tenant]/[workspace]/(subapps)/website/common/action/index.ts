@@ -6,7 +6,7 @@ import {headers} from 'next/headers';
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
-import {TENANT_HEADER} from '@/middleware';
+import {TENANT_HEADER} from '@/proxy';
 import {findSubappAccess} from '@/orm/workspace';
 import type {ID, PortalWorkspace, Website, WebsitePage} from '@/types';
 import {manager} from '@/tenant';
@@ -26,17 +26,19 @@ import {
 
 export async function getLocaleRedirectionURL({
   workspaceURL,
+  workspaceURI,
   websiteSlug,
   websitePageSlug,
 }: {
   workspaceURL: PortalWorkspace['url'];
+  workspaceURI: string;
   websiteSlug: Website['slug'];
   websitePageSlug: WebsitePage['slug'];
 }) {
   const session = await getSession();
   const user = session?.user;
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -68,6 +70,7 @@ export async function getLocaleRedirectionURL({
   const website = await findWebsiteBySlug({
     websiteSlug,
     workspaceURL,
+    workspaceURI,
     user,
     tenantId,
   });
@@ -113,7 +116,7 @@ export async function getLocaleRedirectionURL({
     };
   }
 
-  const baseURL = `${workspaceURL}/${SUBAPP_CODES.website}/${websiteSlug}`;
+  const baseURL = `${workspaceURI}/${SUBAPP_CODES.website}/${websiteSlug}`;
 
   if (websitePageSlug) {
     const client = await manager.getClient(tenantId);
@@ -145,7 +148,7 @@ export async function getLocaleRedirectionURL({
   return {
     success: true,
     data: {
-      url: `${workspaceURL}/${SUBAPP_CODES.website}/${websiteSlug}`,
+      url: `${workspaceURI}/${SUBAPP_CODES.website}/${websiteSlug}`,
     },
   };
 }
@@ -175,7 +178,7 @@ export async function updateWikiContent({
     };
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {

@@ -6,14 +6,20 @@ import {revalidatePath} from 'next/cache';
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
 import {getSession} from '@/auth';
-import {TENANT_HEADER} from '@/middleware';
+import {TENANT_HEADER} from '@/proxy';
 import {findWorkspace} from '@/orm/workspace';
 import {findGooveeUserByEmail, updatePartner} from '@/orm/partner';
 import {clone} from '@/utils';
 import {SUBAPP_PAGE} from '@/constants';
 import {manager, type Tenant} from '@/tenant';
 
-export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
+export async function removeWorkpace({
+  workspaceURL,
+  workspaceURI,
+}: {
+  workspaceURL: string;
+  workspaceURI: string;
+}) {
   if (!workspaceURL) {
     return {
       error: true,
@@ -21,7 +27,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
     };
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -132,7 +138,7 @@ export async function removeWorkpace({workspaceURL}: {workspaceURL: string}) {
         })
         .then(clone);
     }
-    revalidatePath(`${workspace.url}/${SUBAPP_PAGE.account}`);
+    revalidatePath(`${workspaceURI}/${SUBAPP_PAGE.account}`);
     return {
       success: true,
     };
