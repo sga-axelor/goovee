@@ -30,12 +30,11 @@ const tenants: {[key: string]: TenantConfig} = [DEFAULT_TENANT].reduce(
 
 export async function GET(
   req: NextRequest,
-  {
-    params,
-  }: {
-    params: {tenant: string};
+  props: {
+    params: Promise<{tenant: string}>;
   },
 ) {
+  const params = await props.params;
   const authHeader = req.headers.get('authorization');
 
   if (!authHeader || !isValidAuthHeader(authHeader)) {

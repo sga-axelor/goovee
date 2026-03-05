@@ -7,7 +7,6 @@ import {isCommentEnabled, Comments} from '@/comments';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import {useForum} from '@/subapps/forum/common/ui/context';
 import {
   COMMENTS_PER_LOAD,
   JOIN_GROUP_TO_COMMENT,
@@ -16,22 +15,23 @@ import {
   fetchComments,
   createComment,
 } from '@/subapps/forum/common/action/action';
+import {PortalWorkspace} from '@/types';
 
 export const ThreadFooter = ({
   post,
   showCommentsByDefault,
   hideCloseComments = false,
   usePopUpStyles = false,
+  workspace,
 }: {
   post: any;
   showCommentsByDefault: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
+  workspace: PortalWorkspace | null;
 }) => {
-  const {workspace} = useForum();
-
   const isAllowToComment = useMemo(() => post.isMember, [post]);
-  const {workspaceURL} = useWorkspace();
+  const {workspaceURI} = useWorkspace();
 
   const enableComment = isCommentEnabled({
     subapp: SUBAPP_CODES.forum,
@@ -55,7 +55,7 @@ export const ThreadFooter = ({
       {...(!isAllowToComment && {
         placeholder: JOIN_GROUP_TO_COMMENT,
       })}
-      attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.forum}/api/comments/attachments/${post.id}`}
+      attachmentDownloadUrl={`${workspaceURI}/${SUBAPP_CODES.forum}/api/comments/attachments/${post.id}`}
     />
   ) : (
     <div />

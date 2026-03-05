@@ -3,9 +3,14 @@ import {z} from 'zod';
 
 export const CreateFormSchema = z.object({
   subject: z
-    .string({required_error: 'Subject is required'})
+    .string({
+      error: issue =>
+        issue.input === undefined ? 'Subject is required' : undefined,
+    })
     .trim()
-    .min(1, {message: 'Subject is required'}),
+    .min(1, {
+      error: 'Subject is required',
+    }),
   category: z.string().optional(),
   priority: z.string().optional(),
   managedBy: z.string().optional(),
@@ -36,17 +41,26 @@ export type CreateTicketInfo = z.infer<typeof CreateTicketSchema>;
 export type UpdateTicketInfo = z.infer<typeof UpdateTicketSchema>;
 
 export const RelatedTicketSchema = z.object({
-  linkType: z.string({required_error: 'Link type is required'}),
+  linkType: z.string({
+    error: issue =>
+      issue.input === undefined ? 'Link type is required' : undefined,
+  }),
   ticket: z.object(
     {id: z.string(), fullName: z.string().optional(), version: z.number()},
-    {required_error: 'Ticket is required'},
+    {
+      error: issue =>
+        issue.input === undefined ? 'Ticket is required' : undefined,
+    },
   ),
 });
 
 export const ChildTicketSchema = z.object({
   ticket: z.object(
     {id: z.string(), fullName: z.string().optional(), version: z.number()},
-    {required_error: 'Ticket is required'},
+    {
+      error: issue =>
+        issue.input === undefined ? 'Ticket is required' : undefined,
+    },
   ),
 });
 
@@ -61,23 +75,25 @@ export const FilterSchema = z.object({
       const [start, end] = data;
       if (!start && !end) return;
       if (!start) {
-        return ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        ctx.addIssue({
+          code: 'custom',
           message: 'Start date is required.',
           path: [0],
         });
+        return;
       }
       if (!end) {
-        return ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        ctx.addIssue({
+          code: 'custom',
           message: 'End date is required.',
           path: [1],
         });
+        return;
       }
       const [startDate, endDate] = [start, end].map(d => new Date(d).getTime());
       if (startDate >= endDate) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: 'Start date must be earlier than End date.',
         });
       }

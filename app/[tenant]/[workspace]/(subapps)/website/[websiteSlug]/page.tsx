@@ -13,15 +13,14 @@ import {
 } from '@/subapps/website/common/orm/website';
 import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 
-export default async function Layout({
-  params,
-}: {
-  params: {
+export default async function Layout(props: {
+  params: Promise<{
     tenant: string;
     workspace: string;
     websiteSlug: Website['slug'];
-  };
+  }>;
 }) {
+  const params = await props.params;
   const session = await getSession();
   const user = session?.user;
 
@@ -31,6 +30,7 @@ export default async function Layout({
   const website = await findWebsiteBySlug({
     websiteSlug,
     workspaceURL,
+    workspaceURI,
     user,
     tenantId: tenant,
   });
@@ -54,7 +54,7 @@ export default async function Layout({
 
   if (websitePageSlug) {
     redirect(
-      `${workspaceURL}/${SUBAPP_CODES.website}/${websiteSlug}/${websitePageSlug}`,
+      `${workspaceURI}/${SUBAPP_CODES.website}/${websiteSlug}/${websitePageSlug}`,
     );
   }
 

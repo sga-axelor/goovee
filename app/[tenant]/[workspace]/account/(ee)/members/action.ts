@@ -6,7 +6,7 @@ import {revalidatePath} from 'next/cache';
 // ---- CORE IMPORTS ---- //
 import {t} from '@/locale/server';
 import {getSession} from '@/auth';
-import {TENANT_HEADER} from '@/middleware';
+import {TENANT_HEADER} from '@/proxy';
 import {findWorkspace, findWorkspaceMembers} from '@/orm/workspace';
 import {isAdminContact, isPartner, updatePartner} from '@/orm/partner';
 import {manager} from '@/tenant';
@@ -36,7 +36,7 @@ async function canUpdate({workspaceURL}: {workspaceURL: string}) {
     return false;
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return false;
@@ -62,11 +62,13 @@ async function canUpdate({workspaceURL}: {workspaceURL: string}) {
 
 export async function updateInviteApplication({
   workspaceURL,
+  workspaceURI,
   invite,
   app,
   value,
 }: {
   workspaceURL: string;
+  workspaceURI: string;
   invite: {id: string};
   app: {id: string; code: string};
   value: 'yes' | 'no';
@@ -77,7 +79,7 @@ export async function updateInviteApplication({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -157,6 +159,8 @@ export async function updateInviteApplication({
       select: {id: true},
     });
 
+    revalidatePath(`${workspaceURI}/account/members`);
+
     return {
       success: true,
       data: await findInviteById({id: invite.id, tenantId}),
@@ -169,11 +173,13 @@ export async function updateInviteApplication({
 
 export async function updateInviteAuthentication({
   workspaceURL,
+  workspaceURI,
   invite,
   app,
   value,
 }: {
   workspaceURL: string;
+  workspaceURI: string;
   invite: {id: string};
   app: {id: string; code: string};
   value: Authorization;
@@ -184,7 +190,7 @@ export async function updateInviteAuthentication({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -254,6 +260,8 @@ export async function updateInviteAuthentication({
       select: {id: true},
     });
 
+    revalidatePath(`${workspaceURI}/account/members`);
+
     return {
       success: true,
       data: await findInviteById({id: invite.id, tenantId}),
@@ -267,9 +275,11 @@ export async function updateInviteAuthentication({
 export async function deleteMember({
   member,
   workspaceURL,
+  workspaceURI,
 }: {
   member: {id: string; email: string};
   workspaceURL: string;
+  workspaceURI: string;
 }) {
   const canUpdateInvite = await canUpdate({workspaceURL});
 
@@ -277,7 +287,7 @@ export async function deleteMember({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -308,7 +318,7 @@ export async function deleteMember({
     return error(await t('Unauthorized')); // admin contact cannot remove partner
   }
 
-  let $member = members?.contacts?.find((c: any) => c.id === member.id);
+  const $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member?.contactWorkspaceConfig?.id) {
     return error(await t('Bad request'));
@@ -326,6 +336,8 @@ export async function deleteMember({
       tenantId,
     }).then(clone);
 
+    revalidatePath(`${workspaceURI}/account/members`);
+
     return {
       success: true,
       data: updatedPartner,
@@ -337,11 +349,13 @@ export async function deleteMember({
 
 export async function updateMemberApplication({
   workspaceURL,
+  workspaceURI,
   member,
   app,
   value,
 }: {
   workspaceURL: string;
+  workspaceURI: string;
   member: {id: string; email: string};
   app: {id: string; code: string};
   value: 'yes' | 'no';
@@ -352,7 +366,7 @@ export async function updateMemberApplication({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -383,7 +397,7 @@ export async function updateMemberApplication({
     return error(await t('Unauthorized')); // admin contact cannot update partner
   }
 
-  let $member = members?.contacts?.find((c: any) => c.id === member.id);
+  const $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member) {
     return error(await t('Bad request'));
@@ -444,6 +458,8 @@ export async function updateMemberApplication({
       })
       .then(clone);
 
+    revalidatePath(`${workspaceURI}/account/members`);
+
     return {
       success: true,
       data: updatedConfig,
@@ -456,11 +472,13 @@ export async function updateMemberApplication({
 
 export async function updateMemberAuthentication({
   workspaceURL,
+  workspaceURI,
   member,
   app,
   value,
 }: {
   workspaceURL: string;
+  workspaceURI: string;
   member: {id: string; email: string};
   app: {id: string; code: string};
   value: Authorization;
@@ -471,7 +489,7 @@ export async function updateMemberAuthentication({
     return error(await t('Unauthorized'));
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return error(await t('Bad request'));
@@ -502,7 +520,7 @@ export async function updateMemberAuthentication({
     return error(await t('Unauthorized')); // admin contact cannot update partner
   }
 
-  let $member = members?.contacts?.find((c: any) => c.id === member.id);
+  const $member = members?.contacts?.find((c: any) => c.id === member.id);
 
   if (!$member) {
     return error(await t('Bad request'));
@@ -553,7 +571,7 @@ export async function updateMemberAuthentication({
       })
       .then(clone);
 
-    revalidatePath(`${workspaceURL}/account/members`);
+    revalidatePath(`${workspaceURI}/account/members`);
 
     return {
       success: true,

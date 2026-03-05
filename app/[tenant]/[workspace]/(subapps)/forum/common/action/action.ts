@@ -16,7 +16,7 @@ import {ID, PortalWorkspace} from '@/types';
 import {getSession} from '@/auth';
 import {getFileSizeText} from '@/utils/files';
 import {manager} from '@/tenant';
-import {TENANT_HEADER} from '@/middleware';
+import {TENANT_HEADER} from '@/proxy';
 import {filterPrivate} from '@/orm/filter';
 import {
   CreateComment,
@@ -55,13 +55,13 @@ interface AttachmentResponse {
 const pump = promisify(pipeline);
 
 function extractFileValues(formData: FormData) {
-  let values: any = [];
+  const values: any = [];
 
-  for (let pair of formData.entries()) {
-    let key = pair[0];
-    let value = pair[1];
+  for (const pair of formData.entries()) {
+    const key = pair[0];
+    const value = pair[1];
 
-    let index: any = Number(key.match(/\[(\d+)\]/)?.[1]);
+    const index: any = Number(key.match(/\[(\d+)\]/)?.[1]);
 
     if (Number.isNaN(index)) {
       continue;
@@ -71,7 +71,7 @@ function extractFileValues(formData: FormData) {
       values[index] = {};
     }
 
-    let field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
+    const field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
 
     if (field === 'title' || field === 'description') {
       values[index][field] = value;
@@ -88,13 +88,15 @@ export async function pinGroup({
   id,
   groupID,
   workspaceURL,
+  workspaceURI,
 }: {
   isPin: boolean;
   id: string;
   groupID: string;
   workspaceURL: string;
+  workspaceURI: string;
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -160,6 +162,7 @@ export async function pinGroup({
       })
       .then(clone);
 
+    revalidatePath(`${workspaceURI}/${SUBAPP_CODES.forum}`);
     return {
       success: true,
       data: result,
@@ -177,12 +180,14 @@ export async function exitGroup({
   id,
   groupID,
   workspaceURL,
+  workspaceURI,
 }: {
   id: string;
   groupID: string;
   workspaceURL: string;
+  workspaceURI: string;
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -240,6 +245,7 @@ export async function exitGroup({
         version: memberGroup.version,
       })
       .then(clone);
+    revalidatePath(`${workspaceURI}/${SUBAPP_CODES.forum}`);
     return {
       success: true,
       data: result,
@@ -257,12 +263,14 @@ export async function joinGroup({
   groupID,
   userId,
   workspaceURL,
+  workspaceURI,
 }: {
   groupID: any;
   userId: string;
   workspaceURL: string;
+  workspaceURI: string;
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -330,6 +338,7 @@ export async function joinGroup({
       })
       .then(clone);
 
+    revalidatePath(`${workspaceURI}/${SUBAPP_CODES.forum}`);
     return {
       success: true,
       data: result,
@@ -348,13 +357,15 @@ export async function addGroupNotification({
   groupID,
   notificationType,
   workspaceURL,
+  workspaceURI,
 }: {
   id: string;
   groupID: string;
   notificationType: string;
   workspaceURL: string;
+  workspaceURI: string;
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -420,6 +431,7 @@ export async function addGroupNotification({
       })
       .then(clone);
 
+    revalidatePath(`${workspaceURI}/${SUBAPP_CODES.forum}`);
     return {success: true, data: response};
   } catch (error) {
     console.log('error >>>', error);
@@ -435,9 +447,10 @@ export async function addPost({
   title,
   content,
   workspaceURL,
+  workspaceURI,
   formData,
 }: any) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -571,7 +584,7 @@ export async function addPost({
         link: postLink,
       });
     }
-    revalidatePath(`${workspaceURL}/${SUBAPP_CODES.forum}`);
+    revalidatePath(`${workspaceURI}/${SUBAPP_CODES.forum}`);
     return {success: true, data: clone(post)};
   } catch (error) {
     return {
@@ -590,7 +603,7 @@ export async function findMedia({
   workspaceURL: string;
   archived?: boolean;
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -669,10 +682,10 @@ export async function fetchPosts({
   page?: string | number;
   search?: string | undefined;
   workspaceURL: string;
-  memberGroupIDs?: Array<String>;
+  memberGroupIDs?: Array<string>;
   groupIDs?: ID[];
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {
       error: true,
@@ -708,7 +721,7 @@ export async function fetchPosts({
 }
 
 async function uploadAttachment(formData: FormData): Promise<any> {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {
@@ -790,7 +803,7 @@ export async function fetchGroupsByMembers({
   orderBy?: any;
   workspaceID: PortalWorkspace['id'];
 }) {
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   const session = await getSession();
 
@@ -820,7 +833,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Unauthorized')};
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('TenantId is required')};
   }
@@ -949,7 +962,7 @@ export const fetchComments: FetchComments = async props => {
 
   const session = await getSession();
   const user = session?.user;
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
     return {error: true, message: await t('TenantId is required')};
@@ -1024,7 +1037,7 @@ export const getSubscribersByGroup = async ({
     return {error: true, message: await t('Workspace not provided!')};
   }
 
-  const tenantId = headers().get(TENANT_HEADER);
+  const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {
       error: true,

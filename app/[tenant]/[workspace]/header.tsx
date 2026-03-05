@@ -4,7 +4,7 @@ import {Fragment} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
-import {useSession} from 'next-auth/react';
+import {authClient} from '@/lib/auth-client';
 import {MdNotificationsNone} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -78,7 +78,7 @@ export default function Header({
   showCart?: boolean;
 }) {
   const router = useRouter();
-  const {data: session} = useSession();
+  const {data: session} = authClient.useSession();
   const user = session?.user;
 
   const {workspaceURI, workspaceURL, tenant} = useWorkspace();
@@ -157,13 +157,17 @@ export default function Header({
         <div className="bg-background text-foreground z-10 px-6 py-4 hidden lg:flex items-center justify-between border-b border-border border-solid max-w-full gap-10">
           <div>
             {Boolean(workspaces?.length) && user && (
-              <Select defaultValue={workspaceURL} onValueChange={redirect}>
+              <Select defaultValue={workspaceURI} onValueChange={redirect}>
                 <SelectTrigger className="grow max-w-100 overflow-hidden p-0 border-0 bg-none! h-[auto]">
                   <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
                   {workspaces?.map(workspace => (
-                    <SelectItem key={workspace.url} value={workspace.url}>
+                    <SelectItem
+                      key={workspace.url}
+                      value={
+                        workspace.url.replace(env.GOOVEE_PUBLIC_HOST, '') || '/'
+                      }>
                       {workspace.name || workspace.url}
                     </SelectItem>
                   ))}

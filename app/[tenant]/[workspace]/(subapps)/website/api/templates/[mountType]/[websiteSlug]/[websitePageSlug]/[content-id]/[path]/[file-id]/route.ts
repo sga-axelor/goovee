@@ -18,10 +18,8 @@ import {
 
 export async function GET(
   req: NextRequest,
-  {
-    params,
-  }: {
-    params: {
+  props: {
+    params: Promise<{
       tenant: string;
       workspace: string;
       mountType: MountType;
@@ -30,9 +28,10 @@ export async function GET(
       'content-id': string;
       path: string;
       'file-id': string;
-    };
+    }>;
   },
 ) {
+  const params = await props.params;
   const {workspaceURL, tenant: tenantId} = workspacePathname(params);
   const {
     'content-id': contentId,
@@ -99,6 +98,7 @@ export async function GET(
     const website = await findWebsiteBySlug({
       websiteSlug,
       workspaceURL,
+      workspaceURI,
       user,
       tenantId,
       mountTypes: [mountType],

@@ -62,16 +62,15 @@ import {
   RelatedTicketsHeader,
 } from './headers';
 
-export default async function Page({
-  params,
-}: {
-  params: {
+export default async function Page(props: {
+  params: Promise<{
     tenant: string;
     workspace: string;
     'project-id': string;
     'ticket-id': string;
-  };
+  }>;
 }) {
+  const params = await props.params;
   const {workspaceURI, workspaceURL} = workspacePathname(params);
   const projectId = params['project-id'];
   const ticketId = params['ticket-id'];
@@ -228,7 +227,7 @@ export default async function Page({
             commentField="note"
             createComment={createComment}
             fetchComments={fetchComments}
-            attachmentDownloadUrl={`${workspaceURL}/${SUBAPP_CODES.ticketing}/api/comments/attachments/${ticket.id}`}
+            attachmentDownloadUrl={`${workspaceURI}/${SUBAPP_CODES.ticketing}/api/comments/attachments/${ticket.id}`}
           />
         </div>
       )}

@@ -14,18 +14,17 @@ import CategoryNews from '@/subapps/news/[[...segments]]/category-news';
 import ArticleNews from './article-news';
 import {ArticleSkeleton} from '@/subapps/news/common/ui/components';
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: any;
-  searchParams: {[key: string]: string | undefined};
+export default async function Page(props: {
+  params: Promise<any>;
+  searchParams: Promise<{[key: string]: string | undefined}>;
 }) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const {tenant} = params;
 
   const session = await getSession();
   const user = session?.user;
-  const {workspaceURL} = workspacePathname(params);
+  const {workspaceURL, workspaceURI} = workspacePathname(params);
 
   const workspace = await findWorkspace({
     user,
@@ -57,6 +56,7 @@ export default async function Page({
           segments={segments}
           tenantId={tenant}
           workspaceURL={workspace.url}
+          workspaceURI={workspaceURI}
           user={user}
           slug={slug}
         />

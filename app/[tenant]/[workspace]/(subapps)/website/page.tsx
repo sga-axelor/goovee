@@ -13,11 +13,10 @@ import {NotFound} from '@/subapps/website/common/components/blocks/not-found';
 import {inverseTransformLocale} from '@/locale/utils';
 import type {Website} from '@/types';
 
-export default async function Page({
-  params,
-}: {
-  params: {tenant: string; workspace: string};
+export default async function Page(props: {
+  params: Promise<{tenant: string; workspace: string}>;
 }) {
+  const params = await props.params;
   const {tenant} = params;
 
   const {workspaceURL, workspaceURI} = workspacePathname(params);
@@ -47,7 +46,7 @@ export default async function Page({
   if (!mainWebsites?.length) return <NotFound homePageUrl={workspaceURI} />;
 
   const getWebsiteURL = (website: Website) =>
-    `${workspaceURL}/${SUBAPP_CODES.website}/${website.slug}`;
+    `${workspaceURI}/${SUBAPP_CODES.website}/${website.slug}`;
 
   if (mainWebsites.length === 1) {
     return redirect(getWebsiteURL(mainWebsites?.[0]));
