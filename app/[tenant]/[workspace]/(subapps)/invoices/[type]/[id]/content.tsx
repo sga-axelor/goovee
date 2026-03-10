@@ -1,16 +1,24 @@
 'use client';
 
-import React from 'react';
+import {useCallback, useEffect, useRef} from 'react';
+import {useRouter, usePathname} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {Separator, Container, Chip} from '@/ui/components';
 import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
 import {formatDate} from '@/lib/core/locale/formatters';
+import {usePaymentSSE, useSearchParams} from '@/ui/hooks';
+import {PAYMENT_SOURCE} from '@/lib/core/payment/common/type';
 
 // ---- LOCAL IMPORTS ---- //
 import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
-import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
+import {
+  INVOICE,
+  INVOICE_TYPE,
+  INVOICE_PAYMENT_OPTIONS,
+} from '@/subapps/invoices/common/constants/invoices';
+import {UP2PAY_REDIRECT_STATUS} from '@/lib/core/payment/up2pay/constants';
 import type {Invoice as InvoiceType} from '@/subapps/invoices/common/types/invoices';
 
 interface ContentProps {
@@ -26,7 +34,50 @@ export default function Content({
   invoiceType,
   workspaceURI,
 }: ContentProps) {
-  const {invoiceId, dueDate, invoiceDate, isUnpaid} = invoice;
+  const {id, invoiceId, dueDate, invoiceDate, isUnpaid} = invoice;
+
+  const router = useRouter();
+  const {searchParams} = useSearchParams();
+  const pathname = usePathname();
+
+  const paidPathname = pathname.replace(
+    `/${INVOICE.UNPAID}/`,
+    `/${INVOICE.PAID}/`,
+  );
+
+  // Capture isFullPayment from the redirect params before the URL is cleaned
+  const isFullPaymentRef = useRef(
+    searchParams.get('type') === INVOICE_PAYMENT_OPTIONS.TOTAL,
+  );
+
+  const handlePaymentUpdate = useCallback(() => {
+    const target = isFullPaymentRef.current ? paidPathname : pathname;
+    router.replace(target);
+  }, [router, paidPathname, pathname]);
+
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status !== UP2PAY_REDIRECT_STATUS.SUCCESS) return;
+
+    isFullPaymentRef.current =
+      searchParams.get('type') === INVOICE_PAYMENT_OPTIONS.TOTAL;
+
+    // Clean the URL immediately
+    router.replace(pathname);
+
+    const target = isFullPaymentRef.current ? paidPathname : pathname;
+
+    const t = setTimeout(() => {
+      router.replace(target);
+    }, 1500);
+    return () => clearTimeout(t);
+  }, [pathname, router, searchParams, paidPathname]);
+
+  usePaymentSSE({
+    source: PAYMENT_SOURCE.INVOICES,
+    entityId: isUnpaid ? id : '',
+    onUpdate: handlePaymentUpdate,
+  });
 
   const status = isUnpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
 
