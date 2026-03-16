@@ -1,78 +1,65 @@
 'use client';
 
-import {useCallback, useEffect, useRef} from 'react';
-import {useRouter, usePathname} from 'next/navigation';
+import {useCallback, useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {Separator, Container, Chip} from '@/ui/components';
 import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
+import {SUBAPP_CODES} from '@/constants';
 import {formatDate} from '@/lib/core/locale/formatters';
 import {usePaymentSSE, useSearchParams} from '@/ui/hooks';
 import {PAYMENT_SOURCE} from '@/lib/core/payment/common/type';
 
 // ---- LOCAL IMPORTS ---- //
 import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
-import {
-  INVOICE,
-  INVOICE_TYPE,
-  INVOICE_PAYMENT_OPTIONS,
-} from '@/subapps/invoices/common/constants/invoices';
+import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
 import {UP2PAY_REDIRECT_STATUS} from '@/lib/core/payment/up2pay/constants';
 import type {Invoice as InvoiceType} from '@/subapps/invoices/common/types/invoices';
 
 interface ContentProps {
   invoice: InvoiceType;
   workspace: PortalWorkspace;
-  invoiceType: string;
   workspaceURI: string;
+  token?: string;
 }
 
 export default function Content({
   invoice,
   workspace,
-  invoiceType,
   workspaceURI,
+  token,
 }: ContentProps) {
-  const {id, invoiceId, dueDate, invoiceDate, isUnpaid} = invoice;
+  const {id, invoiceId, dueDate, invoiceDate, isUnpaid, amountRemaining} =
+    invoice;
 
   const router = useRouter();
   const {searchParams} = useSearchParams();
-  const pathname = usePathname();
 
-  const paidPathname = pathname.replace(
-    `/${INVOICE.UNPAID}/`,
-    `/${INVOICE.PAID}/`,
-  );
+  const invoiceType =
+    Number(amountRemaining.value) > 0 ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
 
-  // Capture isFullPayment from the redirect params before the URL is cleaned
-  const isFullPaymentRef = useRef(
-    searchParams.get('type') === INVOICE_PAYMENT_OPTIONS.TOTAL,
-  );
-
-  const handlePaymentUpdate = useCallback(() => {
-    const target = isFullPaymentRef.current ? paidPathname : pathname;
-    router.replace(target);
-  }, [router, paidPathname, pathname]);
+  const status = searchParams.get('status');
 
   useEffect(() => {
-    const status = searchParams.get('status');
     if (status !== UP2PAY_REDIRECT_STATUS.SUCCESS) return;
 
-    isFullPaymentRef.current =
-      searchParams.get('type') === INVOICE_PAYMENT_OPTIONS.TOTAL;
+    // Clean the URL immediately, then refresh data
+    router.replace(
+      `${workspaceURI}/${SUBAPP_CODES.invoices}/${id}${token ? `?token=${token}` : ''}`,
+    );
+  }, [id, token, workspaceURI, router, status]);
 
-    // Clean the URL immediately — SSE will trigger navigation once webhook confirms
-    router.replace(pathname);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const handlePaymentUpdate = useCallback(() => {
+    router.refresh();
+  }, [router]);
 
   usePaymentSSE({
     source: PAYMENT_SOURCE.INVOICES,
     entityId: isUnpaid ? id : '',
     onUpdate: handlePaymentUpdate,
   });
-
-  const status = isUnpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
 
   return (
     <Container title={`${i18n.t('Invoice number')} ${invoiceId}`}>
@@ -83,7 +70,7 @@ export default function Content({
           <div className="flex items-center gap-2">
             <h5 className="text-sm font-medium mb-0">{i18n.t('Status')}:</h5>
             <Chip
-              value={i18n.t(status)}
+              value={i18n.t(invoiceType)}
               className="font-normal text-[0.625rem] px-2 py-1"
               variant={isUnpaid ? 'destructive' : 'success'}
             />
@@ -100,7 +87,10 @@ export default function Content({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-12 gap-4 mb-6 rounded-lg">
         <div className="col-span-12 lg:col-span-9">
-          <Invoice invoice={invoice} invoiceType={invoiceType} />
+          <Invoice
+            invoiceId={id}
+            downloadURL={`${workspaceURI}/${SUBAPP_CODES.invoices}/api/invoice/${id}${token ? `?token=${token}` : ''}`}
+          />
         </div>
 
         <div className="col-span-12 lg:col-span-3">
@@ -110,6 +100,7 @@ export default function Content({
             isUnpaid={isUnpaid}
             workspace={workspace}
             workspaceURI={workspaceURI}
+            token={token}
           />
         </div>
       </div>

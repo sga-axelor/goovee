@@ -21,8 +21,8 @@ export type Invoice = {
 };
 
 export type InvoiceProps = {
-  invoice: any;
-  invoiceType: string;
+  invoiceId: string | number;
+  downloadURL: string;
 };
 
 export type TotalProps = {
@@ -31,4 +31,5 @@ export type TotalProps = {
   workspace?: PortalWorkspace;
   invoiceType: string;
   workspaceURI: string;
+  token?: string;
 };

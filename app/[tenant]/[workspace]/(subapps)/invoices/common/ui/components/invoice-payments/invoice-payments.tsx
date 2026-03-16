@@ -1,16 +1,15 @@
 'use client';
 
-import {useCallback, useMemo} from 'react';
-import {useRouter} from 'next/navigation';
+import {useCallback} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {ID} from '@/types';
 import {Payments} from '@/ui/components/payment';
-import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useToast} from '@/ui/hooks';
-import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {ErrorResponse, SuccessResponse} from '@/types/action';
+import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -25,6 +24,7 @@ import {
 } from '@/subapps/invoices/common/actions';
 import {Invoice} from '@/subapps/invoices/common/types/invoices';
 import {INVOICE_PAYMENT_OPTIONS} from '@/subapps/invoices/common/constants/invoices';
+import {SUBAPP_CODES} from '@/constants';
 
 export function InvoicePayments({
   workspace,
@@ -33,6 +33,7 @@ export function InvoicePayments({
   paymentType,
   resetPaymentType,
   resetForm,
+  token,
 }: {
   workspace: any;
   invoice: Invoice;
@@ -40,20 +41,13 @@ export function InvoicePayments({
   paymentType: INVOICE_PAYMENT_OPTIONS | null;
   resetPaymentType: () => void;
   resetForm: () => void;
+  token?: string;
 }) {
   const workspaceURL = workspace?.url;
+  const {workspaceURI} = useWorkspace();
 
   const router = useRouter();
-  const {workspaceURI} = useWorkspace();
   const {toast} = useToast();
-
-  const redirectionPath = useMemo(() => {
-    if (paymentType === INVOICE_PAYMENT_OPTIONS.PARTIAL) {
-      return `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.unpaid}/${invoice.id}`;
-    } else {
-      return `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.paid}/${invoice.id}`;
-    }
-  }, [invoice.id, paymentType, workspaceURI]);
 
   const redirectToInvoice = useCallback(
     async (result: any) => {
@@ -62,10 +56,20 @@ export function InvoicePayments({
           resetPaymentType();
           resetForm();
         }
-        router.replace(redirectionPath);
+        router.replace(
+          `${workspaceURI}/${SUBAPP_CODES.invoices}/${invoice.id}${token ? `?token=${token}` : ''}`,
+        );
       }
     },
-    [paymentType, router, resetPaymentType, resetForm, redirectionPath],
+    [
+      paymentType,
+      router,
+      resetPaymentType,
+      resetForm,
+      invoice,
+      token,
+      workspaceURI,
+    ],
   );
 
   const handleInvoiceValidation = async () => {
@@ -88,7 +92,8 @@ export function InvoicePayments({
       const response: any = await validateStripePayment({
         stripeSessionId,
         workspaceURL,
-        invalidatePath: redirectionPath,
+        workspaceURI,
+        token,
       });
 
       return response;
@@ -109,7 +114,8 @@ export function InvoicePayments({
       const response: any = await validatePayboxPayment({
         params,
         workspaceURL,
-        invalidatePath: redirectionPath,
+        workspaceURI,
+        token,
       });
       return response;
     } catch (error) {
@@ -136,12 +142,14 @@ export function InvoicePayments({
           invoice: {id: invoice.id},
           amount,
           workspaceURL,
+          token,
         });
       }}
       onPaypalCaptureOrder={async orderID => {
         return await paypalCaptureOrder({
           orderID,
           workspaceURL,
+          token,
         });
       }}
       onApprove={redirectToInvoice}
@@ -150,6 +158,7 @@ export function InvoicePayments({
           invoice: {id: invoice.id},
           amount,
           workspaceURL,
+          token,
         });
       }}
       onStripeValidateSession={handleStripeValidations}
@@ -158,6 +167,7 @@ export function InvoicePayments({
           invoice: {id: invoice.id},
           amount,
           workspaceURL,
+          token,
         });
       }}
       onPayboxCreateOrder={async ({uri}) => {
@@ -166,6 +176,7 @@ export function InvoicePayments({
           amount,
           workspaceURL,
           uri,
+          token,
         });
       }}
       onPayboxValidatePayment={handlePayboxValidations}
@@ -175,6 +186,7 @@ export function InvoicePayments({
           amount,
           workspaceURL,
           uri,
+          token,
         });
       }}
       successMessage="Invoice payment completed successfully."

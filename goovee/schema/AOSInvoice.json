@@ -89,6 +89,12 @@
       "type": "Int"
     },
     {
+      "name": "portalTokenList",
+      "type": "OneToMany",
+      "target": "AOSPortalAccessToken",
+      "mappedBy": "invoice"
+    },
+    {
       "name": "archived",
       "type": "Boolean"
     },

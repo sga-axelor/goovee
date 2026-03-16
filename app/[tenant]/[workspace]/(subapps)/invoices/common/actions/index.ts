@@ -10,11 +10,9 @@ import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
   SUBAPP_CODES,
-  SUBAPP_PAGE,
 } from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/proxy';
-import {findGooveeUserByEmail} from '@/orm/partner';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 import {createUp2payOrder} from '@/payment/up2pay/actions';
@@ -54,12 +52,14 @@ export async function paypalCreateOrder({
   invoice,
   amount,
   workspaceURL,
+  token,
 }: {
   invoice: {
     id: string | number;
   };
   amount: string;
   workspaceURL: string;
+  token?: string;
 }) {
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
@@ -71,6 +71,7 @@ export async function paypalCreateOrder({
     amount,
     workspaceURL,
     tenantId,
+    token,
   });
   if (validationResult.error) {
     return validationResult;
@@ -89,7 +90,10 @@ export async function paypalCreateOrder({
     };
   }
 
-  const payer = await findGooveeUserByEmail(user?.email, tenantId);
+  const payerEmail = token
+    ? $invoice?.partner?.emailAddress?.address
+    : user!.email;
+
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
 
   try {
@@ -98,7 +102,7 @@ export async function paypalCreateOrder({
       amount: $amount,
       currency: currencyCode,
       context: invoice,
-      email: payer?.emailAddress?.address!,
+      email: payerEmail,
     });
     return {success: true, order: response?.result};
   } catch (err) {
@@ -113,9 +117,11 @@ export async function paypalCreateOrder({
 export async function paypalCaptureOrder({
   orderID,
   workspaceURL,
+  token,
 }: {
   orderID: string;
   workspaceURL: string;
+  token?: string;
 }) {
   if (!orderID) {
     return {error: true, message: await t('Order ID is missing')};
@@ -128,21 +134,26 @@ export async function paypalCaptureOrder({
     };
   }
 
-  const session = await getSession();
-  const user = session?.user;
-  if (!user) {
-    return {
-      error: true,
-      message: await t('Unauthorized'),
-    };
-  }
-
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {
       error: true,
       message: await t('Tenant is missing'),
     };
+  }
+
+  let user;
+  let invoicesWhereClause = {};
+
+  if (!token) {
+    const session = await getSession();
+    user = session?.user;
+    if (!user) {
+      return {
+        error: true,
+        message: await t('Unauthorized'),
+      };
+    }
   }
 
   const workspace = await findWorkspace({
@@ -157,26 +168,28 @@ export async function paypalCaptureOrder({
     };
   }
 
-  const subapp = await findSubappAccess({
-    code: SUBAPP_CODES.invoices,
-    user,
-    url: workspace.url,
-    tenantId,
-  });
-  if (!subapp) {
-    return {
-      error: true,
-      message: await t('Unauthorized app access'),
-    };
-  }
+  if (!token) {
+    const subapp = await findSubappAccess({
+      code: SUBAPP_CODES.invoices,
+      user,
+      url: workspace.url,
+      tenantId,
+    });
+    if (!subapp) {
+      return {
+        error: true,
+        message: await t('Unauthorized app access'),
+      };
+    }
 
-  const {role, isContactAdmin} = subapp;
-  const invoicesWhereClause = getWhereClauseForEntity({
-    user,
-    role,
-    isContactAdmin,
-    partnerKey: PartnerKey.PARTNER,
-  });
+    const {role, isContactAdmin} = subapp;
+    invoicesWhereClause = getWhereClauseForEntity({
+      user,
+      role,
+      isContactAdmin,
+      partnerKey: PartnerKey.PARTNER,
+    });
+  }
 
   if (workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.NO) {
     return {
@@ -229,10 +242,9 @@ export async function paypalCaptureOrder({
     }
 
     const $invoice = await findInvoice({
+      type: INVOICE.UNPAID,
       id: invoice.id,
-      params: {
-        where: invoicesWhereClause,
-      },
+      ...(token ? {token} : {params: {where: invoicesWhereClause}}),
       workspaceURL,
       tenantId,
     });
@@ -295,10 +307,12 @@ export async function createStripeCheckoutSession({
   invoice,
   amount,
   workspaceURL,
+  token,
 }: {
   invoice: any;
   amount: string;
   workspaceURL: string;
+  token?: string;
 }) {
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
@@ -309,6 +323,7 @@ export async function createStripeCheckoutSession({
     amount,
     workspaceURL,
     tenantId,
+    token,
   });
   if (validationResult.error) {
     return validationResult;
@@ -329,12 +344,14 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  const payer = await findGooveeUserByEmail(user.email, tenantId);
-  if (!payer) {
-    return {
-      error: true,
-      message: await t('Unauthorized user'),
+  let customer: {id: string; email: string};
+  if (token) {
+    customer = {
+      id: String($invoice?.partner?.id),
+      email: $invoice?.partner?.emailAddress?.address,
     };
+  } else {
+    customer = {id: String(user!.id), email: user!.email};
   }
 
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
@@ -342,17 +359,14 @@ export async function createStripeCheckoutSession({
   try {
     const session = await createStripeOrder({
       tenantId,
-      customer: {
-        id: payer?.id!,
-        email: payer?.emailAddress?.address!,
-      },
+      customer,
       context: {id: invoice.id, paymentType: PAYMENT_TYPE.CARD},
       name: await t('Invoice Checkout'),
       amount: Number($amount),
       currency: currencyCode,
       url: {
-        success: `${workspaceURL}/${SUBAPP_CODES.invoices}/${INVOICE.UNPAID}/${$invoice.id}?stripe_session_id={CHECKOUT_SESSION_ID}&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}`,
-        error: `${workspaceURL}/${SUBAPP_CODES.invoices}/${INVOICE.UNPAID}/${$invoice.id}?stripe_error=true`,
+        success: `${workspaceURL}/${SUBAPP_CODES.invoices}/${$invoice.id}?stripe_session_id={CHECKOUT_SESSION_ID}&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}${token ? `&token=${token}` : ''}`,
+        error: `${workspaceURL}/${SUBAPP_CODES.invoices}/${$invoice.id}?stripe_error=true${token ? `&token=${token}` : ''}`,
       },
     });
 
@@ -372,11 +386,13 @@ export async function createStripeCheckoutSession({
 export async function validateStripePayment({
   stripeSessionId,
   workspaceURL,
-  invalidatePath,
+  workspaceURI,
+  token,
 }: {
   stripeSessionId: string;
   workspaceURL: string;
-  invalidatePath: string;
+  workspaceURI: string;
+  token?: string;
 }) {
   if (!stripeSessionId) {
     return {error: true, message: await t('Missing stripe session id!')};
@@ -392,27 +408,45 @@ export async function validateStripePayment({
   }
 
   try {
-    const session = await getSession();
-    const user = session?.user;
-    if (!user) {
-      return {error: true, message: await t('Unauthorized')};
+    let user;
+    let invoicesWhereClause = {};
+
+    if (!token) {
+      const session = await getSession();
+      user = session?.user;
+      if (!user) {
+        return {error: true, message: await t('Unauthorized')};
+      }
     }
 
-    const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+    const workspace = await findWorkspace({
+      url: workspaceURL,
+      tenantId,
+      user,
+    });
 
     if (!workspace) {
       return {error: true, message: await t('Invalid workspace')};
     }
 
-    const subapp = await findSubappAccess({
-      code: SUBAPP_CODES.invoices,
-      user,
-      url: workspace.url,
-      tenantId,
-    });
+    if (!token) {
+      const subapp = await findSubappAccess({
+        code: SUBAPP_CODES.invoices,
+        user,
+        url: workspace.url,
+        tenantId,
+      });
 
-    if (!subapp) {
-      return {error: true, message: await t('Unauthorized app access')};
+      if (!subapp) {
+        return {error: true, message: await t('Unauthorized app access')};
+      }
+
+      invoicesWhereClause = getWhereClauseForEntity({
+        user,
+        role: subapp.role,
+        isContactAdmin: subapp.isContactAdmin,
+        partnerKey: PartnerKey.PARTNER,
+      });
     }
 
     if (!workspace?.config?.allowOnlinePaymentForInvoices) {
@@ -464,16 +498,10 @@ export async function validateStripePayment({
       };
     }
 
-    const invoicesWhereClause = getWhereClauseForEntity({
-      user,
-      role: subapp.role,
-      isContactAdmin: subapp.isContactAdmin,
-      partnerKey: PartnerKey.PARTNER,
-    });
-
     const $invoice = await findInvoice({
+      type: INVOICE.UNPAID,
       id: invoice.id,
-      params: {where: invoicesWhereClause},
+      ...(token ? {token} : {params: {where: invoicesWhereClause}}),
       workspaceURL,
       tenantId,
     });
@@ -520,7 +548,7 @@ export async function validateStripePayment({
       version: context.version,
       tenantId,
     });
-    revalidatePath(invalidatePath);
+    revalidatePath(`${workspaceURI}/${SUBAPP_CODES.invoices}/${$invoice.id}`);
     return {success: true, data: $invoice};
   } catch (error) {
     console.error('Error validating Stripe payment:', error);
@@ -535,10 +563,12 @@ export async function createStripeBankTransferIntent({
   invoice,
   amount,
   workspaceURL,
+  token,
 }: {
   invoice: any;
   amount: string;
   workspaceURL: string;
+  token?: string;
 }) {
   const $headers = await headers();
 
@@ -551,6 +581,7 @@ export async function createStripeBankTransferIntent({
     amount,
     workspaceURL,
     tenantId,
+    token,
   });
   if (validationResult.error) {
     return validationResult;
@@ -570,12 +601,14 @@ export async function createStripeBankTransferIntent({
     };
   }
 
-  const payer = await findGooveeUserByEmail(user.email, tenantId);
-  if (!payer) {
-    return {
-      error: true,
-      message: await t('Unauthorized user'),
+  let customer: {id: string; email: string};
+  if (token) {
+    customer = {
+      id: String($invoice?.partner?.id),
+      email: $invoice?.partner?.emailAddress?.address,
     };
+  } else {
+    customer = {id: String(user!.id), email: user!.email};
   }
 
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
@@ -593,10 +626,7 @@ export async function createStripeBankTransferIntent({
   try {
     const result = await createStripePaymentIntent({
       tenantId,
-      customer: {
-        id: payer?.id!,
-        email: payer?.emailAddress?.address!,
-      },
+      customer,
       context: {
         id: invoice.id,
         paymentType: PAYMENT_TYPE.BANK_TRANSFER,
@@ -625,11 +655,13 @@ export async function cancelStripeBankTransferPaymentIntent({
   contextId,
   workspaceURL,
   workspaceURI,
+  token,
 }: {
   id: string;
   contextId: string;
   workspaceURL: string;
   workspaceURI: string;
+  token?: string;
 }) {
   if (!id) {
     return {error: true, message: await t('Missing stripe payment id!')};
@@ -650,10 +682,15 @@ export async function cancelStripeBankTransferPaymentIntent({
   }
 
   try {
-    const session = await getSession();
-    const user = session?.user;
-    if (!user) {
-      return {error: true, message: await t('Unauthorized')};
+    let user;
+    let invoicesWhereClause = {};
+
+    if (!token) {
+      const session = await getSession();
+      user = session?.user;
+      if (!user) {
+        return {error: true, message: await t('Unauthorized')};
+      }
     }
 
     const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
@@ -662,15 +699,24 @@ export async function cancelStripeBankTransferPaymentIntent({
       return {error: true, message: await t('Invalid workspace')};
     }
 
-    const subapp = await findSubappAccess({
-      code: SUBAPP_CODES.invoices,
-      user,
-      url: workspace.url,
-      tenantId,
-    });
+    if (!token) {
+      const subapp = await findSubappAccess({
+        code: SUBAPP_CODES.invoices,
+        user,
+        url: workspace.url,
+        tenantId,
+      });
 
-    if (!subapp) {
-      return {error: true, message: await t('Unauthorized app access')};
+      if (!subapp) {
+        return {error: true, message: await t('Unauthorized app access')};
+      }
+
+      invoicesWhereClause = getWhereClauseForEntity({
+        user,
+        role: subapp.role,
+        isContactAdmin: subapp.isContactAdmin,
+        partnerKey: PartnerKey.PARTNER,
+      });
     }
 
     if (!workspace?.config?.allowOnlinePaymentForInvoices) {
@@ -730,18 +776,12 @@ export async function cancelStripeBankTransferPaymentIntent({
       };
     }
 
-    const invoicesWhereClause = getWhereClauseForEntity({
-      user,
-      role: subapp.role,
-      isContactAdmin: subapp.isContactAdmin,
-      partnerKey: PartnerKey.PARTNER,
-    });
-
     const {data} = paymentContext;
 
     const $invoice = await findInvoice({
+      type: INVOICE.UNPAID,
       id: data.id,
-      params: {where: invoicesWhereClause},
+      ...(token ? {token} : {params: {where: invoicesWhereClause}}),
       workspaceURL,
       tenantId,
     });
@@ -760,9 +800,7 @@ export async function cancelStripeBankTransferPaymentIntent({
       cancellation_reason: 'requested_by_customer',
     });
 
-    revalidatePath(
-      `${workspaceURI}/${SUBAPP_CODES.invoices}/${SUBAPP_PAGE.unpaid}/${$invoice.id}`,
-    );
+    revalidatePath(`${workspaceURI}/${SUBAPP_CODES.invoices}/${$invoice.id}`);
   } catch (error) {
     console.error('Error Cancelling:', error);
     return {
@@ -777,11 +815,13 @@ export async function payboxCreateOrder({
   amount,
   workspaceURL,
   uri,
+  token,
 }: {
   invoice: any;
   amount: string;
   workspaceURL: string;
   uri: string;
+  token?: string;
 }) {
   if (!uri) {
     return {
@@ -800,6 +840,7 @@ export async function payboxCreateOrder({
     amount,
     workspaceURL,
     tenantId,
+    token,
   });
   if (validationResult.error) {
     return validationResult;
@@ -820,24 +861,21 @@ export async function payboxCreateOrder({
     };
   }
 
-  const payer = await findGooveeUserByEmail(user.email, tenantId);
-  if (!payer) {
-    return {
-      error: true,
-      message: await t('Unauthorized user'),
-    };
-  }
+  const payerEmail = token
+    ? $invoice?.partner?.emailAddress?.address
+    : user!.email;
+
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
   try {
     const response = await createPayboxOrder({
       tenantId,
       amount: $amount,
       currency: currencyCode,
-      email: payer?.emailAddress?.address!,
+      email: payerEmail,
       context: invoice,
       url: {
-        success: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_response=true&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}`,
-        failure: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_error=true`,
+        success: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_response=true&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}${token ? `&token=${token}` : ''}`,
+        failure: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_error=true${token ? `&token=${token}` : ''}`,
       },
     });
 
@@ -853,11 +891,13 @@ export async function payboxCreateOrder({
 export async function validatePayboxPayment({
   params,
   workspaceURL,
-  invalidatePath,
+  workspaceURI,
+  token,
 }: {
   params: any;
   workspaceURL: string;
-  invalidatePath: string;
+  workspaceURI: string;
+  token?: string;
 }) {
   if (!params) {
     return {error: true, message: await t('Bad request')};
@@ -873,27 +913,45 @@ export async function validatePayboxPayment({
   }
 
   try {
-    const session = await getSession();
-    const user = session?.user;
-    if (!user) {
-      return {error: true, message: await t('Unauthorized')};
+    let user;
+    let invoicesWhereClause = {};
+
+    if (!token) {
+      const session = await getSession();
+      user = session?.user;
+      if (!user) {
+        return {error: true, message: await t('Unauthorized')};
+      }
     }
 
-    const workspace = await findWorkspace({user, url: workspaceURL, tenantId});
+    const workspace = await findWorkspace({
+      url: workspaceURL,
+      tenantId,
+      user,
+    });
 
     if (!workspace) {
       return {error: true, message: await t('Invalid workspace')};
     }
 
-    const subapp = await findSubappAccess({
-      code: SUBAPP_CODES.invoices,
-      user,
-      url: workspace.url,
-      tenantId,
-    });
+    if (!token) {
+      const subapp = await findSubappAccess({
+        code: SUBAPP_CODES.invoices,
+        user,
+        url: workspace.url,
+        tenantId,
+      });
 
-    if (!subapp) {
-      return {error: true, message: await t('Unauthorized app access')};
+      if (!subapp) {
+        return {error: true, message: await t('Unauthorized app access')};
+      }
+
+      invoicesWhereClause = getWhereClauseForEntity({
+        user,
+        role: subapp.role,
+        isContactAdmin: subapp.isContactAdmin,
+        partnerKey: PartnerKey.PARTNER,
+      });
     }
 
     if (!workspace?.config?.allowOnlinePaymentForInvoices) {
@@ -944,16 +1002,10 @@ export async function validatePayboxPayment({
       };
     }
 
-    const invoicesWhereClause = getWhereClauseForEntity({
-      user,
-      role: subapp.role,
-      isContactAdmin: subapp.isContactAdmin,
-      partnerKey: PartnerKey.PARTNER,
-    });
-
     const $invoice = await findInvoice({
+      type: INVOICE.UNPAID,
       id: invoice.id,
-      params: {where: invoicesWhereClause},
+      ...(token ? {token} : {params: {where: invoicesWhereClause}}),
       workspaceURL,
       tenantId,
     });
@@ -1000,7 +1052,7 @@ export async function validatePayboxPayment({
       version: context.version,
       tenantId,
     });
-    revalidatePath(invalidatePath);
+    revalidatePath(`${workspaceURI}/${SUBAPP_CODES.invoices}/${$invoice.id}`);
     return {success: true, data: $invoice};
   } catch (error) {
     console.error('Error validating Paybox payment:', error);
@@ -1016,11 +1068,13 @@ export async function up2payCreateOrder({
   amount,
   workspaceURL,
   uri,
+  token,
 }: {
   invoice: any;
   amount: string;
   workspaceURL: string;
   uri: string;
+  token?: string;
 }) {
   if (!uri) {
     return {
@@ -1040,6 +1094,7 @@ export async function up2payCreateOrder({
     amount,
     workspaceURL,
     tenantId,
+    token,
   });
 
   if (validationResult.error) {
@@ -1085,7 +1140,7 @@ export async function up2payCreateOrder({
       tenantId,
       amount: $amount,
       currency: currencyCode,
-      email: user.email,
+      email: token ? $invoice?.partner?.emailAddress?.address : user!.email,
       name: $invoice?.partner?.name || '',
       reference: $invoice?.invoiceId,
       context: {
@@ -1099,9 +1154,9 @@ export async function up2payCreateOrder({
           isPartialPayment
             ? INVOICE_PAYMENT_OPTIONS.PARTIAL
             : INVOICE_PAYMENT_OPTIONS.TOTAL
-        }`,
-        failure: `${process.env.GOOVEE_PUBLIC_HOST}${uri}?status=${UP2PAY_REDIRECT_STATUS.REFUSED}`,
-        cancel: `${process.env.GOOVEE_PUBLIC_HOST}${uri}?status=${UP2PAY_REDIRECT_STATUS.CANCELLED}`,
+        }${token ? `&token=${token}` : ''}`,
+        failure: `${process.env.GOOVEE_PUBLIC_HOST}${uri}?status=${UP2PAY_REDIRECT_STATUS.REFUSED}${token ? `&token=${token}` : ''}`,
+        cancel: `${process.env.GOOVEE_PUBLIC_HOST}${uri}?status=${UP2PAY_REDIRECT_STATUS.CANCELLED}${token ? `&token=${token}` : ''}`,
       },
     });
 

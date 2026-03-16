@@ -107,12 +107,14 @@ type InvoiceType = (typeof INVOICE)[keyof typeof INVOICE];
 
 export const findInvoice = async ({
   id,
-  type = INVOICE.UNPAID,
+  token,
+  type,
   params,
   tenantId,
   workspaceURL,
 }: {
   id: Invoice['id'];
+  token?: string;
   type?: InvoiceType;
   params?: {
     where?: object & {
@@ -129,10 +131,16 @@ export const findInvoice = async ({
   const client = await manager.getClient(tenantId);
 
   const whereClause = buildWhereClause({params, workspaceURL, type});
-  const invoice: any = await client.aOSInvoice
+  const invoice = await client.aOSInvoice
     .findOne({
       where: {
-        id,
+        ...(id && {id}),
+        ...(token && {
+          portalTokenList: {
+            token,
+            // OR: [{expiresOn: null}, {expiresOn: {gt: new Date()}}], // TODO: add this back in when orm fixes date issue https://github.com/axelor/goovee-orm/issues/15
+          },
+        }),
         ...params?.where,
         ...whereClause,
       },
@@ -144,6 +152,9 @@ export const findInvoice = async ({
         inTaxTotal: true,
         amountRemaining: true,
         note: true,
+        ...(token && {
+          portalTokenList: {where: {token}, select: {expiresOn: true}},
+        }), // can be removed when orm fixes date issue
         taxTotal: true,
         company: {
           name: true,
@@ -164,6 +175,9 @@ export const findInvoice = async ({
         partner: {
           simpleFullName: true,
           fixedPhone: true,
+          emailAddress: {
+            address: true,
+          },
           mainAddress: {
             zip: true,
             addressl2: true,
@@ -210,6 +224,15 @@ export const findInvoice = async ({
   if (!invoice) {
     return null;
   }
+
+  if (token && invoice.portalTokenList) {
+    const access = invoice.portalTokenList[0];
+    if (!access) return null;
+    const {expiresOn} = access;
+    if (expiresOn && new Date(expiresOn) < new Date()) {
+      return null;
+    }
+  } // this block can be removed when orm fixes date issue
 
   const {
     currency,
