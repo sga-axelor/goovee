@@ -400,7 +400,7 @@
   "Payment amount mistmatch": "Payment amount mistmatch",
   "Payment not successfull": "Payment not successfull",
   "Paypal is not available": "Paypal is not available",
-  "Pending Bank transfers": "Pending Bank transfers",
+  "Pending Stripe Bank transfers": "Pending Stripe Bank transfers",
   "Personal Settings": "Personal Settings",
   "Personal information": "Personal information",
   "Phone": "Phone",
