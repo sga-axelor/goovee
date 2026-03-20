@@ -400,7 +400,7 @@
   "Payment amount mistmatch": "Montant du paiement non correspondant",
   "Payment not successfull": "Paiement non réussi",
   "Paypal is not available": "Paypal n'est pas disponible",
-  "Pending Bank transfers": "Virements bancaires en attente",
+  "Pending Stripe Bank transfers": "Virements bancaires Stripe en attente",
   "Personal Settings": "Paramètres personnels",
   "Personal information": "Informations personnelles",
   "Phone": "Téléphone",

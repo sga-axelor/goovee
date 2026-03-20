@@ -41,7 +41,7 @@ export function BankTransferList({
   return (
     <div className="rounded-md border-l-4 border-yellow-400 bg-yellow-50 p-4">
       <p className="text-sm font-medium text-yellow-900">
-        {i18n.t('Pending Bank transfers')}
+        {i18n.t('Pending Stripe Bank transfers')}
       </p>
 
       <div className="mt-2 space-y-2">
@@ -92,7 +92,7 @@ function BankTransferItem({transfer, onCancel}: BankTransferItemProps) {
     <div className="border border-yellow-200 rounded bg-white bg-opacity-50">
       <div className="flex items-center justify-between p-2">
         <div>
-          <div className="font-medium">{transfer.amount}</div>
+          <div className="font-medium">{transfer.formattedAmount}</div>
           <div className="text-xs text-gray-500">
             {formatDate(transfer.initiatedDate, {
               dateFormat: 'YYYY-MM-DD',
