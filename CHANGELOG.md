@@ -1,3 +1,14 @@
+# 1.5.3 (2026-03-23)
+
+
+## Security
+
+
+### Core Platform
+
+- Secure tenant config endpoint in multi-tenancy mode – #109862
+
+
 # 1.5.2 (2026-02-04)
 
 ## Fixes
