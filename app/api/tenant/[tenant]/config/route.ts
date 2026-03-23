@@ -3,8 +3,6 @@ import {DEFAULT_TENANT} from '@/constants';
 import type {TenantConfig} from '@/tenant';
 import {getStoragePath} from '@/storage/index';
 
-const CHECK_AUTH = false;
-
 /**
  * Todo
  * GET configuration from tenant manager application
@@ -40,7 +38,7 @@ export async function GET(
 ) {
   const authHeader = req.headers.get('authorization');
 
-  if (CHECK_AUTH && (!authHeader || !isValidAuthHeader(authHeader))) {
+  if (!authHeader || !isValidAuthHeader(authHeader)) {
     const response = new NextResponse(
       JSON.stringify({message: 'Unauthorized'}),
       {
