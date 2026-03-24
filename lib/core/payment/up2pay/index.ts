@@ -46,7 +46,7 @@ export function getPaymentURL({
   const shoppingCart = `<?xml version="1.0" encoding="utf-8"?><shoppingcart><total><totalQuantity>1</totalQuantity></total></shoppingcart>`;
   const billing = `<?xml version="1.0" encoding="utf-8"?><Billing><Address><FirstName>${billingInfo?.firstName || ''}</FirstName><LastName>${billingInfo?.lastName || ''}</LastName><Address1>${billingInfo?.addressLine1 || ''}</Address1><ZipCode>${billingInfo?.zipCode || ''}</ZipCode><City>${billingInfo?.city || ''}</City><CountryCode>${billingInfo?.countryCode || '250'}</CountryCode></Address></Billing>`;
 
-  const payload: any = {
+  const payload = {
     PBX_SITE: process.env.UP2PAY_SITE,
     PBX_RANG: process.env.UP2PAY_RANG,
     PBX_IDENTIFIANT: process.env.UP2PAY_IDENTIFIANT,
@@ -54,7 +54,7 @@ export function getPaymentURL({
     PBX_DEVISE: CURRENCY_CODE[currency] || defaultCurrencyCode,
     PBX_CMD: `${name}-${reference}~${contextId}~${tenantId}`,
     PBX_PORTEUR: email,
-    PBX_RETOUR: 'montant:M;ref:R;erreur:E;sign=K',
+    PBX_RETOUR: 'montant:M;ref:R;erreur:E;sign:K',
     PBX_HASH: 'SHA512',
     PBX_TIME: new Date().toISOString(),
     PBX_SOUHAITAUTHENT: '04',
