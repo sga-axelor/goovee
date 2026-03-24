@@ -12,7 +12,6 @@ import {
 import {PaymentOption} from '@/types';
 import {UP2PAY_ERRORS, UP2PAY_ERROR_MESSAGES} from '@/payment/up2pay/constants';
 import {readPEMFile, verifySignature} from '@/payment/up2pay/crypto';
-import {getParamsWithoutSign} from '@/payment/up2pay/utils';
 import {notifyPaymentUpdate} from '@/lib/core/payment/sse';
 import {PAYMENT_SOURCE} from '@/lib/core/payment/common/type';
 
@@ -23,11 +22,22 @@ export async function GET(request: Request) {
   const parsed = new URL(request.url);
   const params = parsed.searchParams;
 
-  const message = decodeURIComponent(getParamsWithoutSign(parsed.search));
+  const SIGNED_PARAMS = ['montant', 'ref', 'erreur'];
+  const message = SIGNED_PARAMS.filter(key => params.has(key))
+    .map(
+      key =>
+        `${key}=${encodeURIComponent(params.get(key)!).replace(/%7E/gi, '~')}`,
+    )
+    .join('&');
+
   const pem = readPEMFile();
-  const sign = params.get('sign');
+
+  const sign = params.get('sign')?.trim();
+
   const erreur = params.get('erreur');
+
   const ref = params.get('ref');
+
   const montant = params.get('montant');
 
   if (!(pem && message && sign && ref)) {

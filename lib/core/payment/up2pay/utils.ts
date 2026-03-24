@@ -24,15 +24,3 @@ export function clearUp2payParams(
   }
   return clean.toString();
 }
-
-export function getParamsWithoutSign(searchParams: string) {
-  // Strip the leading '?' if present, then remove the sign param from the raw
-  // query string without re-encoding, so the message matches what Up2Pay signed.
-  const raw = searchParams.startsWith('?')
-    ? searchParams.slice(1)
-    : searchParams;
-  return raw
-    .split('&')
-    .filter(part => !part.startsWith('sign='))
-    .join('&');
-}
