@@ -15,16 +15,19 @@ import {Thread} from '@/subapps/forum/common/ui/components';
 import {Image as ImageType, Post} from '@/subapps/forum/common/types/forum';
 
 import styles from './styles.module.scss';
+import {PortalWorkspace} from '@/types';
 
 export const ThreadPopup = ({
   post,
   open,
   images,
   onClose,
+  workspace,
 }: {
   post?: Post;
   open: boolean;
   images: any;
+  workspace: PortalWorkspace;
   onClose: () => void;
 }) => {
   const {workspaceURI} = useWorkspace();
@@ -70,6 +73,7 @@ export const ThreadPopup = ({
           </div>
           <div className="md:pt-12 md:pr-4 pb-6 md:pb-0 w-full md:w-1/2 h-[28.125rem] md:h-full overflow-auto">
             <Thread
+              workspace={workspace}
               post={post}
               showHeader={false}
               showCommentsByDefault={true}

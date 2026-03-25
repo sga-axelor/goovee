@@ -28,14 +28,14 @@ export const ThreadFooter = ({
   showCommentsByDefault: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
-  workspace: PortalWorkspace | null;
+  workspace: PortalWorkspace;
 }) => {
   const isAllowToComment = useMemo(() => post.isMember, [post]);
   const {workspaceURI} = useWorkspace();
 
   const enableComment = isCommentEnabled({
     subapp: SUBAPP_CODES.forum,
-    workspace: workspace!,
+    workspace: workspace,
   });
 
   return enableComment ? (

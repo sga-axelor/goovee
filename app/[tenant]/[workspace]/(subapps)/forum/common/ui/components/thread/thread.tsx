@@ -16,7 +16,7 @@ interface ThreadProps {
   showCommentsByDefault?: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
-  workspace?: PortalWorkspace | null;
+  workspace: PortalWorkspace;
 }
 
 export const Thread = ({
@@ -61,13 +61,17 @@ export const Thread = ({
       id={`post-${post?.id}`}
       className="bg-white rounded-lg flex flex-col gap-4 pt-4 pb-0 rounded-t-lg">
       {showHeader && <ThreadHeader group={forumGroup} />}
-      <ThreadBody post={post} usePopUpStyles={usePopUpStyles} />
+      <ThreadBody
+        post={post}
+        usePopUpStyles={usePopUpStyles}
+        workspace={workspace}
+      />
       <ThreadFooter
         post={post}
         usePopUpStyles={usePopUpStyles}
         hideCloseComments={hideCloseComments}
         showCommentsByDefault={showCommentsByDefault}
-        workspace={workspace ?? null}
+        workspace={workspace}
       />
     </div>
   );

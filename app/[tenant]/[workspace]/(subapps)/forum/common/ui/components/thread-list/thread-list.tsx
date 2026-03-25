@@ -28,7 +28,7 @@ export const ThreadList = ({
   pageInfo: any;
   memberGroupIDs: string[];
   selectedGroupId: string | null;
-  workspace: PortalWorkspace | null;
+  workspace: PortalWorkspace;
 }) => {
   const {update, searchParams} = useSearchParams();
   const sort = searchParams.get('sort') ?? 'new';
