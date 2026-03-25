@@ -26,7 +26,7 @@ interface InfiniteScrollProps {
   pageInfo: PageInfo;
   memberGroupIDs: string[];
   selectedGroupId: string | null;
-  workspace: PortalWorkspace | null;
+  workspace: PortalWorkspace;
 }
 
 export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({

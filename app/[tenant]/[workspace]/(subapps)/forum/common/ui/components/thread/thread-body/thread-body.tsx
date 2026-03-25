@@ -27,13 +27,16 @@ import {
   ImageGallery,
 } from '@/subapps/forum/common/ui/components';
 import {useTruncatedElement} from '@/subapps/forum/common/ui/hooks/use-truncatedElement';
+import {PortalWorkspace} from '@/types';
 
 export const ThreadBody = ({
   post,
   usePopUpStyles = false,
+  workspace,
 }: {
   post?: Post;
   usePopUpStyles?: boolean;
+  workspace: PortalWorkspace;
 }) => {
   const {title, content, attachmentList, author, postDateT}: any = post || {};
 
@@ -124,7 +127,7 @@ export const ThreadBody = ({
           </div>
         </div>
         {images?.length > 0 && !usePopUpStyles && (
-          <ImageGallery post={post} images={images} />
+          <ImageGallery post={post} images={images} workspace={workspace} />
         )}
 
         {files?.length > 0 &&

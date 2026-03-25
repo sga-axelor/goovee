@@ -13,8 +13,17 @@ import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';
 import type {Post} from '@/subapps/forum/common/types/forum';
 import {ThreadPopup} from '@/subapps/forum/common/ui/components';
+import {PortalWorkspace} from '@/types';
 
-export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
+export const ImageGallery = ({
+  images,
+  post,
+  workspace,
+}: {
+  images: any;
+  post?: Post;
+  workspace: PortalWorkspace;
+}) => {
   const showOverlay = images.length > MAX_IMAGES_BEFORE_OVERLAY;
 
   const [openPopUp, setOpenPopUp] = useState(false);
@@ -61,6 +70,7 @@ export const ImageGallery = ({images, post}: {images: any; post?: Post}) => {
         images={images}
         open={openPopUp}
         onClose={closeThreadPopup}
+        workspace={workspace}
       />
     </>
   );
