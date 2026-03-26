@@ -1,3 +1,4 @@
+import {InnerHTML} from '@/ui/components/inner-html';
 import SocialLinks from '@/subapps/website/common/components/reuseable/SocialLinks';
 import NextLink from '@/subapps/website/common/components/reuseable/links/NextLink';
 // -------- data -------- //
@@ -68,10 +69,7 @@ export default function Footer1(props: TemplateProps<Footer1Data>) {
                   height={logo.height}
                 />
               )}
-              <p
-                className="mb-4"
-                dangerouslySetInnerHTML={{__html: copyrightText || ''}}
-              />
+              <InnerHTML as="p" className="mb-4" content={copyrightText} />
               <SocialLinks
                 links={socialLinks || []}
                 className="nav social social-white"

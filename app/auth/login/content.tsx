@@ -20,6 +20,7 @@ import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
 import {useEnvironment} from '@/lib/core/environment';
+import {isSameOrigin} from '@/utils/url';
 
 export default function Content({
   canRegister,
@@ -53,8 +54,9 @@ export default function Content({
   };
 
   const callbackurl = searchParams.get('callbackurl');
-
-  const redirection = callbackurl ? decodeURIComponent(callbackurl) : '/';
+  const decoded = callbackurl ? decodeURIComponent(callbackurl) : '';
+  const redirection =
+    decoded && isSameOrigin(decoded, env.GOOVEE_PUBLIC_HOST!) ? decoded : '/';
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

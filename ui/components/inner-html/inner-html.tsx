@@ -1,27 +1,31 @@
 'use client';
 import DOMPurify from 'dompurify';
-import {ComponentPropsWithoutRef, forwardRef} from 'react';
+import {
+  type ComponentProps,
+  type ElementType,
+  type HTMLAttributes,
+  type Ref,
+} from 'react';
 
 import type {Maybe} from '@/types/util';
 
-export type InnerHTMLProps = {
+export type InnerHTMLProps<T extends ElementType = 'div'> = {
   content: Maybe<string>;
-} & Omit<
-  ComponentPropsWithoutRef<'div'>,
-  'children' | 'dangerouslySetInnerHTML'
->;
+  as?: T;
+} & Omit<ComponentProps<T>, 'children' | 'dangerouslySetInnerHTML' | 'as'>;
 
-export const InnerHTML = forwardRef<HTMLDivElement, InnerHTMLProps>(
-  (props, ref) => {
-    const {content, ...rest} = props;
-    return (
-      <div
-        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(content || '')}}
-        ref={ref}
-        {...rest}
-      />
-    );
-  },
-);
+type HTMLElementProps = HTMLAttributes<HTMLElement> & {ref?: Ref<HTMLElement>};
 
-InnerHTML.displayName = 'InnerHTML';
+export function InnerHTML<T extends ElementType = 'div'>({
+  content,
+  as: Tag = 'div' as T,
+  ...rest
+}: InnerHTMLProps<T>) {
+  const Component = Tag as ElementType<HTMLElementProps>;
+  return (
+    <Component
+      {...(rest as HTMLElementProps)}
+      dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(content || '')}}
+    />
+  );
+}

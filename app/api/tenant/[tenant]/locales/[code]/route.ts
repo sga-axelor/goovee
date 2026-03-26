@@ -7,7 +7,7 @@ export async function GET(
 ) {
   const params = await props.params;
   const {code, tenant} = params;
-
+  // NOTE: No auth required since translations are needed for every visitor
   try {
     const translations = await findTranslations(code, tenant);
 

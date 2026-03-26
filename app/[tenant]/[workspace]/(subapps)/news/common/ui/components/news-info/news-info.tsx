@@ -11,7 +11,7 @@ import {getPartnerImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {formatDate} from '@/locale/formatters';
 import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
-import {BadgeList, Skeleton} from '@/ui/components';
+import {BadgeList, Skeleton, InnerHTML} from '@/ui/components';
 import {PortalWorkspace} from '@/types';
 import {cn} from '@/utils/css';
 
@@ -120,12 +120,12 @@ export const NewsInfo = ({
           {content && (
             <>
               <Separator className="bg-zinc-300" />
-              <div
+              <InnerHTML
                 className={cn(
                   'relative overflow-auto',
                   styles['news-content-html'],
                 )}
-                dangerouslySetInnerHTML={{__html: content}}
+                content={content}
               />
             </>
           )}

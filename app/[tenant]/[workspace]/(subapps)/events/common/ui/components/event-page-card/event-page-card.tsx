@@ -13,7 +13,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -91,15 +90,13 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
             sizes="(min-width: 1024px) 1152px, 100vw"
           />
         </div>
-        <CardDescription>
-          <InnerHTML
-            className={cn(
-              'text-sm font-normal tracking-wide leading-6 w-full overflow-x-auto',
-              styles['card-description-html'],
-            )}
-            content={eventDetails?.eventDescription}
-          />
-        </CardDescription>
+        <InnerHTML
+          className={cn(
+            'text-sm font-normal tracking-wide leading-6 w-full overflow-x-auto text-slate-500 dark:text-slate-400',
+            styles['card-description-html'],
+          )}
+          content={eventDetails?.eventDescription}
+        />
         <div className="border-l border-success space-y-4 text-base font-semibold px-4">
           {eventDetails?.eventPlace && (
             <p>

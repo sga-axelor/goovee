@@ -121,46 +121,29 @@ export async function requestResetPassword({
 
   const link = `${process.env.GOOVEE_PUBLIC_HOST}/auth/reset-password/${email}?${searchQuery}`;
 
-  if (!user) {
-    return {
-      success: true,
-      data: {url: link},
-    };
-  }
-
-  try {
-    const result: any = await createOTP({
+  if (user) {
+    const mailService = NotificationManager.getService(NotificationType.mail);
+    createOTP({
       entity: email,
       scope: Scope.ResetPassword,
       tenantId,
       force: true,
+    }).then(result => {
+      result?.otp &&
+        mailService?.notify(
+          resetPasswordTemplate({
+            email,
+            otp: result.otp,
+            link,
+          }),
+        );
     });
-
-    const mailService = NotificationManager.getService(NotificationType.mail);
-
-    result?.otp &&
-      mailService?.notify(
-        resetPasswordTemplate({
-          email,
-          otp: result.otp,
-          link,
-        }),
-      );
-
-    return {
-      success: true,
-      data: {
-        url: link,
-      },
-    };
-  } catch (err) {
-    return error(
-      await getTranslation(
-        {tenant: tenantId},
-        'Error resetting password. Try again.',
-      ),
-    );
   }
+
+  return {
+    success: true,
+    data: {url: link},
+  };
 }
 
 export async function resetPassword({

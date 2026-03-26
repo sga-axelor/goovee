@@ -8,6 +8,7 @@ import Content from './content';
 import {canRegisterForWorkspace} from '@/orm/workspace';
 import {DEFAULT_TENANT, SEARCH_PARAMS} from '@/constants';
 import {TenancyType, manager} from '@/tenant';
+import {isSameOrigin} from '@/utils/url';
 
 export default async function Page(props: {
   searchParams: Promise<{[key: string]: string}>;
@@ -37,7 +38,12 @@ export default async function Page(props: {
   }
 
   if (session?.user) {
-    redirect(callbackurl || workspaceURI || '/');
+    const host = process.env.GOOVEE_PUBLIC_HOST!;
+    redirect(
+      (callbackurl && isSameOrigin(callbackurl, host) && callbackurl) ||
+        (workspaceURI && isSameOrigin(workspaceURI, host) && workspaceURI) ||
+        '/',
+    );
   }
 
   const workspaceURL = workspaceURI

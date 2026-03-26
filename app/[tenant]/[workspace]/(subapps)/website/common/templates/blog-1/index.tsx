@@ -1,3 +1,4 @@
+import {InnerHTML} from '@/ui/components/inner-html';
 import type {TemplateProps} from '@/subapps/website/common/types';
 import {type Blog1Data} from './meta';
 import {getImage} from '@/subapps/website/common/utils/helper';
@@ -23,10 +24,7 @@ export default function Blog1(props: TemplateProps<Blog1Data>) {
             <h2 className="fs-16 text-uppercase text-line text-primary mb-3">
               {caption}
             </h2>
-            <h3
-              className="display-5 mb-9"
-              dangerouslySetInnerHTML={{__html: title ?? ''}}
-            />
+            <InnerHTML as="h3" className="display-5 mb-9" content={title} />
           </div>
         </div>
 

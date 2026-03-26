@@ -1,3 +1,3 @@
 export {Environment, useEnvironment} from './environment-context';
-export {getGooveeEnvironment} from './utils';
+export {getPublicEnvironment} from './utils';
 export {getEnv} from './store';

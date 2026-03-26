@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '@/ui/components/select';
 import {Icon} from '@/ui/components';
-import {SUBAPP_PAGE} from '@/constants';
+import {SUBAPP_PAGE, SUBAPP_CODES, CHAT_TYPE} from '@/constants';
 import {Account} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
@@ -46,6 +46,7 @@ function MobileSidebar({subapps, workspaces, workspace}: any) {
     closeSidebar();
   }, [pathname, closeSidebar]);
 
+  const mattermostUrl = env?.GOOVEE_PUBLIC_MATTERMOST_HOST || '';
   const displayContact = workspace?.config?.isDisplayContact;
   const contactEmail = workspace?.config?.contactEmailAddress?.address;
   const showHome = workspace?.config?.isHomepageDisplay;
@@ -94,13 +95,22 @@ function MobileSidebar({subapps, workspaces, workspace}: any) {
             .reverse()
             ?.map(({code, name, icon, color, background}: any) => {
               const page = SUBAPP_PAGE[code as keyof typeof SUBAPP_PAGE] || '';
+              const isExternalChat =
+                code === SUBAPP_CODES.chat &&
+                workspace?.config?.chatDisplayTypeSelect === CHAT_TYPE.external;
+
               return (
                 <App
                   key={code}
-                  href={`${workspaceURI}/${code}${page}`}
+                  href={
+                    isExternalChat
+                      ? mattermostUrl
+                      : `${workspaceURI}/${code}${page}`
+                  }
                   icon={icon}
                   color={color}
                   name={name}
+                  isExternal={isExternalChat}
                 />
               );
             })}
@@ -134,10 +144,15 @@ function App(props: {
   href: string;
   icon: string;
   color?: string;
+  isExternal?: boolean;
 }) {
-  const {href, icon, color, name} = props;
+  const {href, icon, color, name, isExternal} = props;
   return (
-    <Link href={href} className="no-underline">
+    <Link
+      href={href}
+      className="no-underline"
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}>
       <div className="flex items-center pt-8 px-6 py-2 font-normal gap-x-4">
         <Icon name={icon || 'app'} className="h-6 w-6" style={{color}} />
         <p className="max-w-full whitespace-nowrap text-main-black">

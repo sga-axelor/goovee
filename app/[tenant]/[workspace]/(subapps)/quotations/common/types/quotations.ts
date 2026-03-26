@@ -109,10 +109,7 @@ export type TotalProps = {
   exTaxTotal: number | string;
   totalDiscount: number | string;
   statusSelect: string | number;
-  workspace?: PortalWorkspace;
   hideDiscount: boolean;
-  onConfirmQuotation?: () => any;
-  renderPaymentOptions?: () => any;
 };
 
 export type InfoProps = {

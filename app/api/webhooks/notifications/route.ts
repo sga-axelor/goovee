@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+import sanitizeHtml from 'sanitize-html';
 import {NextResponse} from 'next/server';
 
 import {manager} from '@/tenant';
@@ -149,6 +151,9 @@ async function sendMail({
 }) {
   const mailService = NotificationManager.getService(NotificationType.mail);
 
+  const html =
+    mail?.body || (await notificationTemplate({user, tenantId, app, entity}));
+
   mailService?.notify({
     to: user.email,
     subject:
@@ -158,8 +163,7 @@ async function sendMail({
         '{0} - Notifications from Goovee',
         app.name,
       )),
-    html:
-      mail?.body || (await notificationTemplate({user, tenantId, app, entity})),
+    html: sanitizeHtml(html),
   });
 }
 
@@ -231,7 +235,8 @@ const FIVE_MINUTES_MS = 5 * 60 * 1000;
 
 function isValidTimestamp(timestamp: number) {
   const current = Date.now();
-  return Number(current) - Number(timestamp) < FIVE_MINUTES_MS;
+  const ts = Number(timestamp);
+  return ts <= current && current - ts < FIVE_MINUTES_MS;
 }
 
 export async function POST(request: Request) {
@@ -268,12 +273,21 @@ export async function POST(request: Request) {
     return response('Invalid Tenant', 400);
   }
 
-  if (
-    !(
-      tenant.aos?.auth?.username === credentials.username &&
-      tenant.aos?.auth?.password === credentials.password
-    )
-  ) {
+  const validUsername =
+    tenant.aos?.auth?.username &&
+    crypto.timingSafeEqual(
+      Buffer.from(tenant.aos.auth.username),
+      Buffer.from(credentials.username),
+    );
+
+  const validPassword =
+    tenant.aos?.auth?.password &&
+    crypto.timingSafeEqual(
+      Buffer.from(tenant.aos.auth.password),
+      Buffer.from(credentials.password),
+    );
+
+  if (!(validUsername && validPassword)) {
     return response('Unauthorized', 401);
   }
 

@@ -83,6 +83,7 @@ export class LRUCache<K, V> {
   private removeTail(): void {
     if (!this.tail) return;
 
+    const nodeToRemove = this.tail;
     if (this.tail === this.head) {
       this.head = this.tail = null; // Cache is now empty
     } else {
@@ -92,8 +93,6 @@ export class LRUCache<K, V> {
       }
     }
 
-    if (this.tail) {
-      this.cache.delete(this.tail.key);
-    }
+    this.cache.delete(nodeToRemove.key);
   }
 }

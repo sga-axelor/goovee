@@ -1,7 +1,5 @@
 'server only';
 
-import axios from 'axios';
-
 import {DEFAULT_TENANT} from '@/constants';
 import {createClient} from '@/goovee/.generated/client';
 import {LRUCache} from './lru';
@@ -10,21 +8,25 @@ import {getStoragePath} from '@/storage/index';
 
 const CACHE_CAPACITY = 20;
 
-async function fetchConfig(id: Tenant['id']) {
-  if (!id) return null;
-
-  return await axios
-    .get(`${process.env.GOOVEE_PUBLIC_HOST}/api/tenant/${id}/config`, {
-      auth: {
-        username: process.env.TENANT_MANAGER_BASIC_USERNAME as string,
-        password: process.env.TENANT_MANAGER_BASIC_PASSWORD as string,
+const tenants: {[key: string]: TenantConfig} = [DEFAULT_TENANT].reduce(
+  (acc, id) => ({
+    ...acc,
+    [id]: {
+      db: {
+        url: process.env.DATABASE_URL,
       },
-    })
-    .then(({data}) => data)
-    .catch(err => {
-      throw new Error('Error fetching tenant configuration');
-    });
-}
+      aos: {
+        url: process.env.AOS_URL,
+        storage: getStoragePath(),
+        auth: {
+          username: process.env.BASIC_AUTH_USERNAME,
+          password: process.env.BASIC_AUTH_PASSWORD,
+        },
+      },
+    },
+  }),
+  {},
+);
 
 export enum TenancyType {
   single = 'single',
@@ -55,7 +57,7 @@ export class SingleTenantManager implements TenantManager {
         url: process.env.DATABASE_URL!,
       },
       aos: {
-        url: process.env.GOOVEE_PUBLIC_AOS_URL!,
+        url: process.env.AOS_URL!,
         storage: getStoragePath(),
         auth: {
           username: process.env.BASIC_AUTH_USERNAME!,
@@ -126,7 +128,7 @@ export class MultiTenantManager implements TenantManager {
     }
 
     try {
-      const config: TenantConfig = await fetchConfig(id);
+      const config: TenantConfig = tenants[id];
 
       if (!config) {
         throw new Error('Error getting tenant');

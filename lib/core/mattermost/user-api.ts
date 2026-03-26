@@ -4,6 +4,7 @@ import {
   getAdminToken,
   isCreateMattermostUsersEnabled,
   getAosUrl,
+  getBasicAuthCredentials,
 } from './utils';
 import type {
   MattermostUser,
@@ -107,6 +108,7 @@ async function createMattermostUser(
 ): Promise<CreateMattermostUserResult> {
   try {
     const aosUrl = await getAosUrl(params.tenantId);
+    const auth = await getBasicAuthCredentials(params.tenantId);
 
     if (!aosUrl) {
       return {
@@ -129,10 +131,7 @@ async function createMattermostUser(
       headers: {
         'Content-Type': 'application/json',
       },
-      auth: {
-        username: process.env.BASIC_AUTH_USERNAME!,
-        password: process.env.BASIC_AUTH_PASSWORD!,
-      },
+      auth,
     });
 
     return {

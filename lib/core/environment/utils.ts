@@ -1,4 +1,4 @@
-export function getGooveeEnvironment() {
+export function getPublicEnvironment() {
   const prefix = 'GOOVEE_PUBLIC_';
 
   const variables = Object.entries(process.env)

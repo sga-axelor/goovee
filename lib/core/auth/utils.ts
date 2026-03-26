@@ -2,10 +2,8 @@ import bcrypt from 'bcrypt';
 
 export const ROUNDS = 10;
 
-export const salt = bcrypt.genSaltSync(ROUNDS);
-
 export async function hash(password: string) {
-  return password && bcrypt.hash(password, salt);
+  return password && bcrypt.hash(password, ROUNDS);
 }
 
 export async function compare(password: string, hash: string) {

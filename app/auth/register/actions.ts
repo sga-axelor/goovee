@@ -11,7 +11,7 @@ import {
   findWorkspaces,
 } from '@/orm/workspace';
 import {Scope} from '@/otp/constants';
-import {findOne, isValid} from '@/otp/orm';
+import {findOne, isValid, markUsed} from '@/otp/orm';
 import {manager, type Tenant} from '@/tenant';
 import type {PortalWorkspace} from '@/types';
 
@@ -219,6 +219,8 @@ export async function registerByEmail(data: RegisterDTO) {
   if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
     return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
   }
+
+  await markUsed({id: otpResult.id, tenantId});
 
   return register(data);
 }

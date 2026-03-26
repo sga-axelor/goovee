@@ -1,6 +1,7 @@
 'use client';
 
 // ---- CORE IMPORTS ---- //
+import {InnerHTML} from '@/ui/components/inner-html';
 import {DATE_FORMATS} from '@/constants';
 import {formatDate} from '@/locale/formatters';
 
@@ -21,11 +22,9 @@ export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
             })}
           </p>
         </div>
-        <div
+        <InnerHTML
           className="overflow-hidden text-xs font-normal text-main-black line-clamp-1"
-          dangerouslySetInnerHTML={{
-            __html: eventDescription ? stripImages(eventDescription) : '',
-          }}
+          content={eventDescription ? stripImages(eventDescription) : ''}
         />
       </div>
     </>

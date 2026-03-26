@@ -21,7 +21,7 @@ import {
 } from '@/orm/partner';
 import {UserType} from '@/auth/types';
 import {generateOTP} from '@/otp/actions';
-import {findOne, isValid} from '@/otp/orm';
+import {findOne, isValid, markUsed} from '@/otp/orm';
 import {Scope} from '@/otp/constants';
 import {findWorkspace} from '@/orm/workspace';
 import {type PortalWorkspace} from '@/types';
@@ -238,6 +238,8 @@ export async function update({
     if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
       return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
     }
+
+    await markUsed({id: otpResult.id, tenantId});
   }
 
   const partner = await findGooveeUserByEmail(user.email, tenantId);
