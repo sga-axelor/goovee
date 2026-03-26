@@ -23,16 +23,13 @@ import {
   createStripeOrder,
   findStripeOrder,
   findStripePaymentIntent,
+  cancelStripePaymentIntent,
+  cancelInvalidPendingBankTransfers,
 } from '@/payment/stripe/actions';
-import {
-  findPaymentContext,
-  markPaymentAsCancelled,
-  markPaymentAsProcessed,
-} from '@/payment/common/orm';
+import {findPaymentContext, markPaymentAsProcessed} from '@/payment/common/orm';
 import {PartnerKey, PaymentOption} from '@/types';
 import {getWhereClauseForEntity} from '@/utils/filters';
 import {isPaymentOptionAvailable} from '@/utils/payment';
-import {stripe} from '@/lib/core/payment/stripe';
 import {formatNumber} from '@/lib/core/locale/server/formatters';
 import {PAYMENT_SOURCE, PAYMENT_TYPE} from '@/lib/core/payment/common/type';
 import {
@@ -44,6 +41,11 @@ import {
   HUBPISP_REDIRECT_STATUS,
   HubPispLocalInstrument,
 } from '@/lib/core/payment/hubpisp/constants';
+import {
+  BANK_TRANSFER_STATUS,
+  STRIPE_CANCELLATION_REASONS,
+} from '@/lib/core/payment/stripe/constants';
+import {scale} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -53,6 +55,11 @@ import {
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 import {validatePaymentData} from '@/subapps/invoices/common/utils/validations';
 import {updateInvoice} from '@/subapps/invoices/common/service';
+
+const normalizeAmount = (
+  value: string | number,
+  decimals = DEFAULT_CURRENCY_SCALE,
+) => Number(scale(Number(value), decimals));
 
 export async function paypalCreateOrder({
   invoice,
@@ -262,7 +269,10 @@ export async function paypalCaptureOrder({
       };
     }
 
-    const remainingAmount = Number($invoice.amountRemaining?.value || 0);
+    const remainingAmount = normalizeAmount(
+      $invoice.amountRemaining?.value ?? 0,
+      $invoice.currency?.numberOfDecimals ?? undefined,
+    );
 
     const isPartialPayment =
       workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
@@ -366,7 +376,11 @@ export async function createStripeCheckoutSession({
     const session = await createStripeOrder({
       tenantId,
       customer,
-      context: {id: invoice.id, paymentType: PAYMENT_TYPE.CARD},
+      context: {
+        id: invoice.id,
+        paymentType: PAYMENT_TYPE.CARD,
+        source: PAYMENT_SOURCE.INVOICES,
+      },
       name: await t('Invoice Checkout'),
       amount: Number($amount),
       currency: currencyCode,
@@ -516,7 +530,10 @@ export async function validateStripePayment({
       return {error: true, message: await t('Invalid invoice!')};
     }
 
-    const remainingAmount = Number($invoice.amountRemaining?.value || 0);
+    const remainingAmount = normalizeAmount(
+      $invoice.amountRemaining?.value ?? 0,
+      $invoice.currency?.numberOfDecimals ?? undefined,
+    );
 
     const isPartialPayment =
       workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;
@@ -554,6 +571,43 @@ export async function validateStripePayment({
       version: context.version,
       tenantId,
     });
+
+    const isFullyPaid = purchaseAmount === remainingAmount;
+    const invoiceType = isFullyPaid ? INVOICE.PAID : INVOICE.UNPAID;
+
+    try {
+      const updatedInvoice = await findInvoice({
+        id: $invoice.id,
+        params: {where: invoicesWhereClause},
+        workspaceURL,
+        tenantId,
+        type: invoiceType,
+      });
+
+      // After a successful card payment, re-fetch the invoice to get the updated
+      // amount remaining, then clean up any stale pending bank transfer intents.
+      // This handles the case where the customer had previously initiated one or
+      // more bank transfers but paid via another method (card) instead.
+      if (updatedInvoice) {
+        const updatedAmountRemaining = normalizeAmount(
+          updatedInvoice.amountRemaining?.value ?? 0,
+          updatedInvoice.currency?.numberOfDecimals ?? undefined,
+        );
+
+        // Cancel any pending bank transfer intents that are now invalid:
+        // - If amountRemaining === 0, the invoice is fully paid → cancel as DUPLICATE
+        // - If amountRemaining > 0 but an intent exceeds what's still owed
+        //   (e.g. a partial card payment was made) → cancel as REQUESTED_BY_CUSTOMER
+        await cancelInvalidPendingBankTransfers({
+          tenantId,
+          sourceId: updatedInvoice.id,
+          amountRemaining: updatedAmountRemaining,
+        });
+      }
+    } catch (err) {
+      console.error('Error cancelling invalid bank transfers:', err);
+    }
+
     revalidatePath(`${workspaceURI}/${SUBAPP_CODES.invoices}/${$invoice.id}`);
     return {success: true, data: $invoice};
   } catch (error) {
@@ -642,7 +696,12 @@ export async function createStripeBankTransferIntent({
       currency: currencyCode,
       countryCode: country.alpha2Code,
     });
-    return {success: true, data: {...result, formattedAmount}};
+    const data =
+      result.status === BANK_TRANSFER_STATUS.PAID
+        ? result
+        : {...result, formattedAmount};
+
+    return {success: true, data};
   } catch (error) {
     console.error('Error creating stripe bank transfer payment intent:', error);
 
@@ -796,9 +855,9 @@ export async function cancelStripeBankTransferPaymentIntent({
       return {error: true, message: await t('Invalid invoice!')};
     }
 
-    await markPaymentAsCancelled({
-      contextId: paymentContext.id,
-      version: paymentContext.version,
+    await cancelStripePaymentIntent({
+      id,
+      cancellationReason: STRIPE_CANCELLATION_REASONS.REQUESTED_BY_CUSTOMER,
       tenantId,
     });
 
@@ -1020,7 +1079,10 @@ export async function validatePayboxPayment({
       return {error: true, message: await t('Invalid invoice!')};
     }
 
-    const remainingAmount = Number($invoice.amountRemaining?.value || 0);
+    const remainingAmount = normalizeAmount(
+      $invoice.amountRemaining?.value ?? 0,
+      $invoice.currency?.numberOfDecimals ?? undefined,
+    );
 
     const isPartialPayment =
       workspace?.config?.canPayInvoice === INVOICE_PAYMENT_OPTIONS.PARTIAL;

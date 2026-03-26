@@ -849,7 +849,6 @@
   "Payment link expired. Please try again.": "Payment link expired. Please try again.",
   "Error processing payment. Try again.": "Error processing payment. Try again.",
   "Unexpected error occurred. Please try again.": "Unexpected error occurred. Please try again.",
-  "Payment completed successfully": "Payment completed successfully",
   "Payment cancelled.": "Payment cancelled.",
   "Payment refused. Please try again.": "Payment refused. Please try again.",
   "Invoice payment completed successfully.": "Invoice payment completed successfully.",
@@ -859,5 +858,12 @@
   "Up2Pay only supports EUR. Your invoice currency is not supported.": "Up2Pay only supports EUR. Your invoice currency is not supported.",
   "You are signed in as {0}. Sign out to access via token.": "You are signed in as {0}. Sign out to access via token.",
   "Sign out": "Sign out",
-  "Token is either invalid or expired.": "Token is either invalid or expired."
+  "Token is either invalid or expired.": "Token is either invalid or expired.",
+  "Confirm Bank Transfer": "Confirm Bank Transfer",
+  "Bank transfers may immediately use your existing Stripe balance.": "Bank transfers may immediately use your existing Stripe balance.",
+  "If you already have sufficient balance, this payment will be completed instantly and funds will be deducted.": "If you already have sufficient balance, this payment will be completed instantly and funds will be deducted.",
+  "Bank details are currently unavailable": "Bank details are currently unavailable",
+  "We could not load the bank transfer details at this time.": "We could not load the bank transfer details at this time.",
+  "Please try again later or contact support if the issue persists.": "Please try again later or contact support if the issue persists.",
+  "Payment completed successfully": "Payment completed successfully"
 }
