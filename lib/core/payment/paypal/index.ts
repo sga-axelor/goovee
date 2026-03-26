@@ -10,7 +10,7 @@ const client = function () {
       oAuthClientSecret: clientSecret,
     },
     environment:
-      process.env.NODE_ENV === 'production'
+      process.env.PAYPAL_LIVE === 'true'
         ? Environment.Production
         : Environment.Sandbox,
   });
