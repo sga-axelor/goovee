@@ -1,5 +1,5 @@
 import {getSession} from '@/auth';
-import {getGooveeEnvironment} from '@/environment';
+import {getPublicEnvironment} from '@/environment';
 import {findWorkspaces} from '@/orm/workspace';
 import {clone} from '@/utils';
 
@@ -17,7 +17,7 @@ export function extractSearchParams({
   const tenantId =
     searchParams?.tenant && decodeURIComponent(searchParams.tenant);
 
-  const workspaceURL = `${getGooveeEnvironment().GOOVEE_PUBLIC_HOST}${workspaceURI}`;
+  const workspaceURL = `${getPublicEnvironment().GOOVEE_PUBLIC_HOST}${workspaceURI}`;
 
   return {
     workspaceURI,

@@ -1,3 +1,5 @@
+import {randomInt} from 'crypto';
+
 // ---- LOCAL IMPORTS ---- /
 import {DEFAULT_OTP_DIGIT, DEFAULT_OTP_EXPIRY} from '../constants';
 
@@ -9,9 +11,7 @@ export function generate(digit: number = DEFAULT_OTP_DIGIT) {
   const min = Math.pow(10, digit - 1);
   const max = Math.pow(10, digit) - 1;
 
-  const otp = Math.floor(min + Math.random() * (max - min + 1));
-
-  return otp.toString();
+  return String(randomInt(min, max + 1));
 }
 
 export function computeExpiry(

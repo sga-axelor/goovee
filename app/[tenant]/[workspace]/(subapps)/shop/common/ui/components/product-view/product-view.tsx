@@ -13,6 +13,7 @@ import {
   Breadcrumbs,
   NavbarCategoryMenu,
   Textarea,
+  InnerHTML,
 } from '@/ui/components';
 import {useQuantity, useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
@@ -167,11 +168,11 @@ export function ProductView({
             )}
             <ProductMetaFieldView productId={product.id} fields={metaFields} />
             <span className="font-medium">{i18n.t('Product description')}</span>
-            <p
+            <InnerHTML
+              as="p"
               className="text-sm mb-0"
-              dangerouslySetInnerHTML={{
-                __html: product.description || '',
-              }}></p>
+              content={product.description}
+            />
             {Boolean(cartQuantity) && product.allowCustomNote && (
               <div className="flex flex-col gap-2 mt-4">
                 <Label>{i18n.t('Note')}</Label>

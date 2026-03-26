@@ -1,5 +1,9 @@
-import PayPalHttpClient from '.';
-import paypal from '@paypal/checkout-server-sdk';
+import {
+  OrdersController,
+  CheckoutPaymentIntent,
+  ApiError,
+} from '@paypal/paypal-server-sdk';
+import PayPalClient from '.';
 import {DEFAULT_CURRENCY_CODE} from '@/constants';
 import type {Tenant} from '@/tenant';
 import {PaymentOption} from '@/types';
@@ -23,11 +27,7 @@ export async function createPaypalOrder({
     throw new Error('Amount, currency and email is required');
   }
 
-  const PaypalClient = PayPalHttpClient();
-
-  const request = new paypal.orders.OrdersCreateRequest();
-
-  request.headers['Prefer'] = 'return=representation';
+  const ordersController = new OrdersController(PayPalClient());
 
   const {id: contextId} = await createPaymentContext({
     context,
@@ -36,34 +36,39 @@ export async function createPaypalOrder({
     tenantId,
   });
 
-  request.requestBody({
-    intent: 'CAPTURE',
-    payer: {
-      email_address: email,
-    } as any,
-    purchase_units: [
-      {
-        custom_id: contextId,
-        amount: {
-          currency_code: currency,
-          value: amount + '',
-        },
-      },
-    ],
-  });
-
-  let response;
+  let result;
   try {
-    response = await PaypalClient.execute(request);
+    const response = await ordersController.createOrder({
+      body: {
+        intent: CheckoutPaymentIntent.Capture,
+        payer: {
+          emailAddress: email,
+        },
+        purchaseUnits: [
+          {
+            customId: contextId,
+            amount: {
+              currencyCode: currency,
+              value: amount + '',
+            },
+          },
+        ],
+      },
+      prefer: 'return=representation',
+    });
+    result = response.result;
   } catch (err) {
+    if (err instanceof ApiError) {
+      console.error('PayPal create order error:', err.result);
+    }
     throw new Error('Error processing payment. Try again');
   }
 
-  if (response?.statusCode !== 201) {
+  if (!result?.id) {
     throw new Error('Error processing payment. Try again');
   }
 
-  return response;
+  return {result};
 }
 
 export async function findPaypalOrder({
@@ -77,23 +82,28 @@ export async function findPaypalOrder({
     throw new Error('Order id is required');
   }
 
-  const PaypalClient = PayPalHttpClient();
+  const ordersController = new OrdersController(PayPalClient());
 
-  const request = new paypal.orders.OrdersCaptureRequest(id);
-
-  let response;
+  let result;
   try {
-    response = await PaypalClient.execute(request);
+    const response = await ordersController.captureOrder({
+      id,
+      prefer: 'return=representation',
+    });
+    result = response.result;
   } catch (err) {
+    if (err instanceof ApiError) {
+      console.error('PayPal capture order error:', err.result);
+    }
     throw new Error('Cannot capture payment');
   }
 
-  if (!response) {
+  if (!result) {
     throw new Error('Cannot capture payment');
   }
 
   const customId =
-    response.result?.purchase_units?.[0]?.payments?.captures?.[0]?.custom_id;
+    result?.purchaseUnits?.[0]?.payments?.captures?.[0]?.customId;
 
   if (!customId) {
     throw new Error('Custom id not found');
@@ -112,8 +122,7 @@ export async function findPaypalOrder({
   return {
     context,
     amount: Number(
-      response.result.purchase_units?.[0]?.payments?.captures?.[0]?.amount
-        ?.value || 0,
+      result.purchaseUnits?.[0]?.payments?.captures?.[0]?.amount?.value || 0,
     ),
   };
 }

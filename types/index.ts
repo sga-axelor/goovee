@@ -89,8 +89,6 @@ export interface PortalAppConfig extends Model {
     image?: {id: ID};
     buttonLabel?: string;
   }>;
-  canConfirmQuotation?: boolean;
-  payQuotationToConfirm?: boolean;
   canPayInvoice?: 'no' | 'total' | 'partial';
   forumHeroTitle: string;
   forumHeroDescription: string;

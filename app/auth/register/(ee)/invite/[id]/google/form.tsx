@@ -10,6 +10,8 @@ import {z} from 'zod';
 // ---- CORE IMPORTS ---- //
 import {SEARCH_PARAMS} from '@/constants';
 import {i18n, l10n} from '@/locale';
+import {useEnvironment} from '@/lib/core/environment';
+import {isSameOrigin} from '@/utils/url';
 import {Button} from '@/ui/components/button';
 import {
   Form,
@@ -50,9 +52,13 @@ export default function SignUp({
   const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
   const workspaceURI = searchParams.get('workspaceURI') as string;
   const callbackurl = searchParams.get('callbackurl');
-  const redirection = callbackurl
-    ? decodeURIComponent(callbackurl)
-    : workspaceURI;
+  const env = useEnvironment();
+  const host = env.GOOVEE_PUBLIC_HOST!;
+  const decoded = callbackurl ? decodeURIComponent(callbackurl) : '';
+  const redirection =
+    (decoded && isSameOrigin(decoded, host) && decoded) ||
+    (workspaceURI && isSameOrigin(workspaceURI, host) && workspaceURI) ||
+    '/';
 
   const {toast} = useToast();
 

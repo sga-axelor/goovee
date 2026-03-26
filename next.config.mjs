@@ -4,16 +4,6 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 const nextConfig = {
   output: 'standalone',
   images: {
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
     localPatterns: [
       {
         pathname: '/**',

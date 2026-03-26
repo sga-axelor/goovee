@@ -71,11 +71,21 @@ export async function POST(req: Request) {
       case STRIPE_EVENTS.PAYMENT_INTENT_SUCCEEDED: {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
+        console.log('Processing Stripe event', {
+          eventId: event.id,
+          type: event.type,
+          paymentIntentId: paymentIntent.id,
+        });
+
         const contextId = paymentIntent.metadata.context_id;
         const tenantId = paymentIntent.metadata.tenant_id;
 
         if (!contextId || !tenantId) {
-          console.error('Missing metadata', paymentIntent.metadata);
+          console.error('Missing payment metadata', {
+            eventId: event.id,
+            metadata: paymentIntent.metadata,
+          });
+          // Permanent error — retrying won't fix missing metadata. Return 200 to stop Stripe retries.
           break;
         }
 
@@ -86,13 +96,20 @@ export async function POST(req: Request) {
         });
 
         if (!paymentContext) {
-          console.error('Payment context not found', contextId);
-          break;
+          // Return 500 so Stripe retries — events can arrive out of order
+          console.error('Payment context not found', {
+            eventId: event.id,
+            contextId,
+          });
+          return new NextResponse('Payment context not found', {status: 500});
         }
 
         if (paymentContext.status === CONTEXT_STATUS.processed) {
           console.log('Already processed, skipping');
-          break;
+          return new NextResponse(JSON.stringify({received: true}), {
+            status: 200,
+            headers: {'Content-Type': 'application/json'},
+          });
         }
 
         const source = paymentContext.data.source;
@@ -104,6 +121,7 @@ export async function POST(req: Request) {
             tenantId,
             reason: 'Missing payment source',
           });
+          // Permanent error — corrupted context data. Return 200 to stop Stripe retries.
           break;
         }
 
@@ -122,7 +140,7 @@ export async function POST(req: Request) {
 
             if (result?.error) {
               console.error('Invoice update failed: ', result.error);
-              break;
+              return new NextResponse('Invoice update failed', {status: 500});
             }
 
             await markPaymentAsProcessed({
@@ -151,6 +169,7 @@ export async function POST(req: Request) {
     }
   } catch (error) {
     console.error('🔥 Error processing webhook:', error);
+    return new NextResponse('Internal server error', {status: 500});
   }
 
   return new NextResponse(JSON.stringify({received: true}), {

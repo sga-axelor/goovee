@@ -14,6 +14,7 @@ export async function GET(
   if (!client) {
     return new NextResponse('Bad request', {status: 400});
   }
+  //NOTE: No authentication required since partner images are public
 
   const partner = await client.aOSPartner.findOne({
     where: {picture: {id: fileId}},

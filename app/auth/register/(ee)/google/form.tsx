@@ -11,6 +11,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 // ---- CORE IMPORTS ---- //
 import {UserType} from '@/auth/types';
 import {i18n, l10n} from '@/locale';
+import {useEnvironment} from '@/lib/core/environment';
+import {isSameOrigin} from '@/utils/url';
 import {useToast} from '@/ui/hooks';
 import {
   Form,
@@ -116,9 +118,13 @@ export default function SignUp({workspace}: {workspace?: PortalWorkspace}) {
   const tenantId = searchParams.get(SEARCH_PARAMS.TENANT_ID);
   const workspaceURI = searchParams.get('workspaceURI') as string;
   const callbackurl = searchParams.get('callbackurl');
-  const redirection = callbackurl
-    ? decodeURIComponent(callbackurl)
-    : workspaceURI;
+  const env = useEnvironment();
+  const host = env.GOOVEE_PUBLIC_HOST!;
+  const decoded = callbackurl ? decodeURIComponent(callbackurl) : '';
+  const redirection =
+    (decoded && isSameOrigin(decoded, host) && decoded) ||
+    (workspaceURI && isSameOrigin(workspaceURI, host) && workspaceURI) ||
+    '/';
 
   const showDirectoryControls = form.watch(
     'showProfileAsContactOnDirectory',

@@ -26,3 +26,10 @@ export async function getAosUrl(tenantId: Tenant['id']): Promise<string> {
   const tenant = await manager.getTenant(tenantId);
   return tenant?.config?.aos?.url;
 }
+
+export async function getBasicAuthCredentials(
+  tenantId: Tenant['id'],
+): Promise<{username: string; password: string}> {
+  const tenant = await manager.getTenant(tenantId);
+  return tenant.config.aos.auth;
+}

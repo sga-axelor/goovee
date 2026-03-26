@@ -1,5 +1,5 @@
-export default function HTMLViewer({record}: any) {
-  const markup = {__html: record.content};
+import {InnerHTML} from '@/ui/components/inner-html';
 
-  return <div dangerouslySetInnerHTML={markup} />;
+export default function HTMLViewer({record}: any) {
+  return <InnerHTML content={record.content} />;
 }

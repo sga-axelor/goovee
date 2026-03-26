@@ -7,6 +7,8 @@ import {DEFAULT_LOCALE} from '@/locale/contants';
 import {findLocaleLanguage} from '@/locale/utils';
 
 const tcache: Record<string, Record<string, string>> = {};
+const localesDir = path.resolve(process.cwd(), 'public', 'locales');
+const localesPromise = fs.readdir(localesDir).catch(() => [] as string[]);
 
 const includeLanguage = () => {
   return process.env.INCLUDE_LANGUAGE === 'true';
@@ -20,11 +22,14 @@ const findGeneralTranslations = cache(async function findGeneralTranslations(
     return {};
   }
 
-  const locales = path.resolve(process.cwd(), 'public', 'locales');
-
   const readFile = async (l: string) => {
+    const fileName = `${l}.json`;
+    const locales = await localesPromise;
+    if (!locales.includes(fileName)) {
+      return {};
+    }
     try {
-      const filepath = path.resolve(locales, `${l}.json`);
+      const filepath = path.resolve(localesDir, fileName);
       return JSON.parse(await fs.readFile(filepath, 'utf8'));
     } catch (err) {
       console.error(err);

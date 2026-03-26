@@ -43,6 +43,16 @@ export function decodeFilter(base64: Maybe<string>): unknown {
   }
 }
 
+export function isSameOrigin(url: string, base: string): boolean {
+  try {
+    const target = new URL(url, base);
+    const baseUrl = new URL(base);
+    return target.origin === baseUrl.origin;
+  } catch {
+    return false;
+  }
+}
+
 export function getLoginURL(params: {
   callbackurl?: string;
   workspaceURI?: string;

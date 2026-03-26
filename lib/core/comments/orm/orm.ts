@@ -129,26 +129,32 @@ async function getPopularCommentsBySorting({
             mail_message.created_on AS createdOn,
             mail_message.is_public_note AS isPublicNote,
             mail_message.parent AS parentComment,
-            JSON_BUILD_OBJECT(
-              'id',
-              author.id,
-              'version',
-              author.version,
-              'fullName',
-              author.full_name
-            ) AS createdBy,
-            JSON_BUILD_OBJECT(
-              'id',
-              partner.id,
-              'version',
-              partner.version,
-              'picture',
-              JSON_BUILD_OBJECT('id', picture.id, 'version', picture.version),
-              'simpleFullName',
-              partner.simple_full_name,
-              'name',
-              partner.name
-            ) AS partner
+            CASE
+              WHEN author.id IS NOT NULL THEN JSON_BUILD_OBJECT(
+                'id',
+                author.id,
+                'version',
+                author.version,
+                'fullName',
+                author.full_name
+              )
+            END AS createdBy,
+            CASE
+              WHEN partner.id IS NOT NULL THEN JSON_BUILD_OBJECT(
+                'id',
+                partner.id,
+                'version',
+                partner.version,
+                'picture',
+                CASE
+                  WHEN picture.id IS NOT NULL THEN JSON_BUILD_OBJECT('id', picture.id, 'version', picture.version)
+                END,
+                'simpleFullName',
+                partner.simple_full_name,
+                'name',
+                partner.name
+              )
+            END AS partner
           FROM
             mail_message
             LEFT JOIN auth_user AS author ON mail_message.created_by = author.id
@@ -184,27 +190,33 @@ async function getPopularCommentsBySorting({
                 'createdOn',
                 childComment.created_on,
                 'partner',
-                JSON_BUILD_OBJECT(
-                  'id',
-                  childPartner.id,
-                  'version',
-                  childPartner.version,
-                  'picture',
-                  JSON_BUILD_OBJECT('id', picture.id, 'version', picture.version),
-                  'simpleFullName',
-                  childPartner.simple_full_name,
-                  'name',
-                  childPartner.name
-                ),
+                CASE
+                  WHEN childPartner.id IS NOT NULL THEN JSON_BUILD_OBJECT(
+                    'id',
+                    childPartner.id,
+                    'version',
+                    childPartner.version,
+                    'picture',
+                    CASE
+                      WHEN picture.id IS NOT NULL THEN JSON_BUILD_OBJECT('id', picture.id, 'version', picture.version)
+                    END,
+                    'simpleFullName',
+                    childPartner.simple_full_name,
+                    'name',
+                    childPartner.name
+                  )
+                END,
                 'createdBy',
-                JSON_BUILD_OBJECT(
-                  'id',
-                  childAuthor.id,
-                  'version',
-                  childAuthor.version,
-                  'fullName',
-                  childAuthor.full_name
-                ),
+                CASE
+                  WHEN childAuthor.id IS NOT NULL THEN JSON_BUILD_OBJECT(
+                    'id',
+                    childAuthor.id,
+                    'version',
+                    childAuthor.version,
+                    'fullName',
+                    childAuthor.full_name
+                  )
+                END,
                 'mailMessageFileList',
                 COALESCE(mf.mailMessageFileList, '[]')
               )

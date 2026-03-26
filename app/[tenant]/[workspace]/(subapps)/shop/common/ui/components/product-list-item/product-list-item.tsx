@@ -4,7 +4,7 @@ import React from 'react';
 import {MdAddShoppingCart} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {Button, BackgroundImage} from '@/ui/components';
+import {Button, BackgroundImage, InnerHTML} from '@/ui/components';
 import {cn} from '@/utils/css';
 import {getProductImageURL} from '@/utils/files';
 import {useResponsive} from '@/ui/hooks';
@@ -99,11 +99,11 @@ export function ProductListItem({
               )}
             </div>
           </div>
-          <p
+          <InnerHTML
+            as="p"
             className="text-xs mb-4 md:mb-0 line-clamp-3"
-            dangerouslySetInnerHTML={{
-              __html: product.description || '',
-            }}></p>
+            content={product.description}
+          />
         </Link>
         {canBuy && (
           <div className="flex justify-end">

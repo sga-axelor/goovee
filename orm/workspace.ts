@@ -346,9 +346,7 @@ export async function findPartnerWorkspaceConfig({
       partnerWorkspaceSet: {
         where: {
           workspace: {
-            url: {
-              like: `%${url}%`,
-            },
+            url,
           },
         },
         select: {

@@ -1,3 +1,4 @@
+import {InnerHTML} from '@/ui/components/inner-html';
 import type {TemplateProps} from '@/subapps/website/common/types';
 import Image from 'next/image';
 import {type Cta3Data} from './meta';
@@ -34,11 +35,10 @@ export default function CTA3(props: TemplateProps<Cta3Data>) {
         <div className="row">
           <div className="col-lg-7 col-xl-7 mx-auto">
             <h2 className="display-4 mb-3 text-center">{title}</h2>
-            <p
+            <InnerHTML
+              as="p"
               className="lead mb-5 px-md-16 px-lg-3"
-              dangerouslySetInnerHTML={{
-                __html: description || '',
-              }}
+              content={description}
             />
             <NextLink
               href={linkHref}

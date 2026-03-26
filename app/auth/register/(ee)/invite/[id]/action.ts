@@ -8,7 +8,7 @@ import {registerByInvite, type RegisterInviteDTO} from '@/lib/core/auth/orm';
 import {getTranslation, t} from '@/locale/server';
 import {findPartnerByEmail, updatePartner} from '@/orm/partner';
 import {Scope} from '@/otp/constants';
-import {findOne, isValid} from '@/otp/orm';
+import {findOne, isValid, markUsed} from '@/otp/orm';
 import {Tenant} from '@/tenant';
 import {PortalWorkspace} from '@/types';
 
@@ -58,6 +58,8 @@ export async function registerByEmail(data: RegisterInviteDTO) {
   if (!(await isValid({id: otpResult.id, value: otp, tenantId}))) {
     return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
   }
+
+  await markUsed({id: otpResult.id, tenantId});
 
   return registerByInvite(data);
 }

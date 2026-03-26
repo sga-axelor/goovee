@@ -5,13 +5,7 @@ import {useRouter} from 'next/navigation';
 import {MdAdd} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/ui/components/card';
+import {Card, CardContent, CardHeader, CardTitle} from '@/ui/components/card';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {
@@ -413,7 +407,7 @@ export const RegistrationForm = ({
     <Card className="w-full rounded-2xl border-none shadow-none">
       <CardHeader className="p-4 flex flex-col gap-4 space-y-0">
         <CardTitle>
-          <p className="text-xl font-semibold">{eventTitle}</p>
+          <span className="text-xl font-semibold">{eventTitle}</span>
         </CardTitle>
         <EventDateCard
           startDate={eventStartDateTime}
@@ -422,7 +416,7 @@ export const RegistrationForm = ({
         />
         <BadgeList items={eventCategorySet} />
         {defaultPrice ? (
-          <CardDescription className="my-6 border p-4 rounded-lg">
+          <div className="my-6 border p-4 rounded-lg text-sm text-slate-500 dark:text-slate-400">
             <div className="flex flex-col gap-2 font-semibold">
               <p className="text-xl text-black">
                 {i18n.t('Price (incl. tax)')}:{' '}
@@ -433,7 +427,7 @@ export const RegistrationForm = ({
                 <span className="text-success">{formattedDefaultPrice}</span>
               </p>
             </div>
-          </CardDescription>
+          </div>
         ) : null}
         {eventAllowMultipleRegistrations && (
           <h3 className="text-lg font-semibold leading-6 tracking-tight">

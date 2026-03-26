@@ -432,17 +432,34 @@ export async function findRecentlyActivePosts({
   if (!workspaceID) return [];
 
   const client = await manager.getClient(tenantId);
-  const whereClause = `WHERE forumGroup.workspace = ${workspaceID}
-          ${await filterPrivateQuery(user, tenantId)}
-          AND COALESCE(post.archived, false) IS FALSE AND COALESCE(forumGroup.archived, false ) IS FALSE
-         `;
+
+  const params: any[] = [];
+  let idx = 1;
+
+  params.push(workspaceID);
+  let whereClause = `WHERE forumGroup.workspace = $${idx++}`;
+
+  const {
+    clause: privateClause,
+    params: privateParams,
+    nextIndex,
+  } = await filterPrivateQuery(user, tenantId, idx);
+  whereClause += ` ${privateClause}`;
+  params.push(...privateParams);
+  idx = nextIndex;
+
+  whereClause +=
+    ' AND COALESCE(post.archived, false) IS FALSE AND COALESCE(forumGroup.archived, false) IS FALSE';
+
+  params.push(limit);
+  const limitIdx = idx++;
 
   const posts = await client.$raw(
     `
     WITH LatestComment AS (
-        SELECT 
-            m.id AS "commentId", 
-            m.related_id AS "postId", 
+        SELECT
+            m.id AS "commentId",
+            m.related_id AS "postId",
             m.note AS "commentNote",
             m.created_on AS "commentDate",
             m.version AS "commentVersion",
@@ -455,9 +472,9 @@ export async function findRecentlyActivePosts({
           AND m.note IS NOT NULL
           AND m.note <> ''
     )
-    SELECT 
-        post.id, 
-        post.title, 
+    SELECT
+        post.id,
+        post.title,
         post.version,
         JSON_BUILD_OBJECT(
             'id', lc."commentId",
@@ -489,9 +506,9 @@ export async function findRecentlyActivePosts({
     LEFT JOIN auth_user au ON lc."commentCreatedById" = au.id
     ${whereClause}
     ORDER BY lc."commentDate" DESC
-    LIMIT $1
+    LIMIT $${limitIdx}
     `,
-    limit,
+    ...params,
   );
 
   return posts as RecentlyActivePost[];

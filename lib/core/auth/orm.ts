@@ -27,7 +27,7 @@ import {UserType} from './types';
 import {manager, type Tenant} from '../tenant';
 import type {Partner, PortalWorkspace} from '@/types';
 import {hash} from './utils';
-import {getGooveeEnvironment} from '../environment/utils';
+import {getPublicEnvironment} from '../environment/utils';
 import {withMattermostSync} from '../mattermost/user-api';
 
 function error(message: string) {
@@ -722,7 +722,7 @@ export async function registerByKeycloak({
   name?: string;
   workspaceURI: string;
 }) {
-  const workspaceURL = `${getGooveeEnvironment().GOOVEE_PUBLIC_HOST}${workspaceURI}`;
+  const workspaceURL = `${getPublicEnvironment().GOOVEE_PUBLIC_HOST}${workspaceURI}`;
   const localization = await findRegistrationLocalization({
     locale,
     tenantId,
