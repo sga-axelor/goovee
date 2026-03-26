@@ -1,5 +1,0 @@
-{
-  "title": "Upgrade to NEXT 16 and migrate to Better-Auth",
-  "type": "feature",
-  "scope": ["core"]
-}

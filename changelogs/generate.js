@@ -38,7 +38,6 @@ program
   .option(
     '--keep',
     'Keep changelog JSON files after processing (default: true)',
-    true,
   )
   .option('--dry-run', 'Show output only, do not write or delete files')
   .option('--stdout', 'Print changelog to console instead of writing to file')

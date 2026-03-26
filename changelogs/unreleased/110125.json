@@ -1,5 +1,0 @@
-{
-  "title": "Add PAYPAL_LIVE flag to control PayPal environment, defaults to sandbox",
-  "type": "fix",
-  "scope": ["core"]
-}

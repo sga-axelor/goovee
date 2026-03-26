@@ -1,5 +1,0 @@
-{
-  "title": "Preserve search params in callback url on logout",
-  "type": "fix",
-  "scope": ["core"]
-}
