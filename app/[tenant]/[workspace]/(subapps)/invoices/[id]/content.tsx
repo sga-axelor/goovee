@@ -9,8 +9,8 @@ import {i18n} from '@/locale';
 import {PortalWorkspace} from '@/types';
 import {SUBAPP_CODES} from '@/constants';
 import {formatDate} from '@/lib/core/locale/formatters';
-import {usePaymentSSE, useToast} from '@/ui/hooks';
-import {PAYMENT_SOURCE} from '@/lib/core/payment/common/type';
+import {useToast} from '@/ui/hooks';
+import {PaymentUpdateStatus} from '@/lib/core/payment/sse';
 
 // ---- LOCAL IMPORTS ---- //
 import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
@@ -37,19 +37,28 @@ export default function Content({
 
   const invoiceType = isUnpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
 
-  const handlePaymentUpdate = useCallback(() => {
-    router.refresh();
-    toast({
-      title: i18n.t('Payment completed successfully'),
-      variant: 'success',
-    });
-  }, [router, toast]);
-
-  usePaymentSSE({
-    source: PAYMENT_SOURCE.INVOICES,
-    entityId: isUnpaid ? id : '',
-    onUpdate: handlePaymentUpdate,
-  });
+  const handlePaymentUpdate = useCallback(
+    (status: PaymentUpdateStatus) => {
+      router.refresh();
+      if (status === 'success') {
+        toast({
+          title: i18n.t('Payment completed successfully'),
+          variant: 'success',
+        });
+      } else if (status === 'cancelled') {
+        toast({
+          title: i18n.t('Payment cancelled.'),
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: i18n.t('Payment failed. Please try again.'),
+          variant: 'destructive',
+        });
+      }
+    },
+    [router, toast],
+  );
 
   return (
     <Container title={`${i18n.t('Invoice number')} ${invoiceId}`}>
@@ -91,6 +100,7 @@ export default function Content({
             workspace={workspace}
             workspaceURI={workspaceURI}
             token={token}
+            onPaymentUpdate={handlePaymentUpdate}
           />
         </div>
       </div>

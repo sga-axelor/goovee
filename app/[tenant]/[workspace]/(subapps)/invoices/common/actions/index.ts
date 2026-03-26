@@ -16,6 +16,7 @@ import {TENANT_HEADER} from '@/proxy';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 import {createUp2payOrder} from '@/payment/up2pay/actions';
+import {createHubPispPaymentLink} from '@/payment/hubpisp/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 import {
   createStripePaymentIntent,
@@ -34,6 +35,15 @@ import {isPaymentOptionAvailable} from '@/utils/payment';
 import {stripe} from '@/lib/core/payment/stripe';
 import {formatNumber} from '@/lib/core/locale/server/formatters';
 import {PAYMENT_SOURCE, PAYMENT_TYPE} from '@/lib/core/payment/common/type';
+import {
+  CURRENCY_CODE,
+  UP2PAY_REDIRECT_STATUS,
+} from '@/lib/core/payment/up2pay/constants';
+import {
+  HUBPISP_LOCAL_INSTRUMENT,
+  HUBPISP_REDIRECT_STATUS,
+  HubPispLocalInstrument,
+} from '@/lib/core/payment/hubpisp/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -43,10 +53,6 @@ import {
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 import {validatePaymentData} from '@/subapps/invoices/common/utils/validations';
 import {updateInvoice} from '@/subapps/invoices/common/service';
-import {
-  CURRENCY_CODE,
-  UP2PAY_REDIRECT_STATUS,
-} from '@/lib/core/payment/up2pay/constants';
 
 export async function paypalCreateOrder({
   invoice,
@@ -1163,6 +1169,138 @@ export async function up2payCreateOrder({
     return {success: true, order: response};
   } catch (error) {
     console.error('[UP2PAY][CREATE ORDER] ', error);
+    return {
+      error: true,
+      message: await t((error as any)?.message),
+    };
+  }
+}
+
+export async function initiatePispPayment({
+  invoice,
+  amount,
+  workspaceURL,
+  uri,
+  localInstrument,
+  token,
+}: {
+  invoice: any;
+  amount: string;
+  workspaceURL: string;
+  uri: string;
+  localInstrument?: HubPispLocalInstrument;
+  token?: string;
+}) {
+  if (!uri) {
+    return {
+      error: true,
+      message: await t('Payment gateway URI is missing'),
+    };
+  }
+
+  if (!invoice?.id) {
+    return {
+      error: true,
+      message: await t('Invoice is missing'),
+    };
+  }
+
+  if (!amount) {
+    return {
+      error: true,
+      message: await t('Amount is missing'),
+    };
+  }
+
+  const $headers = await headers();
+
+  const tenantId = $headers.get(TENANT_HEADER);
+  if (!tenantId) {
+    return {error: true, message: await t('Tenant is missing')};
+  }
+
+  const validationResult = await validatePaymentData({
+    invoice,
+    amount,
+    workspaceURL,
+    tenantId,
+    token,
+  });
+
+  if (validationResult.error) {
+    return validationResult;
+  }
+
+  const {workspace, user, $amount, $invoice} = validationResult.data;
+
+  const paymentOptions = workspace?.config?.paymentOptionSet;
+
+  const allowHubPisp = isPaymentOptionAvailable(
+    paymentOptions,
+    PaymentOption.hubpisp,
+  );
+  if (!allowHubPisp) {
+    return {
+      error: true,
+      message: await t('HUB PISP is not available'),
+    };
+  }
+
+  const host = process.env.GOOVEE_PUBLIC_HOST;
+  const tokenSuffix = token ? `&token=${token}` : '';
+
+  const successfulReportUrl = `${host}${uri}?hubpisp_status=${HUBPISP_REDIRECT_STATUS.SUCCESS}${tokenSuffix}`;
+  const unsuccessfulReportUrl = `${host}${uri}?hubpisp_status=${HUBPISP_REDIRECT_STATUS.CANCELLED}${tokenSuffix}`;
+
+  const pageConsentInfo = {
+    pageTimeout: 1200,
+    pageTimeoutUnit: 'SECONDS' as const,
+    pageUserTimeout: 300,
+    pageUserTimeoutUnit: 'SECONDS' as const,
+    pageTimeOutReturnURL: `${host}${uri}?hubpisp_status=${HUBPISP_REDIRECT_STATUS.EXPIRED}${tokenSuffix}`,
+  };
+
+  const pispEmail = token
+    ? $invoice?.partner?.emailAddress?.address
+    : user?.email;
+
+  try {
+    const psuInfo = {
+      name: [$invoice?.partner?.firstName, $invoice?.partner?.name]
+        .filter(Boolean)
+        .join(' '),
+      email: pispEmail,
+    };
+    const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
+    const response = await createHubPispPaymentLink({
+      amount: Number($amount),
+      tenantId,
+      email: pispEmail,
+      context: {
+        id: invoice.id,
+        source: PAYMENT_SOURCE.INVOICES,
+        amount: Number($amount),
+        localInstrument: localInstrument ?? HUBPISP_LOCAL_INSTRUMENT.SCT,
+      },
+      currency: currencyCode,
+      remittanceInformation: `Invoice-${invoice.id}`,
+      successfulReportUrl,
+      unsuccessfulReportUrl,
+      pageConsentInfo,
+      psuInfo,
+      localInstrument,
+    });
+
+    return {
+      success: true,
+      order: {
+        consentHref: response.consentHref,
+        resourceId: response.resourceId,
+        contextId: response.contextId,
+      },
+    };
+  } catch (error) {
+    console.error('[HUBPISP][CREATE ORDER] ', error);
     return {
       error: true,
       message: await t((error as any)?.message),

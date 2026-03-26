@@ -1,7 +1,7 @@
 'use client';
 
 import {useCallback} from 'react';
-import {useRouter, useSearchParams} from 'next/navigation';
+import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
 import {ID} from '@/types';
@@ -10,11 +10,14 @@ import {useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {ErrorResponse, SuccessResponse} from '@/types/action';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {PAYMENT_SOURCE} from '@/lib/core/payment/common/type';
+import {PaymentUpdateStatus} from '@/lib/core/payment/sse';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   createStripeBankTransferIntent,
   createStripeCheckoutSession,
+  initiatePispPayment,
   payboxCreateOrder,
   paypalCaptureOrder,
   paypalCreateOrder,
@@ -34,6 +37,7 @@ export function InvoicePayments({
   resetPaymentType,
   resetForm,
   token,
+  onPaymentUpdate,
 }: {
   workspace: any;
   invoice: Invoice;
@@ -42,6 +46,7 @@ export function InvoicePayments({
   resetPaymentType: () => void;
   resetForm: () => void;
   token?: string;
+  onPaymentUpdate?: (status: PaymentUpdateStatus) => void;
 }) {
   const workspaceURL = workspace?.url;
   const {workspaceURI} = useWorkspace();
@@ -189,8 +194,27 @@ export function InvoicePayments({
           token,
         });
       }}
+      onInitiatePispPayment={async ({uri, localInstrument}) => {
+        return await initiatePispPayment({
+          invoice: {id: invoice.id},
+          amount,
+          workspaceURL,
+          uri,
+          localInstrument,
+          token,
+        });
+      }}
       successMessage="Invoice payment completed successfully."
       errorMessage="Failed to process invoice payment."
+      sse={
+        onPaymentUpdate
+          ? {
+              source: PAYMENT_SOURCE.INVOICES,
+              entityId: invoice.id,
+              onPaymentUpdate,
+            }
+          : undefined
+      }
     />
   );
 }

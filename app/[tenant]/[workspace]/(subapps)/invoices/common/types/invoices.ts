@@ -1,6 +1,8 @@
 // ---- CORE IMPORTS ---- //
 import {ID, PortalWorkspace} from '@/types';
 import {BankTransferDetailsType} from '@/ui/components/payment/types';
+import type {PendingHubPispContext} from '@/lib/core/payment/hubpisp/orm';
+import type {PaymentUpdateStatus} from '@/lib/core/payment/sse';
 
 export type Invoice = {
   id: ID;
@@ -18,6 +20,7 @@ export type Invoice = {
   isUnpaid: boolean;
   dueDate: string;
   pendingStripeBankTransferIntents?: BankTransferDetailsType[];
+  pendingHubPispContexts?: PendingHubPispContext[];
 };
 
 export type InvoiceProps = {
@@ -32,4 +35,5 @@ export type TotalProps = {
   invoiceType: string;
   workspaceURI: string;
   token?: string;
+  onPaymentUpdate?: (status: PaymentUpdateStatus) => void;
 };

@@ -219,7 +219,7 @@ export async function GET(request: Request) {
     version: paymentContext.version,
     tenantId,
   });
-  notifyPaymentUpdate(source, entityId);
+  notifyPaymentUpdate(source, entityId, paymentContext.id);
 
   return new NextResponse('OK', {status: 200});
 }

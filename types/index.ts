@@ -352,6 +352,7 @@ export enum PaymentOption {
   stripe = 'stripe',
   paybox = 'paybox',
   up2pay = 'up2pay',
+  hubpisp = 'hubpisp',
 }
 
 export interface CommentResponse {
