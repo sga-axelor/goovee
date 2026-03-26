@@ -1,3 +1,25 @@
+# 1.5.4 (2026-03-26)
+
+## Features
+
+### Core Platform
+
+- Upgrade to NEXT 16 and migrate to Better-Auth – #106509
+
+## Fixes
+
+### Core Platform
+
+- Add PAYPAL_LIVE flag to control PayPal environment, defaults to sandbox – #110125
+- Fix forum card redirect to navigate to the specific post – #109583
+  <details>
+    <summary>Details</summary>
+
+  Forum card on the home page now redirects to the specific forum post instead of the forum listing page.
+  </details>
+
+- Preserve search params in callback url on logout – #109284
+
 # 1.5.3 (2026-03-23)
 
 ## Security
