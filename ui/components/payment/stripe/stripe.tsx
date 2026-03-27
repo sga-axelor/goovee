@@ -15,7 +15,7 @@ import {
   DialogDescription,
 } from '@/ui/components';
 import {i18n} from '@/locale';
-import {useSearchParams, useToast} from '@/ui/hooks';
+import {usePaymentSSE, useSearchParams, useToast} from '@/ui/hooks';
 import type {
   BankTransferDetailsType,
   StripeProps,
@@ -36,6 +36,7 @@ export function Stripe({
   onApprove,
   skipSuccessToast,
   onCreateBankTransferIntent,
+  sse,
 }: StripeProps) {
   const {toast} = useToast();
   const [verifying, setVerifying] = useState(false);
@@ -45,6 +46,23 @@ export function Stripe({
   const [showBankDetails, setShowBankDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showBankTransferConfirm, setShowBankTransferConfirm] = useState(false);
+  const [sseContextId, setSseContextId] = useState<string | undefined>();
+
+  usePaymentSSE({
+    source: sse?.source,
+    entityId: sse?.entityId ?? '',
+    contextId: sseContextId,
+    onUpdate: status => {
+      setSseContextId(undefined);
+      if (status === 'success') {
+        toast({
+          variant: 'success',
+          title: i18n.t('Payment completed successfully'),
+        });
+      }
+      sse?.onPaymentUpdate(status);
+    },
+  });
 
   const {searchParams} = useSearchParams();
   const validateRef = useRef(false);
@@ -171,17 +189,17 @@ export function Stripe({
 
       // CASE 1: Auto-paid via customer's balance
       if (data.status === BANK_TRANSFER_STATUS.PAID) {
-        toast({
-          variant: 'success',
-          title: i18n.t('Payment completed successfully'),
-        });
-
-        handleBankDetailsDialogClose();
+        setShowPaymentOptions(false);
+        setSseContextId(data.contextId);
         return;
       }
 
-      // CASE 2: Needs bank transfer
+      // CASE 2: Pending bank transfer — subscribe to SSE so the user gets
+      // notified instantly if the webhook fires while they're on the page.
       if (data.status === BANK_TRANSFER_STATUS.PENDING && data.bankDetails) {
+        if (sse) {
+          setSseContextId(data.contextId);
+        }
         setBankTransferDetails(data);
         setShowBankDetails(true);
       }

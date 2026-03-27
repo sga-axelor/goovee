@@ -11,7 +11,6 @@ import {
   markPaymentAsFailed,
   markPaymentAsCancelled,
   CONTEXT_STATUS,
-  markPaymentAsProcessed,
 } from '@/lib/core/payment/common/orm';
 import {findPendingStripeBankTransfers} from './orm';
 import {PaymentOption} from '@/types';
@@ -275,14 +274,10 @@ export async function createStripePaymentIntent({
 
     // Payment succeeded immediately because the amount was covered by the customer's balance
     if (confirmedIntent.status === PAYMENT_INTENT_STATUS.SUCCEEDED) {
-      await markPaymentAsProcessed({
-        contextId: paymentContext.id,
-        version: paymentContext.version,
-        tenantId,
-      });
       return {
         status: BANK_TRANSFER_STATUS.PAID,
         id: confirmedIntent.id,
+        contextId: paymentContext.id,
       } satisfies BankTransferIntentResult;
     }
 
@@ -303,6 +298,7 @@ export async function createStripePaymentIntent({
       return {
         status: BANK_TRANSFER_STATUS.PENDING,
         id: confirmedIntent.id,
+        contextId: paymentContext.id,
         amount: confirmedIntent.amount,
         currency: confirmedIntent.currency,
         reference: paymentReference,
@@ -316,7 +312,7 @@ export async function createStripePaymentIntent({
     console.error('Error creating stripe payment intent:', error);
 
     if (error instanceof Stripe.errors.StripeError) {
-      throw new Error(error.raw?.message || error.message);
+      throw new Error((error.raw as any)?.message || error.message);
     }
 
     throw new Error('Failed to create stripe payment intent');

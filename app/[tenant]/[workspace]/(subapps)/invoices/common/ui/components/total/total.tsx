@@ -295,7 +295,10 @@ export function Total({
               resetPaymentType={resetPaymentType}
               resetForm={resetForm}
               token={token}
-              onPaymentUpdate={onPaymentUpdate}
+              onPaymentUpdate={status => {
+                setPaymentType(null);
+                onPaymentUpdate?.(status);
+              }}
             />
           </div>
         </>
