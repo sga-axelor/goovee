@@ -16,10 +16,11 @@ import {getAmountFromStripe} from '@/utils/stripe';
 import {manager} from '@/tenant';
 import {scale} from '@/utils';
 import {DEFAULT_CURRENCY_SCALE} from '@/constants';
+import {cancelInvalidPendingBankTransfers} from '@/lib/core/payment/stripe/actions';
+import {notifyPaymentUpdate} from '@/lib/core/payment/sse';
 
 // --- LOCAL IMPORTS ---- //
 import {updateInvoice} from '@/subapps/invoices/common/service';
-import {cancelInvalidPendingBankTransfers} from '@/lib/core/payment/stripe/actions';
 
 export const STRIPE_EVENTS = {
   PAYMENT_INTENT_SUCCEEDED: 'payment_intent.succeeded',
@@ -65,8 +66,11 @@ export async function POST(req: Request) {
     }
 
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-  } catch (err: any) {
-    console.error('Stripe webhook verification failed', err.message);
+  } catch (err) {
+    console.error(
+      'Stripe webhook verification failed',
+      err instanceof Error ? err.message : err,
+    );
     return new NextResponse('Webhook verification failed', {status: 400});
   }
 
@@ -209,6 +213,8 @@ export async function POST(req: Request) {
               sourceId: invoice.id,
               amountRemaining,
             });
+
+            notifyPaymentUpdate(source, sourceId, paymentContext.id);
 
             break;
           }

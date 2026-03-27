@@ -49,17 +49,20 @@ export type StripeProps = {
   onCreateBankTransferIntent?: () => Promise<
     ErrorResponse | SuccessResponse<BankTransferIntentResult>
   >;
+  sse?: PaymentSSEProps;
 };
 
 export type BankTransferIntentResult =
   | {
       status: typeof BANK_TRANSFER_STATUS.PAID;
       id: string;
+      contextId: string;
     }
   | ({
       status: typeof BANK_TRANSFER_STATUS.PENDING;
     } & {
       id: string;
+      contextId: string;
       amount: number;
       currency: string;
       reference: string;

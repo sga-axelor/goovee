@@ -696,12 +696,12 @@ export async function createStripeBankTransferIntent({
       currency: currencyCode,
       countryCode: country.alpha2Code,
     });
-    const data =
-      result.status === BANK_TRANSFER_STATUS.PAID
-        ? result
-        : {...result, formattedAmount};
 
-    return {success: true, data};
+    if (result.status === BANK_TRANSFER_STATUS.PAID) {
+      return {success: true, data: result};
+    }
+
+    return {success: true, data: {...result, formattedAmount}};
   } catch (error) {
     console.error('Error creating stripe bank transfer payment intent:', error);
 
@@ -859,10 +859,6 @@ export async function cancelStripeBankTransferPaymentIntent({
       id,
       cancellationReason: STRIPE_CANCELLATION_REASONS.REQUESTED_BY_CUSTOMER,
       tenantId,
-    });
-
-    await stripe.paymentIntents.cancel(id, {
-      cancellation_reason: 'requested_by_customer',
     });
 
     revalidatePath(`${workspaceURI}/${SUBAPP_CODES.invoices}/${$invoice.id}`);

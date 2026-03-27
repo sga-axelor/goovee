@@ -118,6 +118,7 @@ export function Payments({
           errorMessage={errorMessage}
           skipSuccessToast={skipSuccessToast}
           onCreateBankTransferIntent={onCreateBankTransferIntent}
+          sse={sse}
         />
       )}
       {allowPaybox && (
