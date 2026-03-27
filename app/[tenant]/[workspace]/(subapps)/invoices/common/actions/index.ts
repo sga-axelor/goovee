@@ -572,16 +572,12 @@ export async function validateStripePayment({
       tenantId,
     });
 
-    const isFullyPaid = purchaseAmount === remainingAmount;
-    const invoiceType = isFullyPaid ? INVOICE.PAID : INVOICE.UNPAID;
-
     try {
       const updatedInvoice = await findInvoice({
         id: $invoice.id,
         params: {where: invoicesWhereClause},
         workspaceURL,
         tenantId,
-        type: invoiceType,
       });
 
       // After a successful card payment, re-fetch the invoice to get the updated
