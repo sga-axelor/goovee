@@ -1,4 +1,8 @@
 import {PaymentSource} from '@/lib/core/payment/common/type';
+import {PAYMENT_UPDATE_STATUS, type PaymentUpdateStatus} from './constants';
+
+export {PAYMENT_UPDATE_STATUS};
+export type {PaymentUpdateStatus};
 
 type SSEController = ReadableStreamDefaultController<Uint8Array>;
 
@@ -55,13 +59,11 @@ export function unsubscribe(
   }
 }
 
-export type PaymentUpdateStatus = 'success' | 'failed' | 'cancelled';
-
 export function notifyPaymentUpdate(
   source: PaymentSource,
   entityId: string | number,
   contextId: string,
-  status: PaymentUpdateStatus = 'success',
+  status: PaymentUpdateStatus = PAYMENT_UPDATE_STATUS.SUCCESS,
 ): void {
   const key = getKey(source, String(entityId), contextId);
   const set = subscribers.get(key);
@@ -75,14 +77,18 @@ export function notifyPaymentUpdate(
     `event: payment\ndata: ${JSON.stringify({status})}\n\n`,
   );
 
+  const isTerminal = status !== PAYMENT_UPDATE_STATUS.PARTIAL;
+
   for (const controller of set) {
     try {
       controller.enqueue(message);
-      controller.close();
+      if (isTerminal) controller.close();
     } catch {
       // subscriber already closed, skip
     }
   }
 
-  subscribers.delete(key);
+  if (isTerminal) {
+    subscribers.delete(key);
+  }
 }

@@ -3,7 +3,7 @@ import {
   markPaymentAsFailed,
   markPaymentAsProcessed,
 } from '../common/orm';
-import {notifyPaymentUpdate} from '../sse';
+import {notifyPaymentUpdate, PAYMENT_UPDATE_STATUS} from '../sse';
 import {PAYMENT_SOURCE} from '../common/type';
 import type {PaymentContext} from '../common/type';
 import {HUBPISP_TRANSACTION_STATUS} from './constants';
@@ -44,7 +44,7 @@ export async function applyTransactionStatus({
         paymentContext.data.source,
         paymentContext.data.id,
         paymentContext.id,
-        'cancelled',
+        PAYMENT_UPDATE_STATUS.CANCELLED,
       );
       return true;
 
@@ -62,7 +62,7 @@ export async function applyTransactionStatus({
         paymentContext.data.source,
         paymentContext.data.id,
         paymentContext.id,
-        'failed',
+        PAYMENT_UPDATE_STATUS.FAILED,
       );
       return true;
 

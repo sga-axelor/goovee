@@ -1,0 +1,6 @@
+{
+  "title": "Improve Stripe bank transfer reconciliation",
+  "type": "feature",
+  "description": "Improved Stripe invoice bank transfer handling by retrying transient webhook failures, reconciling payment state through webhook and SSE updates, and cleaning up stale pending bank transfer intents after successful payments or customer balance auto-payment.",
+  "scope": ["core", "invoices"]
+}
