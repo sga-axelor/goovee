@@ -17,13 +17,14 @@ import {
 import {i18n} from '@/locale';
 import {usePaymentSSE, useSearchParams, useToast} from '@/ui/hooks';
 import type {
-  BankTransferDetailsType,
+  NormalizedBankDetails,
   StripeProps,
 } from '@/ui/components/payment/types';
 import {PaymentOption} from '@/types';
 import {BankTransferDetails} from './bank-transfer-details';
 import {BankTransferConfirmDialog} from './bank-transfer-confirmation-dialog';
 import {BANK_TRANSFER_STATUS} from '@/lib/core/payment/stripe/constants';
+import {PAYMENT_UPDATE_STATUS} from '@/lib/core/payment/sse/constants';
 
 export function Stripe({
   disabled,
@@ -41,20 +42,46 @@ export function Stripe({
   const {toast} = useToast();
   const [verifying, setVerifying] = useState(false);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
-  const [bankTransferDetails, setBankTransferDetails] =
-    useState<BankTransferDetailsType | null>(null);
+  const [bankTransferDetails, setBankTransferDetails] = useState<{
+    id: string;
+    reference: string;
+    formattedAmount: string;
+    bankDetails: NormalizedBankDetails;
+  } | null>(null);
   const [showBankDetails, setShowBankDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showBankTransferConfirm, setShowBankTransferConfirm] = useState(false);
+  const sseStorageKey = sse
+    ? `stripe_sse_ctx:${sse.source}:${sse.entityId}`
+    : null;
   const [sseContextId, setSseContextId] = useState<string | undefined>();
+
+  const persistSSEContextId = useCallback(
+    (contextId: string) => {
+      if (sseStorageKey) {
+        sessionStorage.setItem(sseStorageKey, contextId);
+      }
+      setSseContextId(contextId);
+    },
+    [sseStorageKey],
+  );
+
+  const clearPersistedSSEContextId = useCallback(() => {
+    if (sseStorageKey) {
+      sessionStorage.removeItem(sseStorageKey);
+    }
+    setSseContextId(undefined);
+  }, [sseStorageKey]);
 
   usePaymentSSE({
     source: sse?.source,
     entityId: sse?.entityId ?? '',
     contextId: sseContextId,
     onUpdate: status => {
-      setSseContextId(undefined);
-      if (status === 'success') {
+      if (status !== PAYMENT_UPDATE_STATUS.PARTIAL) {
+        clearPersistedSSEContextId();
+      }
+      if (status === PAYMENT_UPDATE_STATUS.SUCCESS) {
         toast({
           variant: 'success',
           title: i18n.t('Payment completed successfully'),
@@ -77,7 +104,9 @@ export function Stripe({
     router.refresh();
   };
 
-  const handlePaymentClick = async (event: any) => {
+  const handlePaymentClick = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     event.preventDefault();
 
     if (onValidate) {
@@ -125,7 +154,7 @@ export function Stripe({
           return;
         }
 
-        const result: any = await onValidateSession({
+        const result = await onValidateSession({
           stripeSessionId,
         });
         if (result.error) {
@@ -134,11 +163,12 @@ export function Stripe({
             title: i18n.t(result.message || errorMessage),
           });
         } else {
-          !skipSuccessToast &&
+          if (!skipSuccessToast) {
             toast({
               variant: 'success',
               title: i18n.t(successMessage),
             });
+          }
           if (onPaymentSuccess) {
             onPaymentSuccess();
           }
@@ -190,7 +220,7 @@ export function Stripe({
       // CASE 1: Auto-paid via customer's balance
       if (data.status === BANK_TRANSFER_STATUS.PAID) {
         setShowPaymentOptions(false);
-        setSseContextId(data.contextId);
+        persistSSEContextId(data.contextId);
         return;
       }
 
@@ -198,7 +228,7 @@ export function Stripe({
       // notified instantly if the webhook fires while they're on the page.
       if (data.status === BANK_TRANSFER_STATUS.PENDING && data.bankDetails) {
         if (sse) {
-          setSseContextId(data.contextId);
+          persistSSEContextId(data.contextId);
         }
         setBankTransferDetails(data);
         setShowBankDetails(true);
@@ -250,6 +280,15 @@ export function Stripe({
       handleValidateStripePayment({stripeSessionId});
     }
   }, [stripeSessionId, stripeError, toast, handleValidateStripePayment]);
+
+  useEffect(() => {
+    if (!sseStorageKey) {
+      setSseContextId(undefined);
+      return;
+    }
+
+    setSseContextId(sessionStorage.getItem(sseStorageKey) ?? undefined);
+  }, [sseStorageKey]);
 
   return (
     <>

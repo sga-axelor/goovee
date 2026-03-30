@@ -17,13 +17,17 @@ import {manager} from '@/tenant';
 import {scale} from '@/utils';
 import {DEFAULT_CURRENCY_SCALE} from '@/constants';
 import {cancelInvalidPendingBankTransfers} from '@/lib/core/payment/stripe/actions';
-import {notifyPaymentUpdate} from '@/lib/core/payment/sse';
+import {
+  notifyPaymentUpdate,
+  PAYMENT_UPDATE_STATUS,
+} from '@/lib/core/payment/sse';
 
 // --- LOCAL IMPORTS ---- //
 import {updateInvoice} from '@/subapps/invoices/common/service';
 
 export const STRIPE_EVENTS = {
   PAYMENT_INTENT_SUCCEEDED: 'payment_intent.succeeded',
+  PAYMENT_INTENT_PARTIALLY_FUNDED: 'payment_intent.partially_funded',
 } as const;
 
 export type StripeEventType =
@@ -226,6 +230,63 @@ export async function POST(req: Request) {
 
           default:
             console.warn('Unknown payment source:', source);
+        }
+
+        break;
+      }
+
+      case STRIPE_EVENTS.PAYMENT_INTENT_PARTIALLY_FUNDED: {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+        const contextId = paymentIntent.metadata.context_id;
+        const tenantId = paymentIntent.metadata.tenant_id;
+
+        if (!contextId || !tenantId) {
+          console.error('[PARTIAL_PAYMENT] Missing payment metadata', {
+            eventId: event.id,
+            metadata: paymentIntent.metadata,
+          });
+          break;
+        }
+
+        const paymentContext = await findPaymentContext({
+          id: contextId,
+          tenantId,
+          mode: PaymentOption.stripe,
+          ignoreExpiration: true,
+        });
+
+        if (!paymentContext) {
+          console.error('[PARTIAL_PAYMENT] Payment context not found', {
+            eventId: event.id,
+            contextId,
+          });
+
+          return new NextResponse('Payment context not found', {status: 500});
+        }
+
+        const source = paymentContext.data?.source;
+        const sourceId = paymentContext.data?.id;
+
+        if (!source || !sourceId) {
+          console.error('[PARTIAL_PAYMENT] Missing source in payment context', {
+            contextId,
+          });
+          break;
+        }
+
+        try {
+          notifyPaymentUpdate(
+            source,
+            sourceId,
+            paymentContext.id,
+            PAYMENT_UPDATE_STATUS.PARTIAL,
+          );
+        } catch (error) {
+          console.error('[PARTIAL_PAYMENT] Failed to send SSE notification', {
+            contextId: paymentContext.id,
+            error,
+          });
         }
 
         break;

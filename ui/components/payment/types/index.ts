@@ -4,7 +4,7 @@ import {BANK_TRANSFER_STATUS} from '@/lib/core/payment/stripe/constants';
 import {BankAccountType} from '@/lib/core/payment/stripe/types';
 import {ErrorResponse, SuccessResponse} from '@/types/action';
 import {PaymentSource} from '@/lib/core/payment/common/type';
-import {PaymentUpdateStatus} from '@/lib/core/payment/sse';
+import {PaymentUpdateStatus} from '@/lib/core/payment/sse/constants';
 
 export type PaymentSSEProps = {
   source: PaymentSource;
@@ -66,11 +66,14 @@ export type BankTransferIntentResult =
       amount: number;
       currency: string;
       reference: string;
+      formattedAmount: string;
       bankDetails: NormalizedBankDetails;
     });
 
 export type BankTransferDetailsType = {
   id: string;
+  totalAmount: number;
+  formattedTotalAmount: string;
   amount: number;
   currency: string;
   reference: string;
