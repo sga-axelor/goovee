@@ -10,7 +10,10 @@ import {PortalWorkspace} from '@/types';
 import {SUBAPP_CODES} from '@/constants';
 import {formatDate} from '@/lib/core/locale/formatters';
 import {useToast} from '@/ui/hooks';
-import {PaymentUpdateStatus} from '@/lib/core/payment/sse';
+import {
+  PaymentUpdateStatus,
+  PAYMENT_UPDATE_STATUS,
+} from '@/lib/core/payment/sse/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {Invoice, Total} from '@/subapps/invoices/common/ui/components';
@@ -40,12 +43,19 @@ export default function Content({
   const handlePaymentUpdate = useCallback(
     (status: PaymentUpdateStatus) => {
       router.refresh();
-      if (status === 'success') {
+      if (status === PAYMENT_UPDATE_STATUS.SUCCESS) {
         toast({
           title: i18n.t('Payment completed successfully'),
           variant: 'success',
         });
-      } else if (status === 'cancelled') {
+      } else if (status === PAYMENT_UPDATE_STATUS.PARTIAL) {
+        toast({
+          title: i18n.t(
+            'Partial payment received. Waiting for remaining funds.',
+          ),
+          variant: 'success',
+        });
+      } else if (status === PAYMENT_UPDATE_STATUS.CANCELLED) {
         toast({
           title: i18n.t('Payment cancelled.'),
           variant: 'destructive',

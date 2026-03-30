@@ -4,7 +4,10 @@ import {useEffect, useLayoutEffect, useRef} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {PaymentSource} from '@/lib/core/payment/common/type';
-import {PaymentUpdateStatus} from '@/lib/core/payment/sse';
+import {
+  PaymentUpdateStatus,
+  PAYMENT_UPDATE_STATUS,
+} from '@/lib/core/payment/sse/constants';
 
 interface UsePaymentSSEOptions {
   source: PaymentSource | undefined;
@@ -32,8 +35,11 @@ export function usePaymentSSE({
 
     es.addEventListener('payment', (event: MessageEvent) => {
       const status: PaymentUpdateStatus =
-        JSON.parse(event.data)?.status ?? 'success';
-      es.close();
+        JSON.parse(event.data)?.status ?? PAYMENT_UPDATE_STATUS.SUCCESS;
+      // For partial payments, keep the connection open — more funds may arrive
+      if (status !== PAYMENT_UPDATE_STATUS.PARTIAL) {
+        es.close();
+      }
       onUpdateRef.current(status);
     });
 

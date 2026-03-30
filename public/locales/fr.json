@@ -443,6 +443,7 @@
   "Record not found": "Enregistrement non trouvé",
   "Reference": "Référence",
   "Record not found: The requested data does not exist.": "Enregistrement non trouvé : Les données demandées n’existent pas.",
+  "Remaining": "Restant",
   "Register": "S’inscrire",
   "Register other people to this event": "Inscrire d’autres personnes à cet événement",
   "Registered successfully": "Inscription réussie",
@@ -849,7 +850,6 @@
   "Payment link expired. Please try again.": "Le lien de paiement a expiré. Veuillez réessayer.",
   "Error processing payment. Try again.": "Erreur lors du traitement du paiement. Veuillez réessayer.",
   "Unexpected error occurred. Please try again.": "Une erreur inattendue s'est produite. Veuillez réessayer.",
-  "Payment completed successfully": "Paiement effectué avec succès",
   "Payment cancelled.": "Paiement annulé.",
   "Payment refused. Please try again.": "Paiement refusé. Veuillez réessayer.",
   "Invoice payment completed successfully.": "Paiement de la facture effectué avec succès.",
@@ -859,5 +859,12 @@
   "Up2Pay only supports EUR. Your invoice currency is not supported.": "Up2Pay accepte uniquement les euros. La devise de votre facture n'est pas prise en charge.",
   "You are signed in as {0}. Sign out to access via token.": "Vous êtes connecté en tant que {0}. Déconnectez-vous pour accéder via le token.",
   "Sign out": "Se déconnecter",
-  "Token is either invalid or expired.": "Le token est invalide ou expiré."
+  "Token is either invalid or expired.": "Le token est invalide ou expiré.",
+  "Confirm Bank Transfer": "Confirmer le virement bancaire",
+  "Bank transfers may immediately use your existing Stripe balance.": "Les virements bancaires peuvent utiliser immédiatement votre solde Stripe existant.",
+  "If you already have sufficient balance, this payment will be completed instantly and funds will be deducted.": "Si votre solde est suffisant, ce paiement sera effectué instantanément et les fonds seront débités.",
+  "Bank details are currently unavailable": "Les coordonnées bancaires ne sont pas disponibles pour le moment.",
+  "We could not load the bank transfer details at this time.": "Nous n'avons pas pu charger les détails du virement bancaire pour le moment.",
+  "Please try again later or contact support if the issue persists.": "Veuillez réessayer plus tard ou contacter l'assistance si le problème persiste.",
+  "Payment completed successfully": "Paiement effectué avec succès"
 }
