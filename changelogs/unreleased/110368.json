@@ -1,5 +1,0 @@
-{
-  "title": "Add empty hubpisp directory in certs",
-  "type": "change",
-  "scope": ["core"]
-}
