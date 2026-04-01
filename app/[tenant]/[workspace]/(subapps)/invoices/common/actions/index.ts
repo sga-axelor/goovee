@@ -29,7 +29,7 @@ import {
 import {findPaymentContext, markPaymentAsProcessed} from '@/payment/common/orm';
 import {PartnerKey, PaymentOption} from '@/types';
 import {getWhereClauseForEntity} from '@/utils/filters';
-import {isPaymentOptionAvailable} from '@/utils/payment';
+import {getPaymentModeId, isPaymentOptionAvailable} from '@/utils/payment';
 import {formatNumber} from '@/lib/core/locale/server/formatters';
 import {PAYMENT_SOURCE, PAYMENT_TYPE} from '@/lib/core/payment/common/type';
 import {
@@ -114,7 +114,10 @@ export async function paypalCreateOrder({
       tenantId,
       amount: $amount,
       currency: currencyCode,
-      context: invoice,
+      context: {
+        ...invoice,
+        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.paypal),
+      },
       email: payerEmail,
     });
     return {success: true, order: response?.result};
@@ -295,6 +298,7 @@ export async function paypalCaptureOrder({
       tenantId,
       amount: purchaseAmount,
       invoiceId: $invoice.id,
+      paymentModeId: context?.data?.paymentModeId,
     });
     if (updatedInvoice.error) {
       return {
@@ -380,6 +384,7 @@ export async function createStripeCheckoutSession({
         id: invoice.id,
         paymentType: PAYMENT_TYPE.CARD,
         source: PAYMENT_SOURCE.INVOICES,
+        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.stripe),
       },
       name: await t('Invoice Checkout'),
       amount: Number($amount),
@@ -556,6 +561,7 @@ export async function validateStripePayment({
       tenantId,
       amount: purchaseAmount,
       invoiceId: $invoice.id,
+      paymentModeId: context?.data?.paymentModeId,
     });
 
     if (result.error) {
@@ -687,6 +693,7 @@ export async function createStripeBankTransferIntent({
         id: invoice.id,
         paymentType: PAYMENT_TYPE.BANK_TRANSFER,
         source: PAYMENT_SOURCE.INVOICES,
+        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.stripe),
       },
       amount: Number($amount),
       currency: currencyCode,
@@ -929,7 +936,10 @@ export async function payboxCreateOrder({
       amount: $amount,
       currency: currencyCode,
       email: payerEmail,
-      context: invoice,
+      context: {
+        ...invoice,
+        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.paybox),
+      },
       url: {
         success: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_response=true&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}${token ? `&token=${token}` : ''}`,
         failure: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_error=true${token ? `&token=${token}` : ''}`,
@@ -1097,6 +1107,7 @@ export async function validatePayboxPayment({
       tenantId,
       amount: purchaseAmount,
       invoiceId: $invoice.id,
+      paymentModeId: context?.data?.paymentModeId,
     });
 
     if (result.error) {
@@ -1207,6 +1218,7 @@ export async function up2payCreateOrder({
         id: invoice.id,
         source: PAYMENT_SOURCE.INVOICES,
         amount: Number($amount),
+        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.up2pay),
       },
       billingInfo,
       url: {
@@ -1335,6 +1347,7 @@ export async function initiatePispPayment({
         source: PAYMENT_SOURCE.INVOICES,
         amount: Number($amount),
         localInstrument: localInstrument ?? HUBPISP_LOCAL_INSTRUMENT.SCT,
+        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.hubpisp),
       },
       currency: currencyCode,
       remittanceInformation: `Invoice-${invoice.id}`,

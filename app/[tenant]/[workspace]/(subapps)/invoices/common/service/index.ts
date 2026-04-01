@@ -9,10 +9,12 @@ export async function updateInvoice({
   tenantId,
   amount,
   invoiceId,
+  paymentModeId,
 }: {
   tenantId: Tenant['id'];
   amount: string | number;
   invoiceId: ID;
+  paymentModeId?: number;
 }) {
   if (!amount || !invoiceId) {
     return {
@@ -40,6 +42,7 @@ export async function updateInvoice({
   const payload = {
     invoiceId: invoiceId,
     paidAmount: amount,
+    ...(paymentModeId ? {paymentModeId} : {}),
   };
 
   try {

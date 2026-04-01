@@ -92,6 +92,7 @@ export async function processAcscPayment({
         tenantId,
         amount: paidAmount,
         invoiceId: entityId,
+        paymentModeId: paymentContext.data?.paymentModeId,
       });
 
       if (result?.error) {

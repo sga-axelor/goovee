@@ -39,6 +39,9 @@ export const portalAppConfigFields: SelectOptions<AOSPortalAppConfig> = {
     select: {
       name: true,
       typeSelect: true,
+      paymentMode: {
+        id: true,
+      },
     },
   },
   ticketStatusChangeMethod: true,

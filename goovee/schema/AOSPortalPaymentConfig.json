@@ -12,6 +12,11 @@
       "name": "typeSelect"
     },
     {
+      "type": "ManyToOne",
+      "name": "paymentMode",
+      "target": "AOSPaymentMode"
+    },
+    {
       "type": "ManyToMany",
       "name": "portalAppConfigSet",
       "target": "AOSPortalAppConfig"
