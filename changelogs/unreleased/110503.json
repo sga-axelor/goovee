@@ -1,6 +1,0 @@
-{
-  "title": "Simplify Up2Pay payment button label",
-  "type": "fix",
-  "description": "Replaced the styled inline markup in the Up2Pay button with a plain translation key, and renamed the 'Pay using' locale key to 'Pay using Up2Pay'",
-  "scope": ["core"]
-}
