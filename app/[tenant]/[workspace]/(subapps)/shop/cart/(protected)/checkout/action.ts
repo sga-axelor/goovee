@@ -15,7 +15,7 @@ import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
 import {manager, type Tenant} from '@/tenant';
 import {PaymentOption, PortalWorkspace} from '@/types';
 import {computeTotal} from '@/utils/cart';
-import {calculateAdvanceAmount} from '@/utils/payment';
+import {calculateAdvanceAmount, getPaymentModeId} from '@/utils/payment';
 
 // ---- LOCAL IMPORTS ---- //
 import {findGooveeUserByEmail} from '@/orm/partner';
@@ -54,10 +54,12 @@ async function createOrder({
   cart,
   workspaceURL,
   tenantId,
+  paymentModeId,
 }: {
   cart: any;
   workspaceURL: string;
   tenantId: Tenant['id'];
+  paymentModeId: number;
 }) {
   if (!cart?.items?.length) {
     return {
@@ -180,6 +182,7 @@ async function createOrder({
       invocingPartnerAddressId: invoicingAddress,
       deliveryPartnerAddressId: deliveryAddress,
       paidAmount,
+      paymentModeId,
     };
 
     const res = await axios.post(ws, payload, {
@@ -334,7 +337,25 @@ export async function paypalCaptureOrder({
       };
     }
 
-    const res = await createOrder({cart, workspaceURL, tenantId});
+    const paymentModeId = getPaymentModeId(
+      workspace?.config?.paymentOptionSet,
+      PaymentOption.paypal,
+    );
+    if (!paymentModeId) {
+      return {
+        error: true,
+        message: await t(
+          'Payment mode is not available for the selected payment.',
+        ),
+      };
+    }
+
+    const res = await createOrder({
+      cart,
+      workspaceURL,
+      tenantId,
+      paymentModeId,
+    });
     await markPaymentAsProcessed({
       contextId: context.id,
       version: context.version,
@@ -766,7 +787,20 @@ export async function validateStripePayment({
     };
   }
 
-  const res = await createOrder({cart, workspaceURL, tenantId});
+  const paymentModeId = getPaymentModeId(
+    workspace?.config?.paymentOptionSet,
+    PaymentOption.stripe,
+  );
+  if (!paymentModeId) {
+    return {
+      error: true,
+      message: await t(
+        'Payment mode is not available for the selected payment.',
+      ),
+    };
+  }
+
+  const res = await createOrder({cart, workspaceURL, tenantId, paymentModeId});
   await markPaymentAsProcessed({
     contextId: context.id,
     version: context.version,
@@ -1048,7 +1082,20 @@ export async function validatePayboxPayment({
     };
   }
 
-  const res = await createOrder({cart, workspaceURL, tenantId});
+  const paymentModeId = getPaymentModeId(
+    workspace?.config?.paymentOptionSet,
+    PaymentOption.paybox,
+  );
+  if (!paymentModeId) {
+    return {
+      error: true,
+      message: await t(
+        'Payment mode is not available for the selected payment.',
+      ),
+    };
+  }
+
+  const res = await createOrder({cart, workspaceURL, tenantId, paymentModeId});
   await markPaymentAsProcessed({
     contextId: context.id,
     version: context.version,
