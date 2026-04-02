@@ -5,6 +5,13 @@ export const isPaymentOptionAvailable = (
   type: PaymentOption,
 ) => paymentOptions.some((option: any) => option?.typeSelect === type);
 
+export const getPaymentModeId = (
+  paymentOptions: any[] = [],
+  type: PaymentOption,
+): number | undefined =>
+  paymentOptions?.find((option: any) => option?.typeSelect === type)
+    ?.paymentMode?.id;
+
 export function calculateAdvanceAmount({
   amount,
   percentage,

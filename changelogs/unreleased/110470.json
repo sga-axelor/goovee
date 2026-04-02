@@ -1,0 +1,5 @@
+{
+  "title": "Support payment mode for payments",
+  "type": "feature",
+  "scope": ["core", "invoices", "events", "orders"]
+}

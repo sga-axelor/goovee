@@ -29,6 +29,7 @@ export type PaymentContextData = {
   paymentType?: PaymentType;
   paymentIntent?: string;
   source?: PaymentSource;
+  paymentModeId?: number;
 };
 
 export type PaymentContext = {

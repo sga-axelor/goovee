@@ -14,11 +14,13 @@ export async function createInvoice({
   tenantId,
   registrationId,
   currencyCode,
+  paymentModeId,
 }: {
   workspace: PortalWorkspace;
   tenantId: Tenant['id'];
   registrationId: ID;
   currencyCode: string;
+  paymentModeId?: number;
 }): ActionResponse<any> {
   const tenant = await manager.getTenant(tenantId);
   const aos = tenant?.config?.aos;
@@ -39,6 +41,7 @@ export async function createInvoice({
       currencyCode,
       partnerWorkspaceId,
       registrationId,
+      paymentModeId,
     };
 
     const {data} = await axios.post(ws, payload, {

@@ -176,6 +176,7 @@ export async function POST(req: Request) {
               tenantId,
               amount: paidAmount,
               invoiceId: sourceId,
+              paymentModeId: paymentContext.data?.paymentModeId,
             });
 
             if (updateResult?.error) {
