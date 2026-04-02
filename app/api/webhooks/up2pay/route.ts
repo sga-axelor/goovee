@@ -177,6 +177,7 @@ export async function GET(request: Request) {
         tenantId,
         amount: paidAmount,
         invoiceId: entityId,
+        paymentModeId: paymentContext.data?.paymentModeId,
       });
 
       if (result?.error) {
