@@ -21,6 +21,7 @@ import {ActionResponse} from '@/types/action';
 import {clone, scale} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
 import {markPaymentAsProcessed} from '@/payment/common/orm';
+import {getPaymentModeId} from '@/utils/payment';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -196,11 +197,21 @@ export async function register({
     });
   }
   if (paidAmount > 0) {
+    const paymentModeId = getPaymentModeId(
+      workspace?.config?.paymentOptionSet,
+      payment!.mode,
+    );
+    if (!paymentModeId) {
+      return error(
+        await t('Payment mode is not available for the selected payment.'),
+      );
+    }
     createInvoice({
       workspace,
       tenantId,
       registrationId: registration.id,
       currencyCode: $event.currency?.code,
+      paymentModeId,
     }).then(res => {
       if (res.error) {
         console.error('Invoice creation failed:', res.message);

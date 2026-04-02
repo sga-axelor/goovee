@@ -103,6 +103,16 @@ export async function paypalCreateOrder({
     };
   }
 
+  const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.paypal);
+  if (!paymentModeId) {
+    return {
+      error: true,
+      message: await t(
+        'Payment mode is not available for the selected payment.',
+      ),
+    };
+  }
+
   const payerEmail = token
     ? $invoice?.partner?.emailAddress?.address
     : user!.email;
@@ -116,7 +126,7 @@ export async function paypalCreateOrder({
       currency: currencyCode,
       context: {
         ...invoice,
-        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.paypal),
+        paymentModeId,
       },
       email: payerEmail,
     });
@@ -376,6 +386,16 @@ export async function createStripeCheckoutSession({
 
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
 
+  const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.stripe);
+  if (!paymentModeId) {
+    return {
+      error: true,
+      message: await t(
+        'Payment mode is not available for the selected payment.',
+      ),
+    };
+  }
+
   try {
     const session = await createStripeOrder({
       tenantId,
@@ -384,7 +404,7 @@ export async function createStripeCheckoutSession({
         id: invoice.id,
         paymentType: PAYMENT_TYPE.CARD,
         source: PAYMENT_SOURCE.INVOICES,
-        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.stripe),
+        paymentModeId,
       },
       name: await t('Invoice Checkout'),
       amount: Number($amount),
@@ -685,6 +705,16 @@ export async function createStripeBankTransferIntent({
     type: 'DECIMAL',
   });
 
+  const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.stripe);
+  if (!paymentModeId) {
+    return {
+      error: true,
+      message: await t(
+        'Payment mode is not available for the selected payment.',
+      ),
+    };
+  }
+
   try {
     const result = await createStripePaymentIntent({
       tenantId,
@@ -693,7 +723,7 @@ export async function createStripeBankTransferIntent({
         id: invoice.id,
         paymentType: PAYMENT_TYPE.BANK_TRANSFER,
         source: PAYMENT_SOURCE.INVOICES,
-        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.stripe),
+        paymentModeId,
       },
       amount: Number($amount),
       currency: currencyCode,
@@ -930,6 +960,17 @@ export async function payboxCreateOrder({
     : user!.email;
 
   const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
+
+  const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.paybox);
+  if (!paymentModeId) {
+    return {
+      error: true,
+      message: await t(
+        'Payment mode is not available for the selected payment.',
+      ),
+    };
+  }
+
   try {
     const response = await createPayboxOrder({
       tenantId,
@@ -938,7 +979,7 @@ export async function payboxCreateOrder({
       email: payerEmail,
       context: {
         ...invoice,
-        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.paybox),
+        paymentModeId,
       },
       url: {
         success: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_response=true&type=${isPartialPayment ? INVOICE_PAYMENT_OPTIONS.PARTIAL : INVOICE_PAYMENT_OPTIONS.TOTAL}${token ? `&token=${token}` : ''}`,
@@ -1206,6 +1247,16 @@ export async function up2payCreateOrder({
     countryCode: $invoice?.address?.country?.alpha2Code || '',
   };
 
+  const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.up2pay);
+  if (!paymentModeId) {
+    return {
+      error: true,
+      message: await t(
+        'Payment mode is not available for the selected payment.',
+      ),
+    };
+  }
+
   try {
     const response = await createUp2payOrder({
       tenantId,
@@ -1218,7 +1269,7 @@ export async function up2payCreateOrder({
         id: invoice.id,
         source: PAYMENT_SOURCE.INVOICES,
         amount: Number($amount),
-        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.up2pay),
+        paymentModeId,
       },
       billingInfo,
       url: {
@@ -1330,6 +1381,16 @@ export async function initiatePispPayment({
     ? $invoice?.partner?.emailAddress?.address
     : user?.email;
 
+  const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.hubpisp);
+  if (!paymentModeId) {
+    return {
+      error: true,
+      message: await t(
+        'Payment mode is not available for the selected payment.',
+      ),
+    };
+  }
+
   try {
     const psuInfo = {
       name: [$invoice?.partner?.firstName, $invoice?.partner?.name]
@@ -1347,7 +1408,7 @@ export async function initiatePispPayment({
         source: PAYMENT_SOURCE.INVOICES,
         amount: Number($amount),
         localInstrument: localInstrument ?? HUBPISP_LOCAL_INSTRUMENT.SCT,
-        paymentModeId: getPaymentModeId(paymentOptions, PaymentOption.hubpisp),
+        paymentModeId,
       },
       currency: currencyCode,
       remittanceInformation: `Invoice-${invoice.id}`,
