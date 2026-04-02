@@ -139,18 +139,7 @@ export function Up2pay({
       style={{
         background: 'linear-gradient(135deg, #6DC040 0%, #00594C 65%)',
       }}>
-      {i18n.t('Pay using')}
-      <span className="flex items-baseline leading-none">
-        <span style={{color: '#99cc00', fontWeight: 800, fontSize: '1.1rem'}}>
-          up
-        </span>
-        <span style={{color: '#179496', fontWeight: 900, fontSize: '1.35rem'}}>
-          2
-        </span>
-        <span style={{color: '#179496', fontWeight: 800, fontSize: '1.1rem'}}>
-          pay
-        </span>
-      </span>
+      {i18n.t('Pay using Up2Pay')}
     </Button>
   );
 }
