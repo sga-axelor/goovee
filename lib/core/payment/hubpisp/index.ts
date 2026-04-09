@@ -98,6 +98,10 @@ export async function createPaymentLink(
 
   const bodyString = JSON.stringify(body);
   const digest = generateDigest(bodyString);
+  console.log('[HUBPISP][CREATE_LINK] Digest debug', {
+    bodyPreview: JSON.stringify(body, null, 2),
+    digest,
+  });
   const date = getDateHeader();
   const xRequestId = generateRequestId();
   const requestTarget = buildRequestTarget('post', PAYMENT_LINK_PATH);
