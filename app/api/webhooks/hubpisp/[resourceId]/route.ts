@@ -27,14 +27,48 @@ export async function POST(
 ) {
   const {resourceId} = await params;
 
+  // BPCE fires the webhook before the resource is queryable on their end — retry with backoff.
+  const RETRY_DELAYS = [1000, 2000, 4000];
+  const fetchWithRetry = async (): Promise<PaymentLinkStatusResult> => {
+    let lastError: Error | undefined;
+    for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+      if (attempt > 0) {
+        const delay = RETRY_DELAYS[attempt - 1];
+        console.log('[HUBPISP][WEBHOOK] Retrying fetchPaymentLinkStatus', {
+          resourceId,
+          attempt,
+          delay,
+        });
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+      try {
+        return await fetchPaymentLinkStatus(resourceId);
+      } catch (err) {
+        lastError = err as Error;
+        console.warn(
+          '[HUBPISP][WEBHOOK] fetchPaymentLinkStatus attempt failed',
+          {
+            resourceId,
+            attempt,
+            error: lastError.message,
+          },
+        );
+      }
+    }
+    throw lastError;
+  };
+
   let linkData: PaymentLinkStatusResult;
   try {
-    linkData = await fetchPaymentLinkStatus(resourceId);
+    linkData = await fetchWithRetry();
   } catch (err) {
-    console.error('[HUBPISP][WEBHOOK] Failed to fetch payment link', {
-      resourceId,
-      error: (err as Error).message,
-    });
+    console.error(
+      '[HUBPISP][WEBHOOK] Failed to fetch payment link after retries',
+      {
+        resourceId,
+        error: (err as Error).message,
+      },
+    );
     return new NextResponse('Internal Server Error', {status: 500});
   }
 

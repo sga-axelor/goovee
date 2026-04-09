@@ -65,7 +65,11 @@ export async function createPaymentLink(
     throw new Error('HUB PISP is not configured');
   }
 
-  console.log('[HUBPISP][CREATE_LINK] Env config OK', {baseUrl, keyId, bicFi: bicFi ?? 'not set'});
+  console.log('[HUBPISP][CREATE_LINK] Env config OK', {
+    baseUrl,
+    keyId,
+    bicFi: bicFi ?? 'not set',
+  });
 
   if (!currency || currency !== 'EUR') {
     throw new Error(
@@ -79,7 +83,10 @@ export async function createPaymentLink(
 
   const requestedExecutionDate =
     rawExecutionDate ?? buildParisISOString(Date.now() + 15_000);
-  console.log('[HUBPISP][CREATE_LINK] requestedExecutionDate', requestedExecutionDate);
+  console.log(
+    '[HUBPISP][CREATE_LINK] requestedExecutionDate',
+    requestedExecutionDate,
+  );
 
   const body = {
     amount,
@@ -118,7 +125,12 @@ export async function createPaymentLink(
   const date = getDateHeader();
   const xRequestId = generateRequestId();
   const requestTarget = buildRequestTarget('post', PAYMENT_LINK_PATH);
-  console.log('[HUBPISP][CREATE_LINK] Signing params', {digest, date, xRequestId, requestTarget});
+  console.log('[HUBPISP][CREATE_LINK] Signing params', {
+    digest,
+    date,
+    xRequestId,
+    requestTarget,
+  });
 
   const headers = buildPispHeaders({
     token,
@@ -138,7 +150,10 @@ export async function createPaymentLink(
     headers: {'Content-Type': 'application/json', ...headers},
     body: bodyString,
   });
-  console.log('[HUBPISP][CREATE_LINK] Response received', {status: response.status, ok: response.ok});
+  console.log('[HUBPISP][CREATE_LINK] Response received', {
+    status: response.status,
+    ok: response.ok,
+  });
 
   if (!response.ok) {
     const errorBody = await response.text();
