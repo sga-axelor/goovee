@@ -25,6 +25,16 @@ import type {
 export async function createPaymentLink(
   params: CreatePaymentLinkParams,
 ): Promise<CreatePaymentLinkResult> {
+  console.log('[HUBPISP][CREATE_LINK] Called', {
+    currency: params.currency,
+    amount: params.amount,
+    localInstrument: params.localInstrument,
+    endToEnd: params.endToEnd,
+    remittanceInformation: params.remittanceInformation,
+    expireIn: params.expireIn,
+    requestedExecutionDate: params.requestedExecutionDate,
+  });
+
   const {
     currency,
     amount,
@@ -55,16 +65,21 @@ export async function createPaymentLink(
     throw new Error('HUB PISP is not configured');
   }
 
+  console.log('[HUBPISP][CREATE_LINK] Env config OK', {baseUrl, keyId, bicFi: bicFi ?? 'not set'});
+
   if (!currency || currency !== 'EUR') {
     throw new Error(
       `HUB PISP only supports EUR payments (got: ${currency ?? 'none'})`,
     );
   }
 
+  console.log('[HUBPISP][CREATE_LINK] Fetching access token');
   const token = await getPispAccessToken();
+  console.log('[HUBPISP][CREATE_LINK] Access token obtained');
 
   const requestedExecutionDate =
     rawExecutionDate ?? buildParisISOString(Date.now() + 15_000);
+  console.log('[HUBPISP][CREATE_LINK] requestedExecutionDate', requestedExecutionDate);
 
   const body = {
     amount,
@@ -97,14 +112,13 @@ export async function createPaymentLink(
   };
 
   const bodyString = JSON.stringify(body);
+  console.log('[HUBPISP][CREATE_LINK] Body built', JSON.parse(bodyString));
+
   const digest = generateDigest(bodyString);
-  console.log('[HUBPISP][CREATE_LINK] Digest debug', {
-    bodyPreview: JSON.stringify(body, null, 2),
-    digest,
-  });
   const date = getDateHeader();
   const xRequestId = generateRequestId();
   const requestTarget = buildRequestTarget('post', PAYMENT_LINK_PATH);
+  console.log('[HUBPISP][CREATE_LINK] Signing params', {digest, date, xRequestId, requestTarget});
 
   const headers = buildPispHeaders({
     token,
@@ -114,12 +128,17 @@ export async function createPaymentLink(
     date,
     xRequestId,
   });
+  console.log('[HUBPISP][CREATE_LINK] Headers built', headers);
 
-  const response = await pispFetch(`${baseUrl}${PAYMENT_LINK_PATH}`, {
+  const url = `${baseUrl}${PAYMENT_LINK_PATH}`;
+  console.log('[HUBPISP][CREATE_LINK] Sending request', {url, method: 'POST'});
+
+  const response = await pispFetch(url, {
     method: 'POST',
     headers: {'Content-Type': 'application/json', ...headers},
     body: bodyString,
   });
+  console.log('[HUBPISP][CREATE_LINK] Response received', {status: response.status, ok: response.ok});
 
   if (!response.ok) {
     const errorBody = await response.text();
@@ -133,11 +152,15 @@ export async function createPaymentLink(
   }
 
   const data = await response.json();
+  console.log('[HUBPISP][CREATE_LINK] Response data', data);
 
-  return {
+  const result = {
     resourceId: data.resourceId,
     consentHref: data._links?.consent?.href,
   };
+  console.log('[HUBPISP][CREATE_LINK] Returning', result);
+
+  return result;
 }
 
 export async function fetchPaymentLinkStatus(

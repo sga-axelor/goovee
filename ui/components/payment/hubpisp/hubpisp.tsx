@@ -94,6 +94,7 @@ export function HubPISP({
         uri: pathname,
         localInstrument,
       });
+      console.log('result >>>>', result);
 
       if (result.error) {
         toast({
