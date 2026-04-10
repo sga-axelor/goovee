@@ -4,7 +4,7 @@ module.exports = {
   bracketSpacing: false,
   singleQuote: true,
   trailingComma: 'all',
-  plugins: ['prettier-plugin-embed', 'prettier-plugin-sql'],
+  plugins: ['prettier-plugin-embed', 'prettier-plugin-sql', '@prettier/plugin-xml'],
   embeddedSqlTags: ['sql'],
   language: 'postgresql',
   keywordCase: 'upper',
