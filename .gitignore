@@ -46,3 +46,5 @@ public/sw*
 
 # generated css for templates
 app/\[tenant]/\[workspace]/\(subapps)/website/common/assets/css
+
+.prettier-cache

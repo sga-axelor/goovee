@@ -8,7 +8,7 @@
     "build": "next build --no-mangling && serwist build",
     "start": "next start",
     "lint": "eslint .",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss,html}\"",
+    "format": "prettier --write --cache \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "generate": "goovee generate",
     "website:common:dir": "app/[tenant]/[workspace]/(subapps)/website/common/",
