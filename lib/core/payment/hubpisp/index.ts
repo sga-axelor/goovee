@@ -119,17 +119,18 @@ export async function createPaymentLink(
   };
 
   const bodyString = JSON.stringify(body);
-  console.log('[HUBPISP][CREATE_LINK] Body built', JSON.parse(bodyString));
 
   const digest = generateDigest(bodyString);
+  const verifyDigest = generateDigest(bodyString);
   const date = getDateHeader();
   const xRequestId = generateRequestId();
   const requestTarget = buildRequestTarget('post', PAYMENT_LINK_PATH);
-  console.log('[HUBPISP][CREATE_LINK] Signing params', {
+  console.log('[HUBPISP][CREATE_LINK] Digest verification', {
+    bodyLength: bodyString.length,
+    bodyPreview: bodyString.slice(0, 200),
     digest,
-    date,
-    xRequestId,
-    requestTarget,
+    verifyDigest,
+    digestMatch: digest === verifyDigest,
   });
 
   const headers = buildPispHeaders({
