@@ -108,7 +108,7 @@
     "plyr-react": "^5.3.0",
     "pnpm": "^9.12.3",
     "prettier": "^3.3.3",
-    "prettier-plugin-embed": "^0.4.15",
+    "prettier-plugin-embed": "^0.5.1",
     "prettier-plugin-sql": "^0.18.1",
     "progressbar.js": "^1.1.1",
     "react": "19.2.3",

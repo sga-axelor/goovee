@@ -173,11 +173,11 @@ async function getPopularCommentsBySorting({
             AND mail_message.related_model = $4
             AND mail_message.archived IS NOT TRUE
             AND mail_message.related_id = $1 ${showRepliesInMainThread
-        ? ''
-        : 'AND mail_message.parent_mail_message IS NULL'} ${exclude &&
-      exclude.length
-        ? `AND mail_message.id NOT IN (${exclude.map((_, i) => '$' + (i + 1 + params.length)).join(',')})`
-        : ''}
+              ? ''
+              : 'AND mail_message.parent_mail_message IS NULL'} ${exclude &&
+            exclude.length
+              ? `AND mail_message.id NOT IN (${exclude.map((_, i) => '$' + (i + 1 + params.length)).join(',')})`
+              : ''}
         ),
         childCommentsData AS (
           SELECT
