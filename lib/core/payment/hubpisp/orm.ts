@@ -68,7 +68,7 @@ export async function findPendingHubPispPayments({
     if (!resourceId || !amount) continue;
 
     try {
-      const linkStatus = await fetchPaymentLinkStatus(resourceId);
+      const linkStatus = await fetchPaymentLinkStatus(resourceId, 'ORM');
       const consentStatus = linkStatus?.consentStatus;
 
       if (consentStatus === HUBPISP_CONSENT_STATUS.EXPIRED) {

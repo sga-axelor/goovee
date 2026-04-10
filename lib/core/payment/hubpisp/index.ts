@@ -181,12 +181,16 @@ export async function createPaymentLink(
 
 export async function fetchPaymentLinkStatus(
   resourceId: string,
+  caller?: string,
 ): Promise<PaymentLinkStatusResult> {
+  const tag = caller ? `[${caller}]` : '';
+  console.log(`[HUBPISP][LINK_STATUS]${tag} Fetching`, {resourceId});
+
   const baseUrl = process.env.HUBPISP_API_URL;
   const keyId = process.env.HUBPISP_CERT_FINGERPRINT;
 
   if (!(baseUrl && keyId)) {
-    console.error('[HUBPISP][LINK_STATUS] Missing env config', {
+    console.error(`[HUBPISP][LINK_STATUS]${tag} Missing env config`, {
       hasBaseUrl: !!baseUrl,
       hasKeyId: !!keyId,
     });
@@ -218,7 +222,7 @@ export async function fetchPaymentLinkStatus(
 
   if (!response.ok) {
     const errorBody = await response.text();
-    console.error('[HUBPISP][LINK_STATUS] Request failed', {
+    console.error(`[HUBPISP][LINK_STATUS]${tag} Request failed`, {
       resourceId,
       status: response.status,
       body: errorBody,
@@ -229,6 +233,10 @@ export async function fetchPaymentLinkStatus(
   }
 
   const data = await response.json();
+  console.log(`[HUBPISP][LINK_STATUS]${tag} Success`, {
+    resourceId,
+    consentStatus: (data as PaymentLinkStatusResult).consentStatus,
+  });
   return data as PaymentLinkStatusResult;
 }
 
@@ -238,8 +246,9 @@ export async function fetchPaymentLinkStatus(
  */
 export async function getPaymentLinkStatus(
   resourceId: string,
+  caller?: string,
 ): Promise<GetPaymentLinkStatusResult> {
-  const data = await fetchPaymentLinkStatus(resourceId);
+  const data = await fetchPaymentLinkStatus(resourceId, caller);
   const consentStatus = data.consentStatus;
 
   if (consentStatus === HUBPISP_CONSENT_STATUS.EXPIRED) {

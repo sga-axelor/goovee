@@ -87,7 +87,7 @@ export async function pollPaymentLinkStatus({
 
     let linkStatusResult: Awaited<ReturnType<typeof getPaymentLinkStatus>>;
     try {
-      linkStatusResult = await getPaymentLinkStatus(resourceId);
+      linkStatusResult = await getPaymentLinkStatus(resourceId, 'POLL_LINK');
     } catch (err) {
       console.error(
         '[HUBPISP][POLL_LINK] Failed to fetch payment link status',

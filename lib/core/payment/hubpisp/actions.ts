@@ -126,7 +126,7 @@ export async function findHubPispOrder({
     throw new Error('Payment context not found');
   }
 
-  const linkStatusResult = await getPaymentLinkStatus(resourceId);
+  const linkStatusResult = await getPaymentLinkStatus(resourceId, 'FIND_ORDER');
 
   if (linkStatusResult.consentStatus === HUBPISP_CONSENT_STATUS.EXPIRED) {
     console.warn('[HUBPISP][FIND_ORDER] Payment link expired', {resourceId});

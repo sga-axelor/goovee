@@ -28,7 +28,8 @@ export async function POST(
   const {resourceId} = await params;
 
   // BPCE fires the webhook before the resource is queryable on their end — retry with backoff.
-  const RETRY_DELAYS = [1000, 2000, 4000];
+  // The create-link round-trip can take ~10s, so the total budget must cover that window.
+  const RETRY_DELAYS = [2000, 4000, 8000, 15000];
   const fetchWithRetry = async (): Promise<PaymentLinkStatusResult> => {
     let lastError: Error | undefined;
     for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
@@ -42,7 +43,7 @@ export async function POST(
         await new Promise(resolve => setTimeout(resolve, delay));
       }
       try {
-        return await fetchPaymentLinkStatus(resourceId);
+        return await fetchPaymentLinkStatus(resourceId, 'WEBHOOK');
       } catch (err) {
         lastError = err as Error;
         console.warn(
@@ -60,7 +61,7 @@ export async function POST(
 
   let linkData: PaymentLinkStatusResult;
   try {
-    linkData = await fetchWithRetry();
+    linkData = await fetchPaymentLinkStatus(resourceId);
   } catch (err) {
     console.error(
       '[HUBPISP][WEBHOOK] Failed to fetch payment link after retries',
