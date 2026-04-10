@@ -4,22 +4,19 @@ import type {ID} from '@/types';
 import type {Maybe} from '@/types/util';
 
 export async function getMailRecipients({
-  userId,
   contacts,
   workspaceURL,
   tenantId,
 }: {
-  contacts: Set<Maybe<ID>>;
-  userId: ID;
+  contacts: Array<{id: Maybe<ID>}>;
   workspaceURL: string;
   tenantId: Tenant['id'];
 }): Promise<NotificationPartner[]> {
   const reciepients = await Promise.all(
-    Array.from(contacts).map(
+    contacts.map(
       contact =>
-        contact &&
-        String(userId) !== String(contact) && // Exclude the logged in user
-        findPartnerNotificationEmail({id: contact, workspaceURL, tenantId}),
+        contact.id &&
+        findPartnerNotificationEmail({id: contact.id, workspaceURL, tenantId}),
     ),
   );
 

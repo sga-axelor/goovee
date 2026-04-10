@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import {authClient} from '@/lib/auth-client';
-import {MdNotificationsNone} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -28,6 +27,7 @@ import Cart from '@/app/[tenant]/[workspace]/cart';
 import {cn} from '@/utils/css';
 import {SUBAPP_CODES, CHAT_TYPE} from '@/constants';
 import {useEnvironment} from '@/lib/core/environment';
+import {Notification} from './notification';
 
 function Logo({workspace}: {workspace: PortalWorkspace}) {
   const {workspaceURI} = useWorkspace();
@@ -50,16 +50,6 @@ function Logo({workspace}: {workspace: PortalWorkspace}) {
           />
         </div>
       </div>
-    </Link>
-  );
-}
-
-function Notification() {
-  const {workspaceURI} = useWorkspace();
-
-  return (
-    <Link href={`${workspaceURI}/notifications`} className="inline-flex">
-      <MdNotificationsNone className="cursor-pointer text-foreground text-2xl" />
     </Link>
   );
 }
@@ -146,7 +136,7 @@ export default function Header({
                     </Link>
                   );
                 })}
-            {false && <Notification />}
+            {user && <Notification />}
             {showCartIcon && <Cart />}
             <Account baseURL={workspaceURI} tenant={tenant} />
           </div>

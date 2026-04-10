@@ -13,7 +13,8 @@ import {
 } from '@/comments';
 import {addComment, findComments} from '@/comments/orm';
 import {ModelMap, SUBAPP_CODES} from '@/constants';
-import {t, tattr} from '@/locale/server';
+import {t, tattr, getTranslation} from '@/locale/server';
+import {DEFAULT_LOCALE} from '@/locale/contants';
 import {TENANT_HEADER} from '@/proxy';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PaymentOption, PortalWorkspace, User} from '@/types';
@@ -50,6 +51,8 @@ import {
   isAlreadyRegistered,
 } from '@/subapps/events/common/utils/registration';
 import {getPaymentInfo} from '@/subapps/events/common/utils/validate';
+import {notifyUser} from '@/pwa/utils';
+import {NotificationTag} from '@/pwa/tags';
 
 export async function getAllEvents({
   limit,
@@ -166,7 +169,7 @@ export async function register({
     return validationResult;
   }
 
-  const {workspace, participants} = validationResult.data;
+  const {workspace, participants, user, subapp} = validationResult.data;
 
   const {priceScale} = $event;
   const {total: expectedAmount} = getCalculatedTotalPrice(values, $event);
@@ -214,6 +217,36 @@ export async function register({
       }
     });
   }
+
+  let userParticipants = registration.participantList?.filter(
+    p => p.contact?.isActivatedOnPortal,
+  );
+
+  if (user) {
+    userParticipants = userParticipants?.filter(
+      p => p.contact?.emailAddress?.address !== user.email,
+    );
+  }
+
+  for (const participant of userParticipants ?? []) {
+    const contact = participant.contact!;
+    const tr = getTranslation.bind(null, {
+      locale: contact.localization?.code || DEFAULT_LOCALE,
+      tenant: tenantId,
+    });
+    notifyUser({
+      userId: contact.id,
+      tenantId,
+      workspaceURL,
+      payload: {
+        title: await tr('You have been registered for an event!'),
+        body: `${registration.event!.eventTitle}`,
+        url: `${workspaceURL}/${SUBAPP_CODES.events}/${registration.event!.slug}`,
+        tag: NotificationTag.event(registration.event!.id),
+      },
+    });
+  }
+
   generateRegistrationMailAction({
     eventId,
     participants,
@@ -329,7 +362,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('TenantId is required')};
   }
 
-  const {workspaceURL, ...rest} = zodParseFormData(
+  const {workspaceURL, workspaceURI, ...rest} = zodParseFormData(
     formData,
     CreateCommentPropsSchema,
   );
@@ -374,7 +407,7 @@ export const createComment: CreateComment = async formData => {
   }
 
   try {
-    const res = await addComment({
+    const [comment, parentComment] = await addComment({
       modelName,
       userId: user.id,
       workspaceUserId: workspaceUser.id,
@@ -385,7 +418,37 @@ export const createComment: CreateComment = async formData => {
       ...rest,
     });
 
-    return {success: true, data: clone(res)};
+    if (parentComment?.partner?.id && parentComment.partner.id !== user.id) {
+      const userName = user.simpleFullName || user.name;
+      const eventUrl = `${workspaceURI}/${SUBAPP_CODES.events}/${event.slug}`;
+      const tr = getTranslation.bind(null, {
+        locale: parentComment.partner.localization?.code || DEFAULT_LOCALE,
+        tenant: tenantId,
+      });
+      notifyUser({
+        userId: parentComment.partner.id,
+        tenantId,
+        workspaceURL,
+        payload: {
+          title: await tr(
+            '{0} replied to your comment on {1}',
+            userName,
+            event.eventTitle ?? '',
+          ),
+          body: comment.note ?? '',
+          url: `${eventUrl}#comment-${comment.id}`,
+          tag: NotificationTag.eventReply(parentComment.id),
+        },
+        getReplacementTitle: count =>
+          tr(
+            'You have {0} new replies to your comment on "{1}"',
+            String(count),
+            event.eventTitle ?? '',
+          ),
+      });
+    }
+
+    return {success: true, data: clone([comment, parentComment])};
   } catch (e) {
     return {
       error: true,

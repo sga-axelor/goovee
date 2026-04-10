@@ -6,8 +6,9 @@ import {ZodIssueCode} from 'zod';
 
 // ---- CORE IMPORTS ---- //
 import {TENANT_HEADER} from '@/proxy';
-import {t} from '@/locale/server';
-import {clone} from '@/utils';
+import {t, getTranslation} from '@/locale/server';
+import {DEFAULT_LOCALE} from '@/locale/contants';
+import {clone, uniqueById} from '@/utils';
 import type {ID} from '@goovee/orm';
 import type {Cloned} from '@/types/util';
 import type {ActionResponse} from '@/types/action';
@@ -50,6 +51,9 @@ import {handleError} from './helpers';
 import type {ActionConfig, MutateProps} from './types';
 import {getMailRecipients} from '../orm/mail';
 import {sendCommentMail} from '../utils/mail';
+import {notifyUser} from '@/pwa/utils';
+import {NotificationTag} from '@/pwa/tags';
+import sanitize from 'sanitize-html';
 
 export type MutateResponse = {id: string; version: number};
 
@@ -70,11 +74,11 @@ export async function mutate(
 
   const {force} = config || {};
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {auth, workspace} = info;
+  const {workspace} = auth;
 
   const allowedFields = new Set(
     workspace.config.ticketingFormFieldSet
@@ -230,11 +234,11 @@ export async function updateAssignment(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {workspace, auth} = info;
+  const {workspace} = auth;
   const {workspaceUser} = workspace;
 
   if (!workspace.config.isDisplayAssignmentBtn) {
@@ -292,11 +296,11 @@ export async function closeTicket(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {workspace, auth} = info;
+  const {workspace} = auth;
   const {workspaceUser} = workspace;
 
   if (!workspace.config.isDisplayCloseBtn) {
@@ -359,11 +363,11 @@ export async function cancelTicket(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {workspace, auth} = info;
+  const {workspace} = auth;
   const {workspaceUser} = workspace;
 
   if (!workspace.config.isDisplayCancelBtn) {
@@ -428,11 +432,11 @@ export async function createRelatedLink(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {auth, workspace} = info;
+  const {workspace} = auth;
   if (!workspace.config.isDisplayRelatedTicket) {
     return {error: true, message: await t('Related tickets are not enabled')};
   }
@@ -464,11 +468,11 @@ export async function createChildLink(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {auth, workspace} = info;
+  const {workspace} = auth;
   if (
     !workspace.config.isDisplayChildTicket &&
     !workspace.config.isDisplayTicketParent
@@ -498,11 +502,11 @@ export async function createParentLink(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {auth, workspace} = info;
+  const {workspace} = auth;
   if (
     !workspace.config.isDisplayChildTicket &&
     !workspace.config.isDisplayTicketParent
@@ -537,11 +541,11 @@ export async function deleteChildLink(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {auth, workspace} = info;
+  const {workspace} = auth;
   if (
     !workspace.config.isDisplayChildTicket &&
     !workspace.config.isDisplayTicketParent
@@ -576,11 +580,11 @@ export async function deleteParentLink(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {auth, workspace} = info;
+  const {workspace} = auth;
   if (
     !workspace.config.isDisplayChildTicket &&
     !workspace.config.isDisplayTicketParent
@@ -614,11 +618,11 @@ export async function deleteRelatedLink(
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) return {error: true, message};
 
-  const {auth, workspace} = info;
+  const {workspace} = auth;
   if (!workspace.config.isDisplayRelatedTicket) {
     return {error: true, message: await t('Related tickets are not enabled')};
   }
@@ -652,12 +656,11 @@ export async function searchTickets({
     };
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) {
     return {error: true, message};
   }
-  const {auth} = info;
 
   const tickets = await findTicketsBySearch({
     search,
@@ -675,17 +678,17 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('TenantId is required')};
   }
 
-  const {workspaceURL, ...rest} = zodParseFormData(
+  const {workspaceURL, workspaceURI, ...rest} = zodParseFormData(
     formData,
     CreateCommentPropsSchema,
   );
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) {
     return {error: true, message};
   }
-  const {auth, workspace, user} = info;
+  const {workspace, user, subapp} = auth;
 
   const {workspaceUser} = workspace;
 
@@ -708,8 +711,8 @@ export const createComment: CreateComment = async formData => {
     select: {
       name: true,
       project: {id: true, name: true},
-      managedByContact: {id: true},
-      createdByContact: {id: true},
+      managedByContact: {id: true, localization: {code: true}},
+      createdByContact: {id: true, localization: {code: true}},
     },
   });
 
@@ -720,7 +723,7 @@ export const createComment: CreateComment = async formData => {
   try {
     const res = await addComment({
       modelName,
-      userId: auth.userId,
+      userId: auth.user.id,
       workspaceUserId: workspaceUser.id,
       tenantId,
       commentField: 'note',
@@ -731,13 +734,83 @@ export const createComment: CreateComment = async formData => {
 
     const [comment, parentComment] = res;
 
+    const commentBody = sanitize(comment.note || '', {
+      allowedTags: [],
+      allowedAttributes: {},
+    })
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const ticketUrl = `${workspaceURI}/${SUBAPP_CODES.ticketing}/projects/${ticket.project?.id}/tickets/${ticket.id}`;
+    const userName = user.simpleFullName || user.name;
+
+    const contacts = uniqueById(
+      parentComment?.partner
+        ? [parentComment.partner]
+        : [ticket.createdByContact, ticket.managedByContact],
+    ).filter(c => c.id !== user.id); // exclude the commenter from the list
+
+    if (parentComment) {
+      const [partner] = contacts;
+      if (partner) {
+        const tr = getTranslation.bind(null, {
+          locale: partner.localization?.code || DEFAULT_LOCALE,
+          tenant: tenantId,
+        });
+        notifyUser({
+          userId: partner.id,
+          tenantId,
+          workspaceURL,
+          payload: {
+            title: await tr(
+              '{0} replied to your comment on {1}',
+              userName,
+              ticket.name,
+            ),
+            body: commentBody,
+            url: `${ticketUrl}#comment-${comment.id}`,
+            tag: NotificationTag.ticketReply(parentComment.id),
+          },
+          getReplacementTitle: count =>
+            tr(
+              'You have {0} new replies to your comment on "{1}"',
+              String(count),
+              ticket.name,
+            ),
+        });
+      }
+    } else {
+      for (const contact of contacts) {
+        const tr = getTranslation.bind(null, {
+          locale: contact.localization?.code || DEFAULT_LOCALE,
+          tenant: tenantId,
+        });
+        notifyUser({
+          userId: contact.id,
+          tenantId,
+          workspaceURL,
+          payload: {
+            title: await tr(
+              '{0} added a comment on {1}',
+              userName,
+              String(ticket.name),
+            ),
+            body: commentBody,
+            url: `${ticketUrl}#comment-${comment.id}`,
+            tag: NotificationTag.ticketComment(ticket.id),
+          },
+          getReplacementTitle: count =>
+            tr(
+              'You have {0} new comments on "{1}"',
+              String(count),
+              String(ticket.name),
+            ),
+        });
+      }
+    }
+
     getMailRecipients({
-      userId: auth.userId,
-      contacts: new Set([
-        parentComment?.partner?.id,
-        ticket.createdByContact?.id,
-        ticket.managedByContact?.id,
-      ]),
+      contacts,
       tenantId,
       workspaceURL,
     })
@@ -779,12 +852,12 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('TenantId is required')};
   }
 
-  const {error, message, info} = await ensureAuth(workspaceURL, tenantId);
+  const {error, message, auth} = await ensureAuth(workspaceURL, tenantId);
 
   if (error) {
     return {error: true, message};
   }
-  const {auth, workspace} = info;
+  const {workspace} = auth;
 
   const {workspaceUser} = workspace;
 

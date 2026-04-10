@@ -4,9 +4,10 @@ import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import {t} from '@/locale/server';
+import {t, getTranslation} from '@/locale/server';
+import {DEFAULT_LOCALE} from '@/locale/contants';
 import {getSession} from '@/auth';
-import {ModelMap, ORDER_BY, SUBAPP_CODES} from '@/constants';
+import {ModelMap, ORDER_BY, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {TENANT_HEADER} from '@/proxy';
 import {type Tenant} from '@/tenant';
@@ -19,6 +20,8 @@ import {
   isCommentEnabled,
 } from '@/comments';
 import {zodParseFormData} from '@/utils/formdata';
+import {notifyUser} from '@/pwa/utils';
+import {NotificationTag} from '@/pwa/tags';
 
 // ---- LOCAL IMPORTS ---- //
 import {findNews} from '@/subapps/news/common/orm/news';
@@ -147,7 +150,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('TenantId is required')};
   }
 
-  const {workspaceURL, ...rest} = zodParseFormData(
+  const {workspaceURL, workspaceURI, ...rest} = zodParseFormData(
     formData,
     CreateCommentPropsSchema,
   );
@@ -191,8 +194,10 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Record not found')};
   }
 
+  const newsItem = news[0];
+
   try {
-    const res = await addComment({
+    const [comment, parentComment] = await addComment({
       modelName,
       userId: user.id,
       workspaceUserId: workspaceUser.id,
@@ -203,7 +208,37 @@ export const createComment: CreateComment = async formData => {
       ...rest,
     });
 
-    return {success: true, data: clone(res)};
+    if (parentComment?.partner?.id && parentComment.partner.id !== user.id) {
+      const userName = user.simpleFullName || user.name;
+      const newsUrl = `${workspaceURI}/${SUBAPP_CODES.news}/${SUBAPP_PAGE.article}/${newsItem.slug}#comment-${comment.id}`;
+      const tr = getTranslation.bind(null, {
+        locale: parentComment.partner.localization?.code || DEFAULT_LOCALE,
+        tenant: tenantId,
+      });
+      notifyUser({
+        userId: parentComment.partner.id,
+        tenantId,
+        workspaceURL,
+        payload: {
+          title: await tr(
+            '{0} replied to your comment on {1}',
+            userName ?? '',
+            newsItem.title ?? '',
+          ),
+          body: comment.note ?? '',
+          url: newsUrl,
+          tag: NotificationTag.newsReply(parentComment.id),
+        },
+        getReplacementTitle: count =>
+          tr(
+            'You have {0} new replies to your comment on "{1}"',
+            String(count),
+            newsItem.title ?? '',
+          ),
+      });
+    }
+
+    return {success: true, data: clone([comment, parentComment])};
   } catch (e) {
     return {
       error: true,

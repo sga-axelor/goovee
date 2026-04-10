@@ -2,9 +2,10 @@
 
 import {useState} from 'react';
 import Link from 'next/link';
-import {usePathname, useSearchParams} from 'next/navigation';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {authClient} from '@/lib/auth-client';
 import {MdOutlineAccountCircle} from 'react-icons/md';
+import {useSignOut} from '@/ui/hooks';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
@@ -32,6 +33,7 @@ export function Account({
   tenant?: ID | null;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const {data: session} = authClient.useSession();
@@ -53,10 +55,11 @@ export function Account({
     tenant,
   });
 
+  const signOut = useSignOut();
+
   const handleLogout = async () => {
-    await authClient.signOut();
-    // Force a hard reload/redirect to ensure auth client picks up the new session cookie
-    window.location.href = loginURL;
+    await signOut();
+    router.push(loginURL);
   };
 
   return (

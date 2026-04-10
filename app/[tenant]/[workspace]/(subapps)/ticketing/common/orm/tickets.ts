@@ -5,9 +5,12 @@ import axios from 'axios';
 import {MAIL_MESSAGE_TYPE, type Track} from '@/comments';
 import {addComment} from '@/comments/orm';
 import {ModelMap, ORDER_BY, SUBAPP_CODES} from '@/constants';
+import {findSubappAccess} from '@/orm/workspace';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
-import {t} from '@/locale/server';
+import {t, getTranslation} from '@/locale/server';
+import {DEFAULT_LOCALE} from '@/locale/contants';
 import {manager, type Tenant} from '@/tenant';
+import {uniqueById} from '@/utils';
 import {sql} from '@/utils/template-string';
 
 // ---- LOCAL IMPORTS ---- //
@@ -33,6 +36,8 @@ import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 import type {QueryProps} from './helpers';
 import {getProjectAccessFilter, withTicketAccessFilter} from './helpers';
 import {getMailRecipients} from './mail';
+import {notifyUser} from '@/pwa/utils';
+import {NotificationTag} from '@/pwa/tags';
 
 export type TicketProps<T extends Entity> = QueryProps<T> & {
   projectId: ID;
@@ -89,7 +94,7 @@ export async function createTicket({
     parentId,
   } = data;
   let {managedBy} = data;
-  managedBy = managedBy || String(auth.userId);
+  managedBy = managedBy || String(auth.user.id);
 
   if (!auth.tenantId) {
     throw new Error(await t('TenantId is required'));
@@ -146,7 +151,7 @@ export async function createTicket({
       isPrivate: false,
       isInternal: false,
       progress: '0.00',
-      createdByContact: {select: {id: auth.userId}},
+      createdByContact: {select: {id: auth.user.id}},
       project: {select: {id: projectId}},
       name: subject,
       description: description,
@@ -176,10 +181,10 @@ export async function createTicket({
       isPrivate: true,
       isInternal: true,
       progress: true,
-      createdByContact: {name: true},
+      createdByContact: {id: true, name: true, localization: {code: true}},
       project: {name: true},
       ...(managedBy && {
-        managedByContact: {name: true},
+        managedByContact: {id: true, name: true, localization: {code: true}},
       }),
       ...(category && {projectTaskCategory: {name: true}}),
       ...(priority && {priority: {name: true}}),
@@ -260,10 +265,10 @@ export async function createTicket({
     if (workspaceUserId) {
       addComment({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
-        userId: auth.userId,
+        userId: auth.user.id,
         workspaceUserId: workspaceUserId,
         recordId: newTicket.id,
-        subject: `Record Created by ${auth.simpleFullName}`,
+        subject: `Record Created by ${auth.user.simpleFullName}`,
         messageBody: {title: 'Record created', tracks: tracks, tags: []},
         messageType: MAIL_MESSAGE_TYPE.notification,
         tenantId: auth.tenantId,
@@ -276,22 +281,48 @@ export async function createTicket({
     console.error(e);
   }
 
+  const contacts = uniqueById([
+    newTicket.createdByContact,
+    newTicket.managedByContact,
+  ]).filter(c => String(c.id) !== String(auth.user.id)); // exclude the ticket creator — they performed the action
+
+  for (const contact of contacts) {
+    const tr = getTranslation.bind(null, {
+      locale: contact.localization?.code || DEFAULT_LOCALE,
+      tenant: auth.tenantId,
+    });
+    notifyUser({
+      userId: contact.id,
+      tenantId: auth.tenantId,
+      workspaceURL: auth.workspaceURL,
+      payload: {
+        title: await tr(
+          '{0} created a new ticket',
+          auth.user.simpleFullName ?? '',
+        ),
+        body: await tr(
+          '{0} created a new ticket: {1}',
+          auth.user.simpleFullName ?? '',
+          String(newTicket.name),
+        ),
+        url: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
+        tag: NotificationTag.ticketUpdate(newTicket.id),
+      },
+    });
+  }
+
   getMailRecipients({
-    userId: auth.userId,
-    contacts: new Set([
-      newTicket.createdByContact?.id,
-      newTicket.managedByContact?.id,
-    ]),
+    contacts,
     tenantId: auth.tenantId,
     workspaceURL: auth.workspaceURL,
   })
     .then(reciepients => {
       if (reciepients.length) {
         return sendTrackMail({
-          author: auth.simpleFullName,
+          author: auth.user.simpleFullName,
           type: 'create',
           tracks,
-          projectName: newTicket.project?.name!,
+          projectName: newTicket.project?.name || '',
           ticketName: newTicket.name,
           ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
           reciepients,
@@ -315,8 +346,8 @@ const updateSelect = {
   priority: {name: true},
   status: {name: true},
   assignment: true,
-  managedByContact: {name: true},
-  createdByContact: {name: true},
+  managedByContact: {id: true, name: true, localization: {code: true}},
+  createdByContact: {id: true, name: true, localization: {code: true}},
 } satisfies SelectOptions<AOSProjectTask>;
 
 export type UTicket = Payload<AOSProjectTask, {select: typeof updateSelect}>;
@@ -489,10 +520,10 @@ export async function updateTicket({
     if (workspaceUserId && !fromWS) {
       addComment({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
-        userId: auth.userId,
+        userId: auth.user.id,
         workspaceUserId: workspaceUserId,
         recordId: newTicket.id,
-        subject: `Record Updated by ${auth.simpleFullName}`,
+        subject: `Record Updated by ${auth.user.simpleFullName}`,
         messageBody: {title: 'Record updated', tracks: tracks, tags: []},
         messageType: MAIL_MESSAGE_TYPE.notification,
         tenantId: auth.tenantId,
@@ -505,23 +536,46 @@ export async function updateTicket({
     console.error(e);
   }
 
+  const contacts = uniqueById([
+    newTicket.createdByContact,
+    newTicket.managedByContact,
+    oldTicket?.managedByContact,
+  ]).filter(c => String(c.id) !== String(auth.user.id)); // exclude the user who performed the update
+
+  for (const contact of contacts) {
+    const tr = getTranslation.bind(null, {
+      locale: contact.localization?.code || DEFAULT_LOCALE,
+      tenant: auth.tenantId,
+    });
+    notifyUser({
+      userId: contact.id,
+      tenantId: auth.tenantId,
+      workspaceURL: auth.workspaceURL,
+      payload: {
+        title: await tr('{0} updated a ticket', auth.user.simpleFullName ?? ''),
+        body: await tr(
+          '{0} updated a ticket: {1}',
+          auth.user.simpleFullName ?? '',
+          String(newTicket.name),
+        ),
+        url: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
+        tag: NotificationTag.ticketUpdate(newTicket.id),
+      },
+    });
+  }
+
   getMailRecipients({
-    userId: auth.userId,
-    contacts: new Set([
-      newTicket.createdByContact?.id,
-      newTicket.managedByContact?.id,
-      oldTicket?.managedByContact?.id,
-    ]),
+    contacts,
     tenantId: auth.tenantId,
     workspaceURL: auth.workspaceURL,
   })
     .then(reciepients => {
       if (reciepients.length) {
         return sendTrackMail({
-          author: auth.simpleFullName,
+          author: auth.user.simpleFullName,
           type: 'update',
           tracks,
-          projectName: newTicket.project?.name!,
+          projectName: newTicket.project?.name || '',
           ticketName: newTicket.name,
           ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
           reciepients,
@@ -571,8 +625,8 @@ export async function getMyTicketCount(props: {
       project: {id: projectId},
       status: {isCompleted: false},
       OR: [
-        {managedByContact: {id: auth.userId}},
-        {createdByContact: {id: auth.userId}},
+        {managedByContact: {id: auth.user.id}},
+        {createdByContact: {id: auth.user.id}},
       ],
     }),
   });
@@ -593,7 +647,7 @@ export async function getManagedTicketCount(props: {
     where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: false},
-      managedByContact: {id: auth.userId},
+      managedByContact: {id: auth.user.id},
     }),
   });
 
@@ -614,7 +668,7 @@ export async function getCreatedTicketCount(props: {
     where: withTicketAccessFilter(auth)({
       project: {id: projectId},
       status: {isCompleted: false},
-      createdByContact: {id: auth.userId},
+      createdByContact: {id: auth.user.id},
     }),
   });
 

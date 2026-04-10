@@ -8,7 +8,8 @@ import {promisify} from 'util';
 import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
-import {t} from '@/locale/server';
+import {t, getTranslation} from '@/locale/server';
+import {DEFAULT_LOCALE} from '@/locale/contants';
 import {clone} from '@/utils';
 import {ModelMap, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -40,6 +41,8 @@ import {NOTIFICATION_VALUES} from '@/subapps/forum/common/constants';
 import {sendEmailNotifications} from '@/subapps/forum/common/utils/mail';
 import {ContentType} from '@/subapps/forum/common/types/forum';
 import {getArchivedFilter} from '@/subapps/forum/common/utils';
+import {notifyUser} from '@/pwa/utils';
+import {NotificationTag} from '@/pwa/tags';
 
 interface FileMeta {
   fileName: string;
@@ -572,7 +575,33 @@ export async function addPost({
     });
 
     if (!subscribers.error) {
-      const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}#post-${post.id}`;
+      const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}?searchid=${post.id}#post-${post.id}`;
+
+      for (const reciever of subscribers as any[]) {
+        if (
+          reciever.member?.id &&
+          reciever.member.id !== user.id // exclude the post author
+        ) {
+          const tr = getTranslation.bind(null, {
+            locale: reciever.member.localization?.code || DEFAULT_LOCALE,
+            tenant: tenantId,
+          });
+          notifyUser({
+            userId: reciever.member.id,
+            tenantId,
+            workspaceURL,
+            payload: {
+              title: await tr(
+                '{0} created a new post',
+                user.simpleFullName || user.name || '',
+              ),
+              body: post?.title ?? '',
+              url: postLink,
+              tag: NotificationTag.forumNewPost(post.id),
+            },
+          });
+        }
+      }
 
       sendEmailNotifications({
         type: ContentType.POST,
@@ -838,7 +867,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('TenantId is required')};
   }
 
-  const {workspaceURL, ...rest} = zodParseFormData(
+  const {workspaceURL, workspaceURI, ...rest} = zodParseFormData(
     formData,
     CreateCommentPropsSchema,
   );
@@ -903,7 +932,7 @@ export const createComment: CreateComment = async formData => {
   }
 
   try {
-    const res = await addComment({
+    const [comment, parentComment] = await addComment({
       modelName,
       userId: user.id,
       workspaceUserId: workspaceUser.id,
@@ -914,38 +943,126 @@ export const createComment: CreateComment = async formData => {
       ...rest,
     });
 
-    if (res) {
+    if (comment) {
       const post = posts[0];
 
       if (post?.id) {
-        const subscribers: any = await getSubscribersByGroup({
+        const subscribers = await getSubscribersByGroup({
           groupID: post.forumGroup.id,
           workspaceURL,
         });
 
-        if (!subscribers?.error) {
-          const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}#post-${post.id}`;
+        if (!('error' in subscribers)) {
+          const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}?searchid=${post.id}#post-${post.id}`;
 
-          sendEmailNotifications({
-            type: ContentType.COMMENT,
-            title: post.title,
-            content: res[0].note ?? '',
-            author: {
-              id: res[0]?.partner?.id ?? '',
-              simpleFullName: res[0]?.partner?.simpleFullName ?? 'Unknown User',
-            },
-            postAuthor: {
-              id: post?.author?.id ?? '',
-            },
-            group: post.forumGroup,
-            subscribers,
-            link: postLink,
-          });
+          const notificationRecievers = subscribers.filter(
+            sub => sub.member?.id !== user.id, // exclude the commenter
+          );
+
+          const isReply = Boolean(parentComment);
+
+          if (isReply) {
+            if (
+              parentComment?.partner?.id &&
+              parentComment.partner.id !== user.id
+            ) {
+              const tr = getTranslation.bind(null, {
+                locale:
+                  parentComment.partner.localization?.code || DEFAULT_LOCALE,
+                tenant: tenantId,
+              });
+              notifyUser({
+                userId: parentComment.partner.id,
+                tenantId,
+                workspaceURL,
+                payload: {
+                  title: await tr(
+                    '{0} replied to your comment',
+                    user.simpleFullName || user.name || '',
+                  ),
+                  body: comment.note ?? '',
+                  url: `${workspaceURI}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}?searchid=${post.id}#post-${post.id}`,
+                  tag: NotificationTag.forumReply(parentComment.id),
+                },
+                getReplacementTitle: count =>
+                  tr('You have {0} new replies to your comment', String(count)),
+              });
+
+              const replySubscriber = notificationRecievers.find(
+                sub => sub.member?.id === parentComment.partner!.id,
+              );
+
+              if (replySubscriber) {
+                sendEmailNotifications({
+                  type: ContentType.COMMENT,
+                  title: post.title,
+                  content: comment.note ?? '',
+                  author: {
+                    id: comment?.partner?.id ?? '',
+                    simpleFullName:
+                      comment?.partner?.simpleFullName ?? 'Unknown User',
+                  },
+                  postAuthor: {
+                    id: post?.author?.id ?? '',
+                  },
+                  group: post.forumGroup,
+                  subscribers: [replySubscriber],
+                  link: postLink,
+                });
+              }
+            }
+          } else {
+            for (const reciever of notificationRecievers) {
+              if (reciever.member?.id) {
+                const tr = getTranslation.bind(null, {
+                  locale: reciever.member.localization?.code || DEFAULT_LOCALE,
+                  tenant: tenantId,
+                });
+                notifyUser({
+                  userId: reciever.member.id,
+                  tenantId,
+                  workspaceURL,
+                  payload: {
+                    title: await tr(
+                      '{0} added a comment',
+                      user.simpleFullName || user.name || '',
+                    ),
+                    body: comment.note ?? '',
+                    url: `${workspaceURI}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${post.forumGroup.id}?searchid=${post.id}#post-${post.id}`,
+                    tag: NotificationTag.forumPostComment(post.id),
+                  },
+                  getReplacementTitle: count =>
+                    tr(
+                      'You have {0} new comments on "{1}"',
+                      String(count),
+                      post.title,
+                    ),
+                });
+              }
+            }
+
+            sendEmailNotifications({
+              type: ContentType.COMMENT,
+              title: post.title,
+              content: comment.note ?? '',
+              author: {
+                id: comment?.partner?.id ?? '',
+                simpleFullName:
+                  comment?.partner?.simpleFullName ?? 'Unknown User',
+              },
+              postAuthor: {
+                id: post?.author?.id ?? '',
+              },
+              group: post.forumGroup,
+              subscribers: notificationRecievers,
+              link: postLink,
+            });
+          }
         }
       }
     }
 
-    return {success: true, data: clone(res)};
+    return {success: true, data: clone([comment, parentComment])};
   } catch (e) {
     return {
       error: true,
@@ -1087,10 +1204,12 @@ export const getSubscribersByGroup = async ({
       select: {
         notificationSelect: true,
         member: {
+          id: true,
           emailAddress: {
             address: true,
           },
           simpleFullName: true,
+          localization: {code: true},
         },
       },
     });

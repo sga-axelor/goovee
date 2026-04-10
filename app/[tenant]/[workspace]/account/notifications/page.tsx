@@ -11,6 +11,7 @@ import {t} from '@/locale/server';
 // ---- LOCAL IMPORTS ---- //
 import {Title} from '../common/ui/components';
 import {Preference} from './preference';
+import {DevicePushPreference} from './device-push-preference';
 
 export default async function Page(props: {
   params: Promise<{tenant: string; workspace: string}>;
@@ -54,6 +55,9 @@ export default async function Page(props: {
       <div className="space-y-20">
         <div className="space-y-4">
           <Title text={await t('Notifications')} />
+          <Separator />
+          <DevicePushPreference />
+          <Title text={await t('Email Notifications')} />
           <Separator />
           <Preference
             title={await t('Events')}

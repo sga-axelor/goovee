@@ -28,9 +28,6 @@ const nextConfig = {
     },
   },
   basePath: process.env.GOOVEE_PUBLIC_BASE_PATH,
-  /**
-   * Security Configs for PWA
-   */
   headers: async () => [
     {
       source: '/(.*)',
@@ -50,7 +47,7 @@ const nextConfig = {
       ],
     },
     {
-      source: '/pwa/service-worker/index.js',
+      source: '/sw.js',
       headers: [
         {
           key: 'Content-Type',
@@ -62,7 +59,13 @@ const nextConfig = {
         },
         {
           key: 'Content-Security-Policy',
-          value: "default-src 'self'; script-src 'self'",
+          /*
+           * Service workers need broad connect-src to fetch and cache external
+           * resources (images, fonts, etc.) intercepted by serwist defaultCache.
+           * 'self' covers http://localhost in dev; https: covers all external CDNs.
+           */
+          value:
+            "default-src 'self'; script-src 'self'; connect-src 'self' https:",
         },
       ],
     },

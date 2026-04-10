@@ -21,9 +21,9 @@ import {
   notifyPaymentUpdate,
   PAYMENT_UPDATE_STATUS,
 } from '@/lib/core/payment/sse';
-
 // --- LOCAL IMPORTS ---- //
 import {updateInvoice} from '@/subapps/invoices/common/service';
+import {notifyInvoicePaymentSuccess} from '@/subapps/invoices/common/utils/notify';
 
 export const STRIPE_EVENTS = {
   PAYMENT_INTENT_SUCCEEDED: 'payment_intent.succeeded',
@@ -182,7 +182,10 @@ export async function POST(req: Request) {
             if (updateResult?.error) {
               // Do NOT mark as failed — payment was already received by Stripe.
               // Return 500 so Stripe retries the webhook for this transient error.
-              console.error('Invoice update failed: ', updateResult.error);
+              console.error(
+                '[STRIPE][WEBHOOK] Invoice update failed: ',
+                updateResult.message,
+              );
               return new NextResponse('Invoice update failed', {status: 500});
             }
 
@@ -220,6 +223,13 @@ export async function POST(req: Request) {
             });
 
             notifyPaymentUpdate(source, sourceId, paymentContext.id);
+            if (paymentContext.payer) {
+              notifyInvoicePaymentSuccess({
+                invoiceId: sourceId,
+                payer: paymentContext.payer,
+                tenantId,
+              });
+            }
 
             break;
           }
