@@ -91,13 +91,13 @@ export async function createHubPispPaymentLink({
     context: {...context, resourceId},
   });
 
-  pollPaymentLinkStatus({
-    resourceId,
-    contextId,
-    tenantId,
-    localInstrument,
-    expireIn: HUBPISP_DEFAULT_EXPIRE_IN,
-  });
+  // pollPaymentLinkStatus({
+  //   resourceId,
+  //   contextId,
+  //   tenantId,
+  //   localInstrument,
+  //   expireIn: HUBPISP_DEFAULT_EXPIRE_IN,
+  // });
 
   return {resourceId, consentHref, contextId};
 }
