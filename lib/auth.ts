@@ -158,7 +158,7 @@ export const auth = betterAuth({
   ...options,
   plugins: [
     ...options.plugins,
-    customSession(async ({user, session}) => {
+    customSession(async ({user, session}, ctx) => {
       const {tenantId} = session;
       const partner =
         tenantId &&
@@ -166,9 +166,13 @@ export const auth = betterAuth({
         (await findGooveeUserByEmail(user.email, tenantId));
 
       if (!partner) {
-        throw new APIError('UNPROCESSABLE_ENTITY', {
-          message: ERROR_CODES.PARTNER_NOT_FOUND,
-        });
+        // Session cookie exists but partner no longer found — clear cookies and treat as no session
+        // customSession types don't accept null but better-auth handles it as unauthenticated
+        const cookies = ctx.context.authCookies;
+        ctx.setCookie(cookies.sessionToken.name, '', {maxAge: 0});
+        ctx.setCookie(cookies.sessionData.name, '', {maxAge: 0});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return null as any;
       }
 
       const {

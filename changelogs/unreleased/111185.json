@@ -1,0 +1,6 @@
+{
+  "title": "Properly log out user if account is missing",
+  "type": "fix",
+  "description": "Automatically clear the session and log out the user if their account is no longer found in the system.",
+  "scope": ["core"]
+}
