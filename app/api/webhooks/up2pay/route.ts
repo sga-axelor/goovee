@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import {NextResponse} from 'next/server';
 
 // ---- CORE IMPORTS ---- //
+import {manager} from '@/tenant';
 import {
   CONTEXT_STATUS,
   findPaymentContext,
@@ -103,9 +104,16 @@ export async function GET(request: Request) {
     });
   }
 
+  const tenant = await manager.getTenant(tenantId);
+  if (!tenant) {
+    console.error('[UP2PAY][WEBHOOK] Tenant not found', {tenantId});
+    return new NextResponse('Bad Request', {status: 400});
+  }
+  const {client, config} = tenant;
+
   const paymentContext = await findPaymentContext({
     id: contextId,
-    tenantId,
+    client,
     mode: PaymentOption.up2pay,
     ignoreExpiration: true,
   });
@@ -150,7 +158,7 @@ export async function GET(request: Request) {
     await markPaymentAsFailed({
       contextId: paymentContext.id,
       version: paymentContext.version,
-      tenantId,
+      client,
     });
 
     return new NextResponse('OK', {status: 200});
@@ -171,7 +179,7 @@ export async function GET(request: Request) {
     await markPaymentAsFailed({
       contextId: paymentContext.id,
       version: paymentContext.version,
-      tenantId,
+      client,
     });
 
     return new NextResponse('Bad Request', {status: 400});
@@ -189,7 +197,7 @@ export async function GET(request: Request) {
     await markPaymentAsFailed({
       contextId: paymentContext.id,
       version: paymentContext.version,
-      tenantId,
+      client,
     });
 
     return new NextResponse('Bad Request', {status: 400});
@@ -204,7 +212,7 @@ export async function GET(request: Request) {
     await markPaymentAsFailed({
       contextId: paymentContext.id,
       version: paymentContext.version,
-      tenantId,
+      client,
     });
 
     return new NextResponse('Bad Request', {status: 400});
@@ -213,7 +221,7 @@ export async function GET(request: Request) {
   switch (source) {
     case PAYMENT_SOURCE.INVOICES: {
       const result = await updateInvoice({
-        tenantId,
+        config,
         amount: paidAmount,
         invoiceId: entityId,
         paymentModeId: paymentContext.data?.paymentModeId,
@@ -229,7 +237,7 @@ export async function GET(request: Request) {
         await markPaymentAsFailed({
           contextId: paymentContext.id,
           version: paymentContext.version,
-          tenantId,
+          client,
         });
 
         return new NextResponse('Internal Server Error', {status: 500});
@@ -240,6 +248,7 @@ export async function GET(request: Request) {
           invoiceId: entityId,
           payer: paymentContext.payer,
           tenantId,
+          client,
         });
       }
       break;
@@ -256,7 +265,7 @@ export async function GET(request: Request) {
       await markPaymentAsFailed({
         contextId: paymentContext.id,
         version: paymentContext.version,
-        tenantId,
+        client,
       });
 
       return new NextResponse('Bad Request', {status: 400});
@@ -265,7 +274,7 @@ export async function GET(request: Request) {
   await markPaymentAsProcessed({
     contextId: paymentContext.id,
     version: paymentContext.version,
-    tenantId,
+    client,
   });
 
   notifyPaymentUpdate(source, entityId, paymentContext.id);
