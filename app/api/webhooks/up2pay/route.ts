@@ -223,6 +223,7 @@ export async function GET(request: Request) {
         console.error('[UP2PAY][WEBHOOK] Invoice update failed', {
           entityId,
           error: result.error,
+          message: result.message,
         });
 
         await markPaymentAsFailed({
