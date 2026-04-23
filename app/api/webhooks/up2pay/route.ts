@@ -48,6 +48,8 @@ function forwardToLegacy(request: Request): boolean {
 }
 
 export async function GET(request: Request) {
+  console.log('[UP2PAY][WEBHOOK] Received callback', {url: request.url});
+
   const url = new URL(request.url);
   const params = url.searchParams;
 
@@ -124,6 +126,14 @@ export async function GET(request: Request) {
       status: forwarded ? 200 : 400,
     });
   }
+
+  console.log('[UP2PAY][WEBHOOK] Payment context found', {
+    contextId,
+    tenantId,
+    status: paymentContext.status,
+    source: paymentContext.data?.source,
+    amount: paymentContext.data?.amount,
+  });
 
   if (paymentContext.status === CONTEXT_STATUS.processed) {
     console.log('[UP2PAY][WEBHOOK] Already processed, skipping', {contextId});
@@ -235,6 +245,11 @@ export async function GET(request: Request) {
         return new NextResponse('Internal Server Error', {status: 500});
       }
 
+      console.log('[UP2PAY][WEBHOOK] Invoice updated successfully', {
+        invoiceId: entityId,
+        amount: paidAmount,
+      });
+
       if (paymentContext.payer) {
         notifyInvoicePaymentSuccess({
           invoiceId: entityId,
@@ -266,6 +281,13 @@ export async function GET(request: Request) {
     contextId: paymentContext.id,
     version: paymentContext.version,
     tenantId,
+  });
+
+  console.log('[UP2PAY][WEBHOOK] Payment processed successfully', {
+    contextId,
+    entityId,
+    source,
+    amount: paidAmount,
   });
 
   notifyPaymentUpdate(source, entityId, paymentContext.id);
