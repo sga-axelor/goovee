@@ -14,6 +14,7 @@ import {UP2PAY_ERRORS, UP2PAY_ERROR_MESSAGES} from '@/payment/up2pay/constants';
 import {readPEMFile, verifySignature} from '@/payment/up2pay/crypto';
 import {notifyPaymentUpdate} from '@/lib/core/payment/sse';
 import {PAYMENT_SOURCE} from '@/lib/core/payment/common/type';
+import {buildSignatureMessage} from '@/payment/up2pay/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {updateInvoice} from '@/subapps/invoices/common/service';
@@ -27,8 +28,9 @@ function forwardToLegacy(request: Request): boolean {
   const legacyUrl = process.env.UP2PAY_LEGACY_FORWARD_URL;
   if (!legacyUrl) return false;
 
-  const params = new URL(request.url).searchParams;
-  const forwardUrl = `${legacyUrl}?${params.toString()}`;
+  // Use the raw search string to preserve the original encoding (e.g. literal '+' in ref values),
+  // so the legacy ERP receives exactly what Up2Pay sent and can verify its own signature.
+  const forwardUrl = `${legacyUrl}${new URL(request.url).search}`;
 
   fetch(forwardUrl, {method: 'GET'})
     .then(res =>
@@ -45,17 +47,9 @@ function forwardToLegacy(request: Request): boolean {
 }
 
 export async function GET(request: Request) {
-  const parsed = new URL(request.url);
-  const params = parsed.searchParams;
-
-  const SIGNED_PARAMS = ['montant', 'ref', 'erreur'];
-  const message = SIGNED_PARAMS.filter(key => params.has(key))
-    .map(
-      key =>
-        `${key}=${encodeURIComponent(params.get(key)!).replace(/%7E/gi, '~')}`,
-    )
-    .join('&');
-
+  const url = new URL(request.url);
+  const params = url.searchParams;
+  const message = buildSignatureMessage(params);
   const pem = readPEMFile();
 
   const sign = params.get('sign')?.trim();
@@ -72,6 +66,7 @@ export async function GET(request: Request) {
       hasMessage: !!message,
       hasSign: !!sign,
       hasRef: !!ref,
+      message,
     });
     return new NextResponse('Bad Request', {status: 400});
   }
@@ -79,7 +74,12 @@ export async function GET(request: Request) {
   const isSignatureValid = verifySignature(message, sign, pem);
 
   if (!isSignatureValid) {
-    console.error('[UP2PAY][WEBHOOK] Invalid signature', {ref, sign});
+    console.error('[UP2PAY][WEBHOOK] Invalid signature', {
+      ref,
+      message,
+      rawQuery: url.search.slice(1),
+      sign,
+    });
     return new NextResponse('Bad Request', {status: 400});
   }
 
@@ -258,6 +258,7 @@ export async function GET(request: Request) {
     version: paymentContext.version,
     tenantId,
   });
+
   notifyPaymentUpdate(source, entityId, paymentContext.id);
 
   return new NextResponse('OK', {status: 200});
