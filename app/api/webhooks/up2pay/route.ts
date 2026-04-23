@@ -50,7 +50,9 @@ function forwardToLegacy(request: Request): boolean {
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const params = url.searchParams;
+
   const message = buildSignatureMessage(params);
+
   const pem = readPEMFile();
 
   const sign = params.get('sign')?.trim();
@@ -84,12 +86,10 @@ export async function GET(request: Request) {
     return new NextResponse('Bad Request', {status: 400});
   }
 
-  // contextId and tenantId are encoded in ref as: name-sequence~contextId~tenantId
-  const tildeIndex = ref.indexOf('~');
-  const tildeParts =
-    tildeIndex !== -1 ? ref.slice(tildeIndex + 1).split('~') : [];
-  const contextId = tildeParts.length === 2 ? tildeParts[0] : null;
-  const tenantId = tildeParts.length === 2 ? tildeParts[1] : null;
+  // Goovee refs are formatted as: name-reference~contextId~tenantId
+  const refParts = ref.split('~');
+  const [contextId, tenantId] =
+    refParts.length >= 3 ? [refParts.at(-2)!, refParts.at(-1)!] : [null, null];
 
   if (!(contextId && tenantId)) {
     // Ref does not match Goovee format — likely a legacy invoice, forward to legacy ERP.
