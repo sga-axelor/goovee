@@ -87,3 +87,24 @@ export const UP2PAY_REDIRECT_PARAMS = [
   'sign',
   'type',
 ] as const;
+
+// Up2Pay encodes exactly these 13 characters when building the signed message
+// (per Chapter 14 of the e-Transactions integration manual). Everything else,
+// including '~', '|', '!', etc., stays literal.
+export const UP2PAY_ENCODE_MAP: Record<string, string> = {
+  ';': '%3B',
+  '?': '%3F',
+  '/': '%2F',
+  ':': '%3A',
+  '#': '%23',
+  '&': '%26',
+  '=': '%3D',
+  '+': '%2B',
+  $: '%24',
+  ',': '%2C',
+  ' ': '%20',
+  '%': '%25',
+  '@': '%40',
+};
+
+export const UP2PAY_ENCODE_REGEX = /[;?/:&#=+$, %@]/g;

@@ -1,21 +1,12 @@
-# 1.6.4 (2026-04-16)
+# 1.6.5 (2026-04-27)
 
-## Features
+## Fixes
 
 ### Core Platform
 
-- Forward Up2Pay IPN callback to legacy ERP when invoice is unknown – #110472
+- Fix Up2Pay IPN webhook intermittent signature verification failure – #111668
   <details>
     <summary>Details</summary>
 
-  Add automatic forwarding of unrecognized Up2Pay IPNs to the legacy system (Consonance Web) via a new UP2PAY_LEGACY_FORWARD_URL environment variable, while preserving normal processing for recognized payments.
-  </details>
-
-### Invoices
-
-- Forward Up2Pay IPN callback to legacy ERP when invoice is unknown – #110472
-  <details>
-    <summary>Details</summary>
-
-  Add automatic forwarding of unrecognized Up2Pay IPNs to the legacy system (Consonance Web) via a new UP2PAY_LEGACY_FORWARD_URL environment variable, while preserving normal processing for recognized payments.
+  IPN callbacks could fail signature verification when parameter values contained characters encoded differently by Up2Pay's rules versus standard URL encoding.
   </details>
