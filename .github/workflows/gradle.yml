@@ -24,17 +24,12 @@ jobs:
       - name: Run format check
         run: pnpm format:check
 
-  # To re-release an existing version:
-  #   gh release delete v1.x.x --yes
-  #   git push origin :refs/tags/v1.x.x
-  #   git tag -d v1.x.x
-  # Then push to main or release/* again to trigger a new release.
-  release:
+  tag:
     needs: format
     if: |
       github.event_name == 'push' &&
       (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/'))
-    name: Release
+    name: Create Tag
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -51,26 +46,18 @@ jobs:
       - name: Check if tag already exists
         id: tag_check
         run: |
+          git fetch --tags
+
           if git tag -l "v${{ steps.version.outputs.value }}" | grep -q .; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Read release notes
+      - name: Create tag
         if: steps.tag_check.outputs.exists == 'false'
-        id: notes
         run: |
-          echo "value<<EOF" >> $GITHUB_OUTPUT
-          cat RELEASE_NOTES.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Create GitHub release
-        if: steps.tag_check.outputs.exists == 'false'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.version.outputs.value }}
-          name: Release v${{ steps.version.outputs.value }}
-          body: ${{ steps.notes.outputs.value }}
-          target_commitish: ${{ github.sha }}
-          make_latest: ${{ github.ref == 'refs/heads/main' }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag v${{ steps.version.outputs.value }}
+          git push origin v${{ steps.version.outputs.value }}
