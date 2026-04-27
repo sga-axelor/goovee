@@ -57,6 +57,35 @@ Then, you can define models inside the goovee/schema folder. After each change i
 
 Check [Goovee ORM](https://github.com/axelor/goovee-orm) for more information about its usage.
 
+## Release
+
+Releases must be triggered from `main` or `release/*` branches.
+
+**1. Merge development branches into the release branch**
+
+Merge your development branches (`dev`, `wip`, `dev-1.6`, etc.) into `main` or the target `release/*` branch.
+
+**2. Prepare the release**
+
+```bash
+pnpm prepare:release
+```
+
+**3. Push and trigger the release**
+
+```bash
+git push origin <branch>
+pnpm release
+```
+
+**4. Merge back and bump the version**
+
+Merge release branch back into your development branches, then bump the version to prepare for the next cycle:
+
+```bash
+pnpm prepare:bump <major|minor|patch>
+```
+
 ## License
 
 This package is made available under the Sustainable Use License.
