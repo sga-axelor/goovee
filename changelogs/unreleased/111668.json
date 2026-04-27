@@ -1,0 +1,6 @@
+{
+  "title": "Fix Up2Pay IPN webhook intermittent signature verification failure",
+  "type": "fix",
+  "description": "IPN callbacks could fail signature verification when parameter values contained characters encoded differently by Up2Pay's rules versus standard URL encoding.",
+  "scope": ["core"]
+}
