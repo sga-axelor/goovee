@@ -8,6 +8,7 @@
     "build": "next build --no-mangling && serwist build",
     "start": "next start",
     "lint": "eslint .",
+    "type-check": "pnpm exec tsc --noEmit",
     "format": "prettier --write --cache \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,css,scss,html}\"",
     "generate": "goovee generate",
