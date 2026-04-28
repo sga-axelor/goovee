@@ -63,7 +63,12 @@ export function ComposePost({
         <div className="bg-white px-4 py-4 rounded-t-lg flex items-center gap-[0.625rem]">
           <Avatar
             className={`rounded-full h-8 w-8 ${!isLoggedIn ? 'bg-gray-light' : ''}`}>
-            {<AvatarImage src={getPartnerImageURL(picture?.id, tenant)} />}
+            {
+              <AvatarImage
+                src={getPartnerImageURL(picture?.id, tenant)}
+                alt={user?.name ?? ''}
+              />
+            }
           </Avatar>
           <Button
             onClick={handleDialogOpen}

@@ -16,6 +16,7 @@ export const ThreadHeader = ({group}: {group: any}) => {
               ? `${workspaceURI}/${SUBAPP_CODES.forum}/api/group/${group.id}/image`
               : NO_IMAGE_URL
           }
+          alt={group?.name}
         />
       </Avatar>
       <p className="font-normal text-xs leading-[0.875rem] line-clamp-1">

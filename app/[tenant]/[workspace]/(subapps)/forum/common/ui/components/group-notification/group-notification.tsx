@@ -69,6 +69,7 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
                   ? `${workspaceURI}/${SUBAPP_CODES.forum}/api/group/${group.forumGroup?.id}/image`
                   : NO_IMAGE_URL
               }
+              alt={forumGroup.name}
             />
           </Avatar>
           <span className="text-sm">{i18n.t(forumGroup.name)}</span>

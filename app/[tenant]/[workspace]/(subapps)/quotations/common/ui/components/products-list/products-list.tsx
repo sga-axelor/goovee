@@ -67,6 +67,7 @@ export const ProductsList = ({
                         <Avatar className="rounded-sm h-6 w-6">
                           <AvatarImage
                             src={getProductImage(saleOrder.product)}
+                            alt={saleOrder.productName}
                           />
                         </Avatar>
                         <p className="font-medium mb-0">

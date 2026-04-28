@@ -32,7 +32,10 @@ export const ProductCard = ({
         <TableCell className="py-4 ps-6 pe-4">
           <div className="flex gap-2">
             <Avatar className="rounded-sm h-6 w-6">
-              <AvatarImage src={getProductImage(saleOrder.product)} />
+              <AvatarImage
+                src={getProductImage(saleOrder.product)}
+                alt={saleOrder.productName}
+              />
             </Avatar>
             <p className="font-semibold mb-0">{saleOrder.productName}</p>
           </div>

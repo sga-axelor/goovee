@@ -112,7 +112,10 @@ export const GroupActionList = ({
                   onClick={() => handlePath(group?.forumGroup?.id || group?.id)}
                   className="flex items-center gap-2">
                   <Avatar className="rounded-lg h-6 w-6">
-                    <AvatarImage src={groupImage} />
+                    <AvatarImage
+                      src={groupImage}
+                      alt={group?.forumGroup?.name || group?.name}
+                    />
                   </Avatar>
                   <p className="font-normal text-sm leading-5 line-clamp-1 cursor-pointer">
                     {group?.forumGroup?.name || group?.name}

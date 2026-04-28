@@ -56,7 +56,10 @@ export const ProductsList = ({
                 <TableCell className="ps-6">
                   <div className="flex items-center gap-2">
                     <Avatar className="rounded-sm h-6 w-6">
-                      <AvatarImage src={getProductImage(saleOrder.product)} />
+                      <AvatarImage
+                        src={getProductImage(saleOrder.product)}
+                        alt={saleOrder.productName}
+                      />
                     </Avatar>
                     <p className="font-medium mb-0">{saleOrder.productName}</p>
                   </div>

@@ -95,6 +95,7 @@ export const NewsInfo = ({
                     src={getPartnerImageURL(author.picture?.id, tenant, {
                       noimage: true,
                     })}
+                    alt={author.simpleFullName}
                   />
                 </Avatar>
               )}

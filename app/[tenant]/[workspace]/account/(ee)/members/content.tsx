@@ -171,6 +171,7 @@ function Members({members, availableApps}: any) {
                               noimage: true,
                               noimageSrc: '/images/profile.png',
                             })}
+                            alt={fullName}
                           />
                           <AvatarFallback>
                             {getInitials(fullName)}

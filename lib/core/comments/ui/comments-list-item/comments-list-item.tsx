@@ -187,9 +187,12 @@ export const CommentListItem = ({
     ));
   };
 
-  const renderAvatar = (pictureId: ID) => (
+  const renderAvatar = (pictureId: ID, name?: string | null) => (
     <Avatar className="rounded-full h-6 w-6">
-      <AvatarImage src={getPartnerImageURL(pictureId, tenantId)} />
+      <AvatarImage
+        src={getPartnerImageURL(pictureId, tenantId)}
+        alt={name ?? ''}
+      />
     </Avatar>
   );
 
@@ -207,7 +210,10 @@ export const CommentListItem = ({
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             {subapp === SUBAPP_CODES.forum && partner?.picture
-              ? renderAvatar(partner?.picture?.id)
+              ? renderAvatar(
+                  partner?.picture?.id,
+                  partner.simpleFullName ?? partner.name,
+                )
               : null}
             <div className="font-semibold text-sm">
               {partner
@@ -282,7 +288,10 @@ export const CommentListItem = ({
       <div className="flex gap-2 justify-between items-center border-b-2 border-dotted">
         <div className="flex items-center gap-2">
           {subapp === SUBAPP_CODES.forum && partner?.picture
-            ? renderAvatar(partner?.picture?.id)
+            ? renderAvatar(
+                partner?.picture?.id,
+                partner.simpleFullName ?? partner.name,
+              )
             : null}
           <div className="font-semibold text-sm leading-[21px] ">
             {partner
