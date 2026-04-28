@@ -1,0 +1,6 @@
+{
+  "title": "General improvements across authentication, core, events, forum, orders, and translations",
+  "type": "change",
+  "description": "Refactored ORM functions to pass resolved Client/Tenant instead of tenantId, validated auth and account actions with Zod, cached locale translations in the service worker, upgraded Next.js to 16.2.4 with TypeScript 6.0, replaced lodash with lodash-es. Fixed auth error handling, Google OAuth redirection, service worker caching scope, locale initialisation, React hook dependencies in forum and events, and missing/incorrect translations. Migrated Avatar and other image components to next/image with proper alt attributes.",
+  "scope": ["core", "events", "forum", "orders"]
+}
