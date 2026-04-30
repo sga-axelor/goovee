@@ -67,6 +67,7 @@ export function ComposePost({
               <AvatarImage
                 src={getPartnerImageURL(picture?.id, tenant)}
                 alt={user?.name ?? ''}
+                size={32}
               />
             }
           </Avatar>

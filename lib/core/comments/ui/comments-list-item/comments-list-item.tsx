@@ -192,6 +192,7 @@ export const CommentListItem = ({
       <AvatarImage
         src={getPartnerImageURL(pictureId, tenantId)}
         alt={name ?? ''}
+        size={24}
       />
     </Avatar>
   );

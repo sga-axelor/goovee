@@ -79,6 +79,7 @@ export const ThreadBody = ({
               <AvatarImage
                 src={getPartnerImageURL(author?.picture?.id, tenant)}
                 alt={author?.simpleFullName}
+                size={40}
               />
             </Avatar>
             <div className="flex flex-col gap-2">

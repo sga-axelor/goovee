@@ -35,6 +35,7 @@ export const ProductCard = ({
               <AvatarImage
                 src={getProductImage(saleOrder.product)}
                 alt={saleOrder.productName}
+                size={24}
               />
             </Avatar>
             <p className="font-semibold mb-0">{saleOrder.productName}</p>

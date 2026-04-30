@@ -1,0 +1,6 @@
+{
+  "title": "Avoid duplicate and oversized avatar image fetches",
+  "type": "fix",
+  "description": "Avatars were downloaded twice (Radix preload + next/image) and at the largest configured width. AvatarImage now serves a single, properly-sized optimized variant.",
+  "scope": ["core"]
+}

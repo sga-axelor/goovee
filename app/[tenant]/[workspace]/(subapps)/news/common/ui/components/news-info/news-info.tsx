@@ -96,6 +96,7 @@ export const NewsInfo = ({
                       noimage: true,
                     })}
                     alt={author.simpleFullName}
+                    size={32}
                   />
                 </Avatar>
               )}

@@ -115,6 +115,7 @@ export const GroupActionList = ({
                     <AvatarImage
                       src={groupImage}
                       alt={group?.forumGroup?.name || group?.name}
+                      size={24}
                     />
                   </Avatar>
                   <p className="font-normal text-sm leading-5 line-clamp-1 cursor-pointer">

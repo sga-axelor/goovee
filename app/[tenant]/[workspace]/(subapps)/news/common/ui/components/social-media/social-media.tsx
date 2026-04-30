@@ -48,7 +48,11 @@ export const SocialMedia = ({
               className="cursor-pointer">
               <Avatar
                 className={`w-8 h-8 bg-[${color}] p-1 rounded cursor-pointer`}>
-                <AvatarImage src={image} alt={`Visit ${redirectUrl}`} />
+                <AvatarImage
+                  src={image}
+                  alt={`Visit ${redirectUrl}`}
+                  size={32}
+                />
               </Avatar>
             </Link>
           );

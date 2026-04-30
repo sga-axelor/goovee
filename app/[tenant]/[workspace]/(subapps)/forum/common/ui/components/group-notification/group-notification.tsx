@@ -70,6 +70,7 @@ export const GroupNotification = ({group}: groupNotificationPros) => {
                   : NO_IMAGE_URL
               }
               alt={forumGroup.name}
+              size={24}
             />
           </Avatar>
           <span className="text-sm">{i18n.t(forumGroup.name)}</span>

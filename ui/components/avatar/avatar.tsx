@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import Image, {type ImageProps} from 'next/image';
+import {getImageProps, type ImageProps} from 'next/image';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 
 import {cn} from '@/utils/css';
@@ -25,32 +25,36 @@ type AvatarImageProps = Omit<
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>,
   'src'
 > &
-  Pick<ImageProps, 'sizes' | 'quality' | 'loader'> & {
+  Pick<ImageProps, 'quality' | 'loader'> & {
     src?: string;
     alt?: string;
+    size: number;
   };
 
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   AvatarImageProps
->(({className, src, alt = '', sizes, quality, loader, ...props}, ref) => {
+>(({className, src, alt = '', size, quality, loader, ...props}, ref) => {
   if (!src) return null;
+  // Oversample to stay sharp on 2x/3x DPR displays; the actual rendered size is still `size` CSS pixels.
+  const oversampled = size * 2;
+  const {props: img} = getImageProps({
+    src,
+    alt,
+    width: oversampled,
+    height: oversampled,
+    quality,
+    loader,
+  });
   return (
     <AvatarPrimitive.Image
       ref={ref}
-      asChild
-      src={src}
-      className={cn('aspect-square h-full w-full', className)}
-      {...props}>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes={sizes}
-        quality={quality}
-        loader={loader}
-      />
-    </AvatarPrimitive.Image>
+      src={img.src}
+      srcSet={img.srcSet}
+      alt={alt}
+      className={cn('aspect-square h-full w-full object-cover', className)}
+      {...props}
+    />
   );
 });
 AvatarImage.displayName = AvatarPrimitive.Image.displayName;

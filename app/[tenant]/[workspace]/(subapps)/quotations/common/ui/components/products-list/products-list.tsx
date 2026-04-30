@@ -68,6 +68,7 @@ export const ProductsList = ({
                           <AvatarImage
                             src={getProductImage(saleOrder.product)}
                             alt={saleOrder.productName}
+                            size={24}
                           />
                         </Avatar>
                         <p className="font-medium mb-0">

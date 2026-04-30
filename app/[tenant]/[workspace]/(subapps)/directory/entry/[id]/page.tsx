@@ -246,6 +246,7 @@ async function Contact({
               className="object-cover"
               src={getPartnerImageURL(picture?.id, tenant, {noimage: true})}
               alt={displayName}
+              size={64}
             />
           </Avatar>
           <div className="flex-1">

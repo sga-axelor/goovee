@@ -357,6 +357,7 @@ export default function Personal({
                           noimageSrc: '/images/profile.png',
                         })}
                         alt={fullName}
+                        size={80}
                       />
                       <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
                     </Avatar>

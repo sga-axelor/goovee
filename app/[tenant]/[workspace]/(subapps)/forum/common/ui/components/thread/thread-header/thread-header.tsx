@@ -17,6 +17,7 @@ export const ThreadHeader = ({group}: {group: any}) => {
               : NO_IMAGE_URL
           }
           alt={group?.name}
+          size={24}
         />
       </Avatar>
       <p className="font-normal text-xs leading-[0.875rem] line-clamp-1">
