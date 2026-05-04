@@ -224,6 +224,8 @@ export async function update(data: UpdatePersonal) {
 
   const email = inputEmail || user.email;
 
+  let otpId: string | undefined;
+
   if (inputEmail && user.email !== inputEmail) {
     if (!otp) {
       return error(await t('OTP is required'));
@@ -243,7 +245,7 @@ export async function update(data: UpdatePersonal) {
       return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
     }
 
-    await markUsed({id: otpResult.id, client});
+    otpId = otpResult.id;
   }
 
   const partner = await findGooveeUserByEmail(user.email, client);
@@ -290,59 +292,64 @@ export async function update(data: UpdatePersonal) {
       return error(await t('Invalid partner'));
     }
   }
+
+  const isEmailChanging = email !== partner?.emailAddress?.address;
+
+  if (isEmailChanging) {
+    try {
+      await withMattermostEmailSync({
+        oldEmail: partner.emailAddress!.address!,
+        newEmail: email,
+      });
+    } catch (err: any) {
+      return {
+        message: await t('Error updating email. Try again.'),
+        success: false,
+      };
+    }
+  }
+
   try {
-    const updatedPartner = await updatePartner({
-      data: {
-        id: partner.id,
-        version: partner.version,
-        registrationCode: identificationNumber,
-        fixedPhone: companyNumber,
-        firstName,
-        name: isCompany ? companyName : name,
-        linkedinLink: isCompany ? undefined : linkedInLink,
-        ...(partner.isContact && mainPartner
-          ? {
-              mainPartner: {
-                select: {
-                  id: mainPartner,
-                },
-              },
-            }
-          : {}),
-      },
-      client,
-    });
-
-    if (email !== partner?.emailAddress?.address) {
-      try {
-        await withMattermostEmailSync({
-          oldEmail: partner.emailAddress!.address!,
-          newEmail: email,
-        });
-      } catch (err: any) {
-        return {
-          message: await t('Error updating email. Try again.'),
-          success: false,
-        };
+    await client.$transaction(async txClient => {
+      if (otpId !== undefined) {
+        await markUsed({id: otpId, client: txClient});
       }
-      const updateEmail = async (emailAddress: any, newEmail: string) => {
-        if (!emailAddress) return;
 
-        const {id, version} = emailAddress;
+      await updatePartner({
+        data: {
+          id: partner.id,
+          version: partner.version,
+          registrationCode: identificationNumber,
+          fixedPhone: companyNumber,
+          firstName,
+          name: isCompany ? companyName : name,
+          linkedinLink: isCompany ? undefined : linkedInLink,
+          ...(partner.isContact && mainPartner
+            ? {
+                mainPartner: {
+                  select: {
+                    id: mainPartner,
+                  },
+                },
+              }
+            : {}),
+        },
+        client: txClient,
+      });
 
-        await client.aOSEmailAddress.update({
+      if (isEmailChanging && partner.emailAddress) {
+        const {id, version} = partner.emailAddress;
+        await txClient.aOSEmailAddress.update({
           data: {
             id,
             version,
-            name: newEmail,
-            address: newEmail,
+            name: email,
+            address: email,
           },
           select: {id: true},
         });
-      };
-
-      await updateEmail(partner?.emailAddress, email);
-    }
+      }
+    });
 
     return {
       success: true,

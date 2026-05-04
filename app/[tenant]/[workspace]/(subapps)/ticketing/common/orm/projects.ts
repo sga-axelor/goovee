@@ -4,8 +4,7 @@ import type {Client} from '@/goovee/.generated/client';
 import type {AOSProject} from '@/goovee/.generated/models';
 import type {ID} from '@/types';
 
-import type {QueryProps} from './helpers';
-import type {AuthProps} from '../utils/auth-helper';
+import type {QueryProps, UserCtx, SubappCtx, WorkspaceCtx} from './helpers';
 import {getProjectAccessFilter} from './helpers';
 import {getAllTicketCount} from './tickets';
 import {
@@ -19,15 +18,19 @@ import {
 import {and} from '@/utils/orm';
 
 export async function findProjects(
-  props: QueryProps<AOSProject> & {auth: AuthProps},
+  props: QueryProps<AOSProject> & {
+    client: Client;
+    user: UserCtx;
+    workspace: WorkspaceCtx;
+  },
 ) {
-  const {where, take, orderBy, skip, auth} = props;
+  const {where, take, orderBy, skip, client, user, workspace} = props;
 
-  const projects = await auth.tenant.client.aOSProject.find({
+  const projects = await client.aOSProject.find({
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     ...(orderBy ? {orderBy} : {}),
-    where: and<AOSProject>([getProjectAccessFilter(auth), where]),
+    where: and<AOSProject>([getProjectAccessFilter({user, workspace}), where]),
     select: {name: true},
   });
 
@@ -35,24 +38,40 @@ export async function findProjects(
 }
 
 export async function findProjectsWithTaskCount(
-  props: QueryProps<AOSProject> & {auth: AuthProps},
+  props: QueryProps<AOSProject> & {
+    client: Client;
+    user: UserCtx;
+    subapp: SubappCtx;
+    workspace: WorkspaceCtx;
+  },
 ) {
+  const {client, user, subapp} = props;
   const projects = await findProjects(props);
 
   const counts = await Promise.all(
     projects.map(project =>
-      getAllTicketCount({projectId: project.id, auth: props.auth}),
+      getAllTicketCount({projectId: project.id, client, user, subapp}),
     ),
   );
 
   return projects.map((p, i) => ({...p, taskCount: counts[i]}));
 }
 
-export async function findProject(id: ID, auth: AuthProps) {
-  const project = await auth.tenant.client.aOSProject.findOne({
+export async function findProject({
+  projectId,
+  client,
+  user,
+  workspace,
+}: {
+  projectId: ID;
+  client: Client;
+  user: UserCtx;
+  workspace: WorkspaceCtx;
+}) {
+  const project = await client.aOSProject.findOne({
     where: {
-      id: id,
-      ...getProjectAccessFilter(auth),
+      id: projectId,
+      ...getProjectAccessFilter({user, workspace}),
     },
     select: {id: true, name: true},
   });

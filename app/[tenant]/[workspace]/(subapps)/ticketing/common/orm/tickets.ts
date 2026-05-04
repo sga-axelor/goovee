@@ -6,7 +6,6 @@ import axios from 'axios';
 import {MAIL_MESSAGE_TYPE, type Track} from '@/comments';
 import {addComment} from '@/comments/orm';
 import {ModelMap, ORDER_BY, SUBAPP_CODES} from '@/constants';
-import {findSubappAccess} from '@/orm/workspace';
 import type {AOSProjectTask} from '@/goovee/.generated/models';
 import {t, getTranslation} from '@/locale/server';
 import {DEFAULT_LOCALE} from '@/locale/contants';
@@ -31,12 +30,12 @@ import type {
   TicketListTicket,
   TicketSearch,
 } from '../types';
-import type {AuthProps} from '../utils/auth-helper';
 import {sendTrackMail} from '../utils/mail';
 import {findTicketStatuses} from './projects';
 import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
-import type {QueryProps} from './helpers';
+import type {QueryProps, UserCtx, SubappCtx, WorkspaceCtx} from './helpers';
 import {getProjectAccessFilter, withTicketAccessFilter} from './helpers';
+import type {Tenant} from '@/tenant';
 import {getMailRecipients} from './mail';
 import {notifyUser} from '@/pwa/utils';
 import {NotificationTag} from '@/pwa/tags';
@@ -49,22 +48,27 @@ export async function findTicketAccess<
   T extends SelectOptions<AOSProjectTask>,
 >({
   recordId: ticketId,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
   select,
   projectId,
 }: {
   recordId: ID;
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
   projectId?: ID;
   select?: T;
 }): Promise<Payload<AOSProjectTask, {select: T}> | null> {
-  const {client} = auth.tenant;
   const ticket = await client.aOSProjectTask.findOne({
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       id: ticketId,
       project: {
         ...(projectId && {id: projectId}),
-        ...getProjectAccessFilter(auth),
+        ...getProjectAccessFilter({user, workspace}),
       },
     }),
     select: select as T,
@@ -76,11 +80,21 @@ export async function findTicketAccess<
 export async function createTicket({
   data,
   workspaceUserId,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
+  tenantId,
+  workspaceURL,
 }: {
   data: CreateTicketInfo;
   workspaceUserId?: ID;
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
+  tenantId: string;
+  workspaceURL: string;
 }) {
   const {
     priority,
@@ -91,13 +105,11 @@ export async function createTicket({
     parentId,
   } = data;
   let {managedBy} = data;
-  managedBy = managedBy || String(auth.user.id);
-
-  const {client} = auth.tenant;
+  managedBy = managedBy || String(user.id);
   const project = await client.aOSProject.findOne({
     where: {
       id: projectId,
-      ...getProjectAccessFilter(auth),
+      ...getProjectAccessFilter({user, workspace}),
     },
     select: {
       assignedTo: {id: true},
@@ -117,7 +129,10 @@ export async function createTicket({
     const parentTicket = await findTicketAccess({
       recordId: parentId,
       select: {project: {id: true}},
-      auth,
+      client,
+      user,
+      subapp,
+      workspace,
     });
 
     if (!parentTicket) {
@@ -143,7 +158,7 @@ export async function createTicket({
       isPrivate: false,
       isInternal: false,
       progress: '0.00',
-      createdByContact: {select: {id: auth.user.id}},
+      createdByContact: {select: {id: user.id}},
       project: {select: {id: projectId}},
       name: subject,
       description: description,
@@ -257,13 +272,13 @@ export async function createTicket({
     if (workspaceUserId) {
       addComment({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
-        userId: auth.user.id,
+        userId: user.id,
         workspaceUserId: workspaceUserId,
         recordId: newTicket.id,
-        subject: `Record Created by ${auth.user.simpleFullName}`,
+        subject: `Record Created by ${user.simpleFullName}`,
         messageBody: {title: 'Record created', tracks: tracks, tags: []},
         messageType: MAIL_MESSAGE_TYPE.notification,
-        client: auth.tenant.client,
+        client,
         trackingField: 'publicBody',
         commentField: 'note',
       });
@@ -276,29 +291,26 @@ export async function createTicket({
   const contacts = uniqueById([
     newTicket.createdByContact,
     newTicket.managedByContact,
-  ]).filter(c => String(c.id) !== String(auth.user.id)); // exclude the ticket creator — they performed the action
+  ]).filter(c => String(c.id) !== String(user.id)); // exclude the ticket creator — they performed the action
 
   for (const contact of contacts) {
     const tr = getTranslation.bind(null, {
       locale: contact.localization?.code || DEFAULT_LOCALE,
-      tenant: auth.tenant.id,
+      tenant: tenantId,
     });
     notifyUser({
       userId: contact.id,
-      tenantId: auth.tenant.id,
-      client: auth.tenant.client,
-      workspaceURL: auth.workspaceURL,
+      tenantId,
+      client,
+      workspaceURL,
       payload: {
-        title: await tr(
-          '{0} created a new ticket',
-          auth.user.simpleFullName ?? '',
-        ),
+        title: await tr('{0} created a new ticket', user.simpleFullName ?? ''),
         body: await tr(
           '{0} created a new ticket: {1}',
-          auth.user.simpleFullName ?? '',
+          user.simpleFullName ?? '',
           String(newTicket.name),
         ),
-        url: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
+        url: `${workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
         tag: NotificationTag.ticketUpdate(newTicket.id),
       },
     });
@@ -306,20 +318,20 @@ export async function createTicket({
 
   getMailRecipients({
     contacts,
-    client: auth.tenant.client,
-    workspaceURL: auth.workspaceURL,
+    client,
+    workspaceURL,
   })
     .then(reciepients => {
       if (reciepients.length) {
         return sendTrackMail({
-          author: auth.user.simpleFullName || '',
+          author: user.simpleFullName || '',
           type: 'create',
           tracks,
           projectName: newTicket.project?.name || '',
           ticketName: newTicket.name,
-          ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
+          ticketLink: `${workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
           reciepients,
-          tenant: auth.tenant.id,
+          tenant: tenantId,
         });
       }
     })
@@ -347,22 +359,34 @@ export type UTicket = Payload<AOSProjectTask, {select: typeof updateSelect}>;
 
 export async function updateTicket({
   data,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
+  tenant,
+  workspaceURL,
   fromWS,
   workspaceUserId,
 }: {
   data: UpdateTicketInfo;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
+  tenant: Tenant;
+  workspaceURL: string;
   workspaceUserId?: ID;
   fromWS?: boolean;
-  auth: AuthProps;
 }): Promise<UTicket> {
   const {priority, category, status, assignment, managedBy, id, version} = data;
-  const {client} = auth.tenant;
 
   const oldTicket = await findTicketAccess({
     recordId: id,
     select: updateSelect,
-    auth,
+    client,
+    user,
+    subapp,
+    workspace,
   });
 
   if (!oldTicket) {
@@ -382,8 +406,6 @@ export async function updateTicket({
 
   let newTicket: UTicket | null;
   if (fromWS) {
-    const tenant = auth.tenant;
-
     if (!tenant?.config?.aos?.url) {
       throw new Error(await t('Rest API URL not set'));
     }
@@ -522,13 +544,13 @@ export async function updateTicket({
     if (workspaceUserId && !fromWS) {
       addComment({
         modelName: ModelMap[SUBAPP_CODES.ticketing]!,
-        userId: auth.user.id,
+        userId: user.id,
         workspaceUserId: workspaceUserId,
         recordId: newTicket.id,
-        subject: `Record Updated by ${auth.user.simpleFullName}`,
+        subject: `Record Updated by ${user.simpleFullName}`,
         messageBody: {title: 'Record updated', tracks: tracks, tags: []},
         messageType: MAIL_MESSAGE_TYPE.notification,
-        client: auth.tenant.client,
+        client,
         trackingField: 'publicBody',
         commentField: 'note',
       });
@@ -542,26 +564,26 @@ export async function updateTicket({
     newTicket.createdByContact,
     newTicket.managedByContact,
     oldTicket?.managedByContact,
-  ]).filter(c => String(c.id) !== String(auth.user.id)); // exclude the user who performed the update
+  ]).filter(c => String(c.id) !== String(user.id)); // exclude the user who performed the update
 
   for (const contact of contacts) {
     const tr = getTranslation.bind(null, {
       locale: contact.localization?.code || DEFAULT_LOCALE,
-      tenant: auth.tenant.id,
+      tenant: tenant.id,
     });
     notifyUser({
       userId: contact.id,
-      tenantId: auth.tenant.id,
-      client: auth.tenant.client,
-      workspaceURL: auth.workspaceURL,
+      tenantId: tenant.id,
+      client,
+      workspaceURL,
       payload: {
-        title: await tr('{0} updated a ticket', auth.user.simpleFullName ?? ''),
+        title: await tr('{0} updated a ticket', user.simpleFullName ?? ''),
         body: await tr(
           '{0} updated a ticket: {1}',
-          auth.user.simpleFullName ?? '',
+          user.simpleFullName ?? '',
           String(newTicket.name),
         ),
-        url: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
+        url: `${workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
         tag: NotificationTag.ticketUpdate(newTicket.id),
       },
     });
@@ -569,20 +591,20 @@ export async function updateTicket({
 
   getMailRecipients({
     contacts,
-    client: auth.tenant.client,
-    workspaceURL: auth.workspaceURL,
+    client,
+    workspaceURL,
   })
     .then(reciepients => {
       if (reciepients.length) {
         return sendTrackMail({
-          author: auth.user.simpleFullName || '',
+          author: user.simpleFullName || '',
           type: 'update',
           tracks,
           projectName: newTicket.project?.name || '',
           ticketName: newTicket.name,
-          ticketLink: `${auth.workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
+          ticketLink: `${workspaceURL}/${SUBAPP_CODES.ticketing}/projects/${newTicket.project?.id}/tickets/${newTicket.id}`,
           reciepients,
-          tenant: auth.tenant.id,
+          tenant: tenant.id,
         });
       }
     })
@@ -595,12 +617,13 @@ export async function updateTicket({
 
 export async function getAllTicketCount(props: {
   projectId: ID;
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
 }): Promise<number> {
-  const {projectId, auth} = props;
-  const {client} = auth.tenant;
+  const {projectId, client, user, subapp} = props;
   const count = await client.aOSProjectTask.count({
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       project: {id: projectId},
       status: {isCompleted: false},
     }),
@@ -611,17 +634,18 @@ export async function getAllTicketCount(props: {
 
 export async function getMyTicketCount(props: {
   projectId: ID;
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
 }): Promise<number> {
-  const {projectId, auth} = props;
-  const {client} = auth.tenant;
+  const {projectId, client, user, subapp} = props;
   const count = await client.aOSProjectTask.count({
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       project: {id: projectId},
       status: {isCompleted: false},
       OR: [
-        {managedByContact: {id: auth.user.id}},
-        {createdByContact: {id: auth.user.id}},
+        {managedByContact: {id: user.id}},
+        {createdByContact: {id: user.id}},
       ],
     }),
   });
@@ -630,15 +654,16 @@ export async function getMyTicketCount(props: {
 
 export async function getManagedTicketCount(props: {
   projectId: ID;
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
 }): Promise<number> {
-  const {projectId, auth} = props;
-  const {client} = auth.tenant;
+  const {projectId, client, user, subapp} = props;
   const count = await client.aOSProjectTask.count({
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       project: {id: projectId},
       status: {isCompleted: false},
-      managedByContact: {id: auth.user.id},
+      managedByContact: {id: user.id},
     }),
   });
 
@@ -647,28 +672,31 @@ export async function getManagedTicketCount(props: {
 
 export async function getCreatedTicketCount(props: {
   projectId: ID;
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
 }): Promise<number> {
-  const {projectId, auth} = props;
-  const {client} = auth.tenant;
+  const {projectId, client, user, subapp} = props;
   const count = await client.aOSProjectTask.count({
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       project: {id: projectId},
       status: {isCompleted: false},
-      createdByContact: {id: auth.user.id},
+      createdByContact: {id: user.id},
     }),
   });
 
   return Number(count);
 }
+
 export async function getResolvedTicketCount(props: {
   projectId: ID;
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
 }): Promise<number> {
-  const {projectId, auth} = props;
-  const {client} = auth.tenant;
+  const {projectId, client, user, subapp} = props;
   const count = await client.aOSProjectTask.count({
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       project: {id: projectId},
       status: {isCompleted: true},
     }),
@@ -678,16 +706,19 @@ export async function getResolvedTicketCount(props: {
 }
 
 export async function findTickets(
-  props: TicketProps<AOSProjectTask> & {auth: AuthProps},
+  props: TicketProps<AOSProjectTask> & {
+    client: Client;
+    user: UserCtx;
+    subapp: SubappCtx;
+  },
 ): Promise<TicketListTicket[]> {
-  const {projectId, take, skip, where, orderBy, auth} = props;
+  const {projectId, take, skip, where, orderBy, client, user, subapp} = props;
 
-  const {client} = auth.tenant;
   const tickets = await client.aOSProjectTask.find({
     ...(take ? {take} : {}),
     ...(skip ? {skip} : {}),
     ...(orderBy ? {orderBy} : {}),
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       project: {id: projectId},
       ...where,
     }),
@@ -811,17 +842,22 @@ export async function findParentTicket(
 export async function findTicket({
   ticketId,
   projectId,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
 }: {
   ticketId: ID;
   projectId: ID;
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
 }): Promise<Ticket | null> {
-  const {client} = auth.tenant;
   const ticket = await client.aOSProjectTask.findOne({
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       id: ticketId,
-      project: {id: projectId, ...getProjectAccessFilter(auth)},
+      project: {id: projectId, ...getProjectAccessFilter({user, workspace})},
     }),
     select: {
       name: true,
@@ -871,16 +907,19 @@ export async function findTicketsBySearch(props: {
   search?: string;
   projectId?: ID;
   excludeList?: ID[];
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
 }): Promise<TicketSearch[]> {
-  const {search, projectId, excludeList, auth} = props;
+  const {search, projectId, excludeList, client, user, subapp, workspace} =
+    props;
 
-  const {client} = auth.tenant;
   const tickets = await client.aOSProjectTask.find({
-    where: withTicketAccessFilter(auth)({
+    where: withTicketAccessFilter({user, subapp})({
       project: {
         ...(projectId && {id: projectId}),
-        ...getProjectAccessFilter(auth),
+        ...getProjectAccessFilter({user, workspace}),
       },
       ...(search && {
         OR: [
@@ -998,17 +1037,28 @@ export async function findChildTicketIds(
 
 export async function createChildTicketLink({
   data,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
 }) {
   const {currentTicketId, linkTicketId} = data;
 
-  const {client} = auth.tenant;
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, auth}),
-    findTicketAccess({recordId: linkTicketId, auth}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      client,
+      user,
+      subapp,
+      workspace,
+    }),
+    findTicketAccess({recordId: linkTicketId, client, user, subapp, workspace}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1016,10 +1066,7 @@ export async function createChildTicketLink({
     throw new Error(await t('Ticket not found'));
   }
 
-  const parentTickets = await findParentTicketIds(
-    currentTicketId,
-    auth.tenant.client,
-  );
+  const parentTickets = await findParentTicketIds(currentTicketId, client);
 
   if (parentTickets.includes(linkTicketId.toString())) {
     throw new Error(await t('Circular dependency'));
@@ -1039,17 +1086,28 @@ export async function createChildTicketLink({
 
 export async function deleteChildTicketLink({
   data,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
 }) {
-  const {client} = auth.tenant;
   const {currentTicketId, linkTicketId} = data;
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, auth}),
-    findTicketAccess({recordId: linkTicketId, auth}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      client,
+      user,
+      subapp,
+      workspace,
+    }),
+    findTicketAccess({recordId: linkTicketId, client, user, subapp, workspace}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1071,17 +1129,28 @@ export async function deleteChildTicketLink({
 
 export async function createParentTicketLink({
   data,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
 }) {
-  const {client} = auth.tenant;
   const {currentTicketId, linkTicketId} = data;
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, auth}),
-    findTicketAccess({recordId: linkTicketId, auth}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      client,
+      user,
+      subapp,
+      workspace,
+    }),
+    findTicketAccess({recordId: linkTicketId, client, user, subapp, workspace}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1089,10 +1158,7 @@ export async function createParentTicketLink({
     throw new Error(await t('Ticket not found'));
   }
 
-  const childTickets = await findChildTicketIds(
-    currentTicketId,
-    auth.tenant.client,
-  );
+  const childTickets = await findChildTicketIds(currentTicketId, client);
 
   if (childTickets.includes(linkTicketId.toString())) {
     throw new Error(await t('Circular dependency'));
@@ -1111,17 +1177,28 @@ export async function createParentTicketLink({
 
 export async function deleteParentTicketLink({
   data,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID};
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
 }) {
-  const {client} = auth.tenant;
   const {currentTicketId, linkTicketId} = data;
 
   const [currentTicket, linkTicket] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, auth}),
-    findTicketAccess({recordId: linkTicketId, auth}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      client,
+      user,
+      subapp,
+      workspace,
+    }),
+    findTicketAccess({recordId: linkTicketId, client, user, subapp, workspace}),
   ]);
 
   if (!currentTicket || !linkTicket) {
@@ -1168,12 +1245,17 @@ export async function findTicketLinkTypes(
 
 export async function createRelatedTicketLink({
   data,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID; linkType: ID};
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
 }): Promise<[string, string]> {
-  const {client} = auth.tenant;
   const {currentTicketId, linkTicketId, linkType} = data;
 
   const [currentTicket, linkTicket] = await Promise.all([
@@ -1183,7 +1265,10 @@ export async function createRelatedTicketLink({
         name: true,
         project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
       },
-      auth,
+      client,
+      user,
+      subapp,
+      workspace,
     }),
     findTicketAccess({
       recordId: linkTicketId,
@@ -1191,7 +1276,10 @@ export async function createRelatedTicketLink({
         name: true,
         project: {name: true, projectTaskLinkTypeSet: {select: {id: true}}},
       },
-      auth,
+      client,
+      user,
+      subapp,
+      workspace,
     }),
   ]);
 
@@ -1290,17 +1378,28 @@ export async function createRelatedTicketLink({
 
 export async function deleteRelatedTicketLink({
   data,
-  auth,
+  client,
+  user,
+  subapp,
+  workspace,
 }: {
   data: {currentTicketId: ID; linkTicketId: ID; linkId: ID};
-  auth: AuthProps;
+  client: Client;
+  user: UserCtx;
+  subapp: SubappCtx;
+  workspace: WorkspaceCtx;
 }): Promise<number> {
-  const {client} = auth.tenant;
   const {currentTicketId, linkTicketId, linkId} = data;
 
   const [hasCurrentTicketAccess, hasLinkTicketAccess] = await Promise.all([
-    findTicketAccess({recordId: currentTicketId, auth}),
-    findTicketAccess({recordId: linkTicketId, auth}),
+    findTicketAccess({
+      recordId: currentTicketId,
+      client,
+      user,
+      subapp,
+      workspace,
+    }),
+    findTicketAccess({recordId: linkTicketId, client, user, subapp, workspace}),
   ]);
 
   if (!hasCurrentTicketAccess || !hasLinkTicketAccess) {

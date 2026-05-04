@@ -89,15 +89,16 @@ export default async function Page(props: {
   }
 
   if (error) notFound();
-  const {workspace} = auth;
+  const {workspace, user, subapp} = auth;
+  const {client} = auth.tenant;
 
   const [ticket, statuses, categories, priorities, contacts] =
     await Promise.all([
-      findTicket({ticketId, projectId, auth}),
-      findTicketStatuses(projectId, auth.tenant.client),
-      findTicketCategories(projectId, auth.tenant.client),
-      findTicketPriorities(projectId, auth.tenant.client),
-      findMainPartnerContacts(projectId, auth.tenant.client),
+      findTicket({ticketId, projectId, client, user, subapp, workspace}),
+      findTicketStatuses(projectId, client),
+      findTicketCategories(projectId, client),
+      findTicketPriorities(projectId, client),
+      findMainPartnerContacts(projectId, client),
     ]).then(clone);
 
   if (!ticket) notFound();
@@ -173,7 +174,7 @@ export default async function Page(props: {
                 <ParentTicket
                   ticketId={ticket.id}
                   projectId={ticket.project?.id}
-                  client={auth.tenant.client}
+                  client={client}
                   fields={workspace.config.ticketingFieldSet}
                 />
               </Suspense>
@@ -186,8 +187,8 @@ export default async function Page(props: {
                   categories={categories}
                   priorities={priorities}
                   contacts={contacts}
-                  userId={auth.user.id}
-                  client={auth.tenant.client}
+                  userId={user.id}
+                  client={client}
                   fields={workspace.config.ticketingFieldSet}
                   formFields={workspace.config.ticketingFormFieldSet}
                 />
@@ -198,7 +199,7 @@ export default async function Page(props: {
                 <RelatedTickets
                   ticketId={ticket.id}
                   projectId={ticket.project?.id}
-                  client={auth.tenant.client}
+                  client={client}
                   fields={workspace.config.ticketingFieldSet}
                 />
               </Suspense>

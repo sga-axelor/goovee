@@ -196,7 +196,7 @@ export default function SignUp({
       if (res.success) {
         toast({
           variant: 'success',
-          title: res.message,
+          title: i18n.t('Registered successfully'),
         });
         router.push(`/auth/login?${searchQuery}`);
       } else if (res.error) {

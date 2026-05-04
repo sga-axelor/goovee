@@ -58,24 +58,28 @@ export default async function Page(props: {
   }
 
   if (error) notFound();
-  const {workspace} = auth;
+  const {workspace, user, subapp} = auth;
+  const {client} = auth.tenant;
 
   if (parentId) {
     const parentTicket = await findTicketAccess({
       recordId: parentId,
       select: {project: {id: true}},
-      auth,
+      client,
+      user,
+      subapp,
+      workspace,
     });
     if (parentTicket?.project?.id !== projectId) notFound();
   }
 
   const [project, statuses, categories, priorities, contacts] =
     await Promise.all([
-      findProject(projectId, auth),
-      findTicketStatuses(projectId, auth.tenant.client),
-      findTicketCategories(projectId, auth.tenant.client).then(clone),
-      findTicketPriorities(projectId, auth.tenant.client).then(clone),
-      findMainPartnerContacts(projectId, auth.tenant.client).then(clone),
+      findProject({projectId, client, user, workspace}),
+      findTicketStatuses(projectId, client),
+      findTicketCategories(projectId, client).then(clone),
+      findTicketPriorities(projectId, client).then(clone),
+      findMainPartnerContacts(projectId, client).then(clone),
     ]);
 
   if (!project) notFound();
@@ -134,7 +138,7 @@ export default async function Page(props: {
         categories={categories}
         priorities={priorities}
         contacts={contacts}
-        userId={auth.user.id}
+        userId={user.id}
         parentId={parentId}
         workspaceURI={workspaceURI}
         formFields={clone(workspace.config.ticketingFormFieldSet)}

@@ -14,6 +14,7 @@ import {
 import {Scope} from '@/otp/constants';
 import {findOne, isValid, markUsed} from '@/otp/orm';
 import {manager} from '@/tenant';
+import type {ActionResponse} from '@/types/action';
 import {
   EmailRegisterSchema,
   SubscribeSchema,
@@ -21,7 +22,7 @@ import {
   type Subscribe,
 } from '@/lib/core/auth/validation-utils';
 
-function error(message: string) {
+function error(message: string): {error: true; message: string} {
   return {
     error: true,
     message,
@@ -32,7 +33,7 @@ export async function subscribe(data: Subscribe) {
   const validation = SubscribeSchema.safeParse(data);
 
   if (!validation.success) {
-    return error(z.prettifyError(validation.error));
+    return {error: true, message: z.prettifyError(validation.error)};
   }
 
   const {workspace, tenantId} = validation.data;
@@ -190,11 +191,13 @@ export async function subscribe(data: Subscribe) {
   );
 }
 
-export async function registerByEmail(data: EmailRegister) {
+export async function registerByEmail(
+  data: EmailRegister,
+): ActionResponse<true> {
   const validation = EmailRegisterSchema.safeParse(data);
 
   if (!validation.success) {
-    return error(z.prettifyError(validation.error));
+    return {error: true, message: z.prettifyError(validation.error)};
   }
 
   const {
@@ -231,21 +234,31 @@ export async function registerByEmail(data: EmailRegister) {
     return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
   }
 
-  await markUsed({id: otpResult.id, client});
-
-  return register({
-    email,
-    tenantId,
-    type,
-    name,
-    password,
-    workspaceURL,
-    firstName,
-    companyName,
-    identificationNumber,
-    companyNumber,
-    locale,
-    client,
-    config,
-  });
+  try {
+    await client.$transaction(async txClient => {
+      await markUsed({id: otpResult.id, client: txClient});
+      await register({
+        email,
+        tenantId,
+        type,
+        name,
+        password,
+        workspaceURL,
+        firstName,
+        companyName,
+        identificationNumber,
+        companyNumber,
+        locale,
+        client: txClient,
+        config,
+      });
+    });
+    return {success: true, data: true};
+  } catch (err) {
+    return error(
+      err instanceof Error
+        ? err.message
+        : await getTranslation({tenant: tenantId}, 'Registration failed'),
+    );
+  }
 }

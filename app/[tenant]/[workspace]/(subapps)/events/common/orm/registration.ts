@@ -10,6 +10,38 @@ import {PartnerTypeMap} from '@/orm/partner';
 import {CreateArgs} from '@goovee/orm';
 import {Maybe} from '@/types/util';
 
+export type Registration = {
+  id: string;
+  version: number;
+  participantList:
+    | {
+        id: string;
+        version: number;
+        contact: {
+          id: string;
+          version: number;
+          emailAddress: {
+            id: string;
+            version: number;
+            address: string | null;
+          } | null;
+          localization: {
+            id: string;
+            version: number;
+            code: string | null;
+          } | null;
+          isActivatedOnPortal: boolean | null;
+        } | null;
+      }[]
+    | null;
+  event: {
+    id: string;
+    version: number;
+    eventTitle: string | null;
+    slug: string | null;
+  } | null;
+};
+
 export async function registerParticipants({
   eventId,
   participants,
@@ -19,11 +51,8 @@ export async function registerParticipants({
   workspaceURL: string;
   participants: Participant[];
   client: Client;
-}) {
-  const contacts = await getEventContacts({
-    participants,
-    client,
-  });
+}): Promise<Registration> {
+  const contacts = await getEventContacts({participants, client});
 
   const timeStamp = new Date();
 

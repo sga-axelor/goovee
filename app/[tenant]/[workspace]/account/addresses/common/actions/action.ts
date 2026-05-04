@@ -61,16 +61,17 @@ export async function createAddress(data: CreateAddress) {
   const userId = getPartnerId(session?.user);
 
   try {
-    const partnerAddress = await createPartnerAddress(
-      userId,
-      {
-        address,
-        isDeliveryAddr,
-        isInvoicingAddr,
-        isDefaultAddr,
-      },
-      client,
-    ).then(clone);
+    /* createPartnerAddress does multiple writes (address record + partner fiscal
+       update), so we wrap in a transaction to keep them atomic. */
+    const partnerAddress = await client
+      .$transaction(txClient =>
+        createPartnerAddress(
+          userId,
+          {address, isDeliveryAddr, isInvoicingAddr, isDefaultAddr},
+          txClient,
+        ),
+      )
+      .then(clone);
 
     return {success: true, data: partnerAddress};
   } catch (error) {
@@ -108,18 +109,24 @@ export async function updateAddress(data: UpdateAddress) {
   const userId = getPartnerId(session?.user);
 
   try {
-    const partnerAddress = await updatePartnerAddress(
-      userId,
-      {
-        id,
-        version,
-        address,
-        isDeliveryAddr,
-        isInvoicingAddr,
-        isDefaultAddr,
-      },
-      client,
-    ).then(clone);
+    /* updatePartnerAddress does multiple writes (address record + partner fiscal
+       update), so we wrap in a transaction to keep them atomic. */
+    const partnerAddress = await client
+      .$transaction(txClient =>
+        updatePartnerAddress(
+          userId,
+          {
+            id,
+            version,
+            address,
+            isDeliveryAddr,
+            isInvoicingAddr,
+            isDefaultAddr,
+          },
+          txClient,
+        ),
+      )
+      .then(clone);
 
     return {success: true, data: partnerAddress};
   } catch (error) {
@@ -156,12 +163,18 @@ export async function updateDefaultAddress(data: UpdateDefaultAddress) {
 
   const userId = getPartnerId(session?.user);
 
-  return updateHandler({
-    partnerAddressId: id,
-    partnerId: userId,
-    client,
-    isDefault,
-  }).then(clone);
+  /* updateDefault*Address does multiple writes (unset old default + set new
+     default + partner fiscal update), so we wrap in a transaction. */
+  return client
+    .$transaction(txClient =>
+      updateHandler({
+        partnerAddressId: id,
+        partnerId: userId,
+        client: txClient,
+        isDefault,
+      }),
+    )
+    .then(clone);
 }
 
 export async function deleteAddress(data: z.infer<typeof IdSchema>) {

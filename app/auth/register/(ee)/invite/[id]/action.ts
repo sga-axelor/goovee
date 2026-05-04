@@ -11,6 +11,7 @@ import {findPartnerByEmail, updatePartner} from '@/orm/partner';
 import {Scope} from '@/otp/constants';
 import {findOne, isValid, markUsed} from '@/otp/orm';
 import {manager} from '@/tenant';
+import type {ActionResponse} from '@/types/action';
 import {
   EmailInviteRegisterSchema,
   InviteSubscribeSchema,
@@ -20,14 +21,16 @@ import {
 
 import {findInviteById} from '../../../common/orm/register';
 
-function error(message: string) {
+function error(message: string): {error: true; message: string} {
   return {
     error: true,
     message,
   };
 }
 
-export async function registerByEmail(data: InviteEmailRegister) {
+export async function registerByEmail(
+  data: InviteEmailRegister,
+): ActionResponse<{query: string}> {
   const validation = EmailInviteRegisterSchema.safeParse(data);
 
   if (!validation.success) {
@@ -56,19 +59,30 @@ export async function registerByEmail(data: InviteEmailRegister) {
     return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
   }
 
-  await markUsed({id: otpResult.id, client});
-
-  return registerByInvite({
-    email,
-    tenantId,
-    firstName,
-    name,
-    password,
-    inviteId,
-    locale,
-    client,
-    config,
-  });
+  try {
+    const query = await client.$transaction(async txClient => {
+      await markUsed({id: otpResult.id, client: txClient});
+      const {query} = await registerByInvite({
+        email,
+        tenantId,
+        firstName,
+        name,
+        password,
+        inviteId,
+        locale,
+        client: txClient,
+        config,
+      });
+      return query;
+    });
+    return {success: true, data: {query}};
+  } catch (err) {
+    return error(
+      err instanceof Error
+        ? err.message
+        : await getTranslation({tenant: tenantId}, 'Registration failed'),
+    );
+  }
 }
 
 export async function subscribe(data: InviteSubscribe) {

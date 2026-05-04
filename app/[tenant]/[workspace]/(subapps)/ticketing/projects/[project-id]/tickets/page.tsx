@@ -90,9 +90,10 @@ export default async function Page(props: {
   }
 
   if (error) notFound();
-  const {workspace} = auth;
+  const {workspace, user, subapp} = auth;
+  const {client} = auth.tenant;
 
-  const project = await findProject(projectId, auth);
+  const project = await findProject({projectId, client, user, workspace});
 
   if (!project) notFound();
 
@@ -100,9 +101,11 @@ export default async function Page(props: {
     projectId,
     take: +limit,
     skip: getSkip(limit, page),
-    where: getWhere(decodeFilter(filter), auth.user.id),
+    where: getWhere(decodeFilter(filter), user.id),
     orderBy: getOrderBy(sort, sortKeyPathMap),
-    auth,
+    client,
+    user,
+    subapp,
   }).then(clone);
 
   const allowedFields = new Set(
@@ -180,7 +183,7 @@ export default async function Page(props: {
               url={url}
               searchParams={searchParams}
               projectId={projectId}
-              client={auth.tenant.client}
+              client={client}
               fields={workspace.config.ticketingFieldSet}
             />
           </Suspense>

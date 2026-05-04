@@ -605,24 +605,25 @@ export async function validateStripePayment({
           (await t('Something went wrong while updating invoice!')),
       };
     }
-    await markPaymentAsProcessed({
-      contextId: context.id,
-      version: context.version,
-      client,
-    });
 
-    try {
-      const updatedInvoice = await findInvoice({
-        id: $invoice.id,
-        params: {where: invoicesWhereClause},
-        workspaceURL,
-        client,
+    await client.$transaction(async txClient => {
+      await markPaymentAsProcessed({
+        contextId: context.id,
+        version: context.version,
+        client: txClient,
       });
 
       /* After a successful card payment, re-fetch the invoice to get the updated
        * amount remaining, then clean up any stale pending bank transfer intents.
        * This handles the case where the customer had previously initiated one or
        * more bank transfers but paid via another method (card) instead. */
+      const updatedInvoice = await findInvoice({
+        id: $invoice.id,
+        params: {where: invoicesWhereClause},
+        workspaceURL,
+        client: txClient,
+      });
+
       if (updatedInvoice) {
         const updatedAmountRemaining = normalizeAmount(
           updatedInvoice.amountRemaining?.value ?? 0,
@@ -636,14 +637,12 @@ export async function validateStripePayment({
          * - If amountRemaining > 0 but an intent exceeds what's still owed
          *   (e.g. a partial card payment was made) → cancel as REQUESTED_BY_CUSTOMER */
         await cancelInvalidPendingBankTransfers({
-          client,
+          client: txClient,
           sourceId: String(updatedInvoice.id),
           amountRemaining: updatedAmountRemaining,
         });
       }
-    } catch (err) {
-      console.error('Error cancelling invalid bank transfers:', err);
-    }
+    });
 
     revalidatePath(`${workspaceURI}/${SUBAPP_CODES.invoices}/${$invoice.id}`);
     return {success: true, data: $invoice};

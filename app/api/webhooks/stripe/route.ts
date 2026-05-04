@@ -195,38 +195,54 @@ export async function POST(req: Request) {
               return new NextResponse('Invoice update failed', {status: 500});
             }
 
-            await markPaymentAsProcessed({
-              contextId: paymentContext.id,
-              version: paymentContext.version,
-              client,
-            });
+            try {
+              await client.$transaction(async txClient => {
+                await markPaymentAsProcessed({
+                  contextId: paymentContext.id,
+                  version: paymentContext.version,
+                  client: txClient,
+                });
 
-            // Once the payment is applied, reload the invoice to ensure the remaining balance
-            // is accurate, and cancel any pending bank transfers that are no longer necessary.
-            const updatedInvoice = await client.aOSInvoice.findOne({
-              where: {id: sourceId},
-              select: {
-                id: true,
-                amountRemaining: true,
-                currency: {
-                  numberOfDecimals: true,
+                // Once the payment is applied, reload the invoice to ensure the remaining balance
+                // is accurate, and cancel any pending bank transfers that are no longer necessary.
+                const updatedInvoice = await txClient.aOSInvoice.findOne({
+                  where: {id: sourceId},
+                  select: {
+                    id: true,
+                    amountRemaining: true,
+                    currency: {
+                      numberOfDecimals: true,
+                    },
+                  },
+                });
+
+                const amountRemaining = Number(
+                  scale(
+                    Number(updatedInvoice?.amountRemaining ?? 0),
+                    updatedInvoice?.currency?.numberOfDecimals ??
+                      DEFAULT_CURRENCY_SCALE,
+                  ),
+                );
+
+                await cancelInvalidPendingBankTransfers({
+                  client: txClient,
+                  sourceId: invoice.id,
+                  amountRemaining,
+                });
+              });
+            } catch (err) {
+              console.error(
+                '[STRIPE][WEBHOOK] Post-payment transaction failed',
+                {
+                  contextId: paymentContext.id,
+                  sourceId,
+                  error: err instanceof Error ? err.message : err,
                 },
-              },
-            });
-
-            const amountRemaining = Number(
-              scale(
-                Number(updatedInvoice?.amountRemaining ?? 0),
-                updatedInvoice?.currency?.numberOfDecimals ??
-                  DEFAULT_CURRENCY_SCALE,
-              ),
-            );
-
-            await cancelInvalidPendingBankTransfers({
-              client,
-              sourceId: invoice.id,
-              amountRemaining,
-            });
+              );
+              return new NextResponse('Post-payment processing failed', {
+                status: 500,
+              });
+            }
 
             notifyPaymentUpdate(source, sourceId, paymentContext.id);
             if (paymentContext.payer) {

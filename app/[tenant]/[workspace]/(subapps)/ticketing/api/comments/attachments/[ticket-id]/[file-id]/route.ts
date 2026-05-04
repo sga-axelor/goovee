@@ -28,13 +28,20 @@ export async function GET(
   if (error) {
     return new NextResponse('Unauthorized', {status: 401});
   }
-  const {workspace} = auth;
+  const {workspace, user, subapp} = auth;
+  const {client} = auth.tenant;
 
   if (!isCommentEnabled({subapp: SUBAPP_CODES.quotations, workspace})) {
     return new NextResponse('Forbidden', {status: 403});
   }
 
-  const ticket = await findTicketAccess({auth, recordId: ticketId});
+  const ticket = await findTicketAccess({
+    client,
+    user,
+    subapp,
+    workspace,
+    recordId: ticketId,
+  });
   if (!ticket) {
     return new NextResponse('Forbidden', {status: 403});
   }
@@ -43,7 +50,7 @@ export async function GET(
     !(await isFileOfRecord({
       recordId: ticketId,
       fileId,
-      client: auth.tenant.client,
+      client,
     }))
   ) {
     return new NextResponse('Forbidden', {status: 403});
@@ -52,7 +59,7 @@ export async function GET(
   const file = await findFile({
     id: fileId,
     meta: true,
-    client: auth.tenant.client,
+    client,
     storage: auth.tenant.config.aos.storage,
   });
 

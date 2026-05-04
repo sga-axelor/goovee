@@ -18,12 +18,14 @@ import {DEFAULT_LOCALE} from '@/locale/contants';
 import {TENANT_HEADER} from '@/proxy';
 import {manager} from '@/tenant';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
-import {ID, PaymentOption, User} from '@/types';
+import {ID, PaymentOption} from '@/types';
 import {PortalWorkspace} from '@/orm/workspace';
 import {ActionResponse} from '@/types/action';
+import type {Cloned} from '@/types/util';
 import {clone, scale} from '@/utils';
 import {zodParseFormData} from '@/utils/formdata';
 import {markPaymentAsProcessed} from '@/payment/common/orm';
+import type {PaymentContext} from '@/lib/core/payment/common/type';
 import {getPaymentModeId} from '@/utils/payment';
 
 // ---- LOCAL IMPORTS ---- //
@@ -40,7 +42,10 @@ import {
 } from '@/subapps/events/common/orm/event';
 import {createInvoice} from '@/subapps/events/common/orm/invoice';
 import {findContacts} from '@/subapps/events/common/orm/partner';
-import {registerParticipants} from '@/subapps/events/common/orm/registration';
+import {
+  registerParticipants,
+  type Registration,
+} from '@/subapps/events/common/orm/registration';
 import {
   error,
   isEventPrivate,
@@ -91,7 +96,7 @@ export async function getAllEvents({
 
   const tenant = await manager.getTenant(tenantId);
   if (!tenant) return {events: [], pageInfo: null};
-  const {client, config} = tenant;
+  const {client} = tenant;
 
   const result = await validate([
     withWorkspace(workspaceURL, client, {checkAuth: false}),
@@ -137,7 +142,7 @@ export async function register({
   workspace: {url: PortalWorkspace['url']};
   values?: any;
   payment?: {data: {id?: string; params?: any}; mode: PaymentOption};
-}): ActionResponse<{id: ID; version: number}> {
+}): ActionResponse<Cloned<Registration>> {
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) return error(await t('Tenant ID is missing!'));
 
@@ -145,7 +150,7 @@ export async function register({
   if (!tenant) return error(await t('Tenant not found'));
   const {client, config} = tenant;
 
-  let paidAmount, values, context;
+  let paidAmount: number, values: any, context: PaymentContext | undefined;
   if (payment) {
     const paymentInfo = await getPaymentInfo({
       mode: payment.mode,
@@ -174,7 +179,7 @@ export async function register({
     return validationResult;
   }
 
-  const {workspace, participants, user, subapp} = validationResult.data;
+  const {workspace, participants, user} = validationResult.data;
 
   const $event = await findEvent({
     id: eventId,
@@ -199,20 +204,36 @@ export async function register({
     );
   }
 
-  const registration = await registerParticipants({
-    eventId,
-    participants,
-    workspaceURL,
-    client,
-  });
+  let registration: Registration;
+  try {
+    registration = await client.$transaction(async txClient => {
+      const reg = await registerParticipants({
+        eventId,
+        participants,
+        workspaceURL,
+        client: txClient,
+      });
 
-  if (context) {
-    await markPaymentAsProcessed({
-      contextId: context.id,
-      version: context.version,
-      client,
+      if (context) {
+        await markPaymentAsProcessed({
+          contextId: context.id,
+          version: context.version,
+          client: txClient,
+        });
+      }
+
+      return reg;
     });
+  } catch (err) {
+    return error(
+      err instanceof Error ? err.message : await t('Registration failed'),
+    );
   }
+
+  /* createInvoice makes an HTTP call to AOS and must run after the transaction
+     commits — AOS queries the registration by ID, so calling it inside the
+     transaction would make the row invisible to AOS (read committed isolation).
+     Errors are logged but do not fail the registration. */
   if (paidAmount > 0) {
     const paymentModeId = getPaymentModeId(
       workspace?.config?.paymentOptionSet,

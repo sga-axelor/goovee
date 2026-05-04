@@ -34,13 +34,6 @@ import {getPublicEnvironment} from '../environment/utils';
 import {withMattermostSync} from '../mattermost/user-api';
 import type {Client} from '@/goovee/.generated/client';
 
-function error(message: string) {
-  return {
-    error: true,
-    message,
-  };
-}
-
 export type RegisterInviteDTO = OAuthInviteRegister & {
   password?: string;
   client: Client;
@@ -57,15 +50,15 @@ export async function registerByInvite({
   locale,
   client,
   config,
-}: RegisterInviteDTO) {
+}: RegisterInviteDTO): Promise<{query: string}> {
   const invite = await findInviteById({id: inviteId, client});
 
   if (!invite) {
-    return error(await getTranslation({tenant: tenantId}, 'Invalid invite'));
+    throw new Error(await getTranslation({tenant: tenantId}, 'Invalid invite'));
   }
 
   if (!invite?.partner?.id) {
-    return error(
+    throw new Error(
       await getTranslation(
         {tenant: tenantId},
         'No partner available for the workspace',
@@ -74,7 +67,7 @@ export async function registerByInvite({
   }
 
   if (email !== invite.emailAddress?.address) {
-    return error(
+    throw new Error(
       await getTranslation(
         {tenant: tenantId},
         'This invitation is valid only for the email address it was sent to.',
@@ -85,13 +78,15 @@ export async function registerByInvite({
   const {workspace} = invite;
 
   if (!workspace) {
-    return error(await getTranslation({tenant: tenantId}, 'Invalid workspace'));
+    throw new Error(
+      await getTranslation({tenant: tenantId}, 'Invalid workspace'),
+    );
   }
 
   const gooveeUser = await findGooveeUserByEmail(email, client);
 
   if (gooveeUser) {
-    return error(
+    throw new Error(
       await getTranslation(
         {tenant: tenantId},
         'Already registered, try login and subscribing invite',
@@ -106,7 +101,7 @@ export async function registerByInvite({
     existingRecord.mainPartner &&
     existingRecord.mainPartner.id !== invite.partner.id
   ) {
-    return error(
+    throw new Error(
       await getTranslation(
         {tenant: tenantId},
         'Contact already exists with another partner.',
@@ -133,18 +128,17 @@ export async function registerByInvite({
         context: INVITE_REGISTER,
       });
     } catch (err: any) {
-      return {
-        message: await getTranslation(
+      throw new Error(
+        await getTranslation(
           {tenant: tenantId},
           'Error registering contact. Try again.',
         ),
-        success: false,
-      };
+      );
     }
   }
 
   try {
-    const contact = await registerContact({
+    await registerContact({
       email,
       name,
       firstName,
@@ -168,14 +162,10 @@ export async function registerByInvite({
     });
 
     return {
-      success: true,
-      data: {
-        contact,
-        query: `?callbackurl=${encodeURIComponent(`${invite.workspace?.url}/`)}&workspaceURI=${encodeURIComponent(`${uri}/`)}&tenant=${tenantId}`,
-      },
+      query: `?callbackurl=${encodeURIComponent(`${invite.workspace?.url}/`)}&workspaceURI=${encodeURIComponent(`${uri}/`)}&tenant=${tenantId}`,
     };
   } catch (err) {
-    return error(
+    throw new Error(
       await getTranslation(
         {tenant: tenantId},
         'Error registering contact. Try again.',
@@ -204,11 +194,11 @@ export async function register({
   locale,
   client,
   config,
-}: RegisterDTO) {
+}: RegisterDTO): Promise<void> {
   const isCompany = type === UserType.company;
 
   if (isCompany && !companyName) {
-    return error(
+    throw new Error(
       await getTranslation({tenant: tenantId}, 'Company name is required'),
     );
   }
@@ -216,13 +206,15 @@ export async function register({
   const workspace = await findWorkspaceByURL({url: workspaceURL, client});
 
   if (!workspace) {
-    return error(await getTranslation({tenant: tenantId}, 'Invalid workspace'));
+    throw new Error(
+      await getTranslation({tenant: tenantId}, 'Invalid workspace'),
+    );
   }
 
   const registrationScope = workspace.allowRegistrationSelect;
 
   if (!registrationScope || registrationScope === ALLOW_NO_REGISTRATION) {
-    return error(
+    throw new Error(
       await getTranslation({tenant: tenantId}, 'Registration not allowed'),
     );
   }
@@ -230,7 +222,7 @@ export async function register({
   const existingUser = await findGooveeUserByEmail(email, client);
 
   if (existingUser) {
-    return error(
+    throw new Error(
       await getTranslation({tenant: tenantId}, 'Account already exists'),
     );
   }
@@ -249,46 +241,39 @@ export async function register({
 
   const isAllowedToRegister = aosPartner?.isAllowedToRegister;
 
-  const registrationError = error(
-    await getTranslation({tenant: tenantId}, 'Registration not allowed'),
+  const registrationErrorMessage = await getTranslation(
+    {tenant: tenantId},
+    'Registration not allowed',
   );
 
-  const companyRegistrationError = error(
-    await getTranslation(
-      {
-        locale,
-        tenant: tenantId,
-      },
-      'You are trying to create an account for an existing company, please contact admin to invite you as a user',
-    ),
+  const companyRegistrationErrorMessage = await getTranslation(
+    {
+      locale,
+      tenant: tenantId,
+    },
+    'You are trying to create an account for an existing company, please contact admin to invite you as a user',
   );
 
   if (registrationScope === ALLOW_AOS_ONLY_REGISTRATION) {
     if (!aosPartner) {
-      return registrationError;
+      throw new Error(registrationErrorMessage);
     } else if (isAosPartner) {
-      if (!isAllowedToRegister) return registrationError;
-      const existingAdminContact: any =
-        await findActiveAdminContactForWorkspace({
-          url: workspaceURL,
-          tenantId,
-          partnerId: aosPartner.id,
-          client,
-        });
+      if (!isAllowedToRegister) throw new Error(registrationErrorMessage);
+      const existingAdminContact = await findActiveAdminContactForWorkspace({
+        url: workspaceURL,
+        tenantId,
+        partnerId: aosPartner.id,
+        client,
+      });
 
-      if (existingAdminContact?.id || existingAdminContact?.error) {
-        return companyRegistrationError;
+      if (existingAdminContact?.id) {
+        throw new Error(companyRegistrationErrorMessage);
       }
       /** Register */
     } else if (isAosContact) {
-      if (!isAllowedToRegister) return registrationError;
+      if (!isAllowedToRegister) throw new Error(registrationErrorMessage);
       if (!aosPartner?.mainPartner) {
-        const result: any = await transformAosContactAsPartner(
-          aosPartner.id,
-          client,
-          tenantId,
-        );
-        if (!('success' in result)) return registrationError;
+        await transformAosContactAsPartner(aosPartner.id, client, tenantId);
         /** Register */
       } else {
         return registerAosContactAsAdmin({
@@ -313,28 +298,26 @@ export async function register({
     if (!aosPartner) {
       /** Register */
     } else if (isAosPartner) {
-      const existingAdminContact: any =
-        await findActiveAdminContactForWorkspace({
-          url: workspaceURL,
-          tenantId,
-          partnerId: aosPartner.id,
-          client,
-        });
+      const existingAdminContact = await findActiveAdminContactForWorkspace({
+        url: workspaceURL,
+        tenantId,
+        partnerId: aosPartner.id,
+        client,
+      });
 
-      if (existingAdminContact?.id || existingAdminContact?.error) {
-        return companyRegistrationError;
+      if (existingAdminContact?.id) {
+        throw new Error(companyRegistrationErrorMessage);
       }
 
       /** Register */
     } else if (isAosContact) {
       if (!aosPartner?.mainPartner) {
-        const result = await transformAosContactAsPartner(
+        await transformAosContactAsPartner(
           aosPartner.id,
           client,
           tenantId,
           locale,
         );
-        if (!('success' in result)) return registrationError;
         /** Register */
       } else {
         return registerAosContactAsAdmin({
@@ -373,50 +356,39 @@ export async function register({
         context: REGISTER,
       });
     } catch (err: any) {
-      return {
-        message: await getTranslation(
+      throw new Error(
+        await getTranslation(
           {locale, tenant: tenantId},
           'Error registering, try again',
         ),
-        success: false,
-      };
+      );
     }
   }
 
-  try {
-    const partner = await registerPartner({
-      type,
-      companyName,
-      identificationNumber,
-      companyNumber,
-      firstName,
-      name,
-      email,
-      password,
-      workspaceURL,
-      client,
-      localizationId: localization?.id,
-    });
+  const partner = await registerPartner({
+    type,
+    companyName,
+    identificationNumber,
+    companyNumber,
+    firstName,
+    name,
+    email,
+    password,
+    workspaceURL,
+    client,
+    localizationId: localization?.id,
+  });
 
-    const $partner = partner?.id && (await findPartnerById(partner.id, client));
+  const $partner = partner?.id && (await findPartnerById(partner.id, client));
 
-    if ($partner) {
-      return {
-        success: true,
-        message: await getTranslation(
-          {locale, tenant: tenantId},
-          'Registered successfully',
-        ),
-      };
-    }
-  } catch (err) {}
-
-  return error(
-    await getTranslation(
-      {locale, tenant: tenantId},
-      'Error registering, try again',
-    ),
-  );
+  if (!$partner) {
+    throw new Error(
+      await getTranslation(
+        {locale, tenant: tenantId},
+        'Error registering, try again',
+      ),
+    );
+  }
 }
 
 async function transformAosContactAsPartner(
@@ -424,16 +396,16 @@ async function transformAosContactAsPartner(
   client: Client,
   tenantId: Tenant['id'],
   locale?: string,
-) {
+): Promise<void> {
   if (!id)
-    return error(
+    throw new Error(
       await getTranslation({tenant: tenantId, locale}, 'Bad Request'),
     );
 
   const contact = await findContactById(id, client);
 
   if (!contact)
-    return error(
+    throw new Error(
       await getTranslation({tenant: tenantId, locale}, 'Bad Request'),
     );
 
@@ -446,11 +418,8 @@ async function transformAosContactAsPartner(
       },
       client,
     });
-    return {
-      success: true,
-    };
   } catch (err) {
-    return error(
+    throw new Error(
       await getTranslation(
         {tenant: tenantId, locale},
         'Error updating resource',
@@ -473,47 +442,46 @@ async function registerAosContactAsAdmin({
   locale,
   client,
   config,
-}: RegisterDTO) {
+}: RegisterDTO): Promise<void> {
   const workspace = await findWorkspaceByURL({url: workspaceURL, client});
 
   if (!workspace) {
-    return error(await getTranslation({tenant: tenantId}, 'Invalid workspace'));
+    throw new Error(
+      await getTranslation({tenant: tenantId}, 'Invalid workspace'),
+    );
   }
 
   const contact = await findContactByEmail(email, client);
 
-  const registrationError = error(
-    await getTranslation(
-      {tenant: tenantId, locale},
-      'Registration not allowed',
-    ),
+  const registrationErrorMessage = await getTranslation(
+    {tenant: tenantId, locale},
+    'Registration not allowed',
   );
 
-  if (!contact) return registrationError;
+  if (!contact) throw new Error(registrationErrorMessage);
 
-  if (contact.isActivatedOnPortal) return registrationError;
+  if (contact.isActivatedOnPortal) throw new Error(registrationErrorMessage);
 
-  if (!contact?.isAllowedToRegister) return registrationError;
+  if (!contact?.isAllowedToRegister) throw new Error(registrationErrorMessage);
 
   const contactPartner =
     contact?.mainPartner &&
     (await findPartnerById(contact.mainPartner?.id, client));
 
-  if (!contactPartner) return registrationError;
+  if (!contactPartner) throw new Error(registrationErrorMessage);
 
   const isContactPartnerAlreadyRegistered = contactPartner?.isActivatedOnPortal;
 
-  const companyRegistrationError = error(
-    await getTranslation(
-      {
-        locale,
-        tenant: tenantId,
-      },
-      'You are trying to create an account for an existing company, please contact admin to invite you as a user',
-    ),
+  const companyRegistrationErrorMessage = await getTranslation(
+    {
+      locale,
+      tenant: tenantId,
+    },
+    'You are trying to create an account for an existing company, please contact admin to invite you as a user',
   );
 
-  if (isContactPartnerAlreadyRegistered) return companyRegistrationError;
+  if (isContactPartnerAlreadyRegistered)
+    throw new Error(companyRegistrationErrorMessage);
 
   const existingAdminContact: any = await findActiveAdminContactForWorkspace({
     url: workspaceURL,
@@ -522,8 +490,8 @@ async function registerAosContactAsAdmin({
     client,
   });
 
-  if (existingAdminContact?.id || existingAdminContact?.error) {
-    return companyRegistrationError;
+  if (existingAdminContact?.id) {
+    throw new Error(companyRegistrationErrorMessage);
   }
 
   const localization = await findRegistrationLocalization({locale, client});
@@ -543,90 +511,72 @@ async function registerAosContactAsAdmin({
       });
     } catch (err: any) {
       console.log(err);
-      return {
-        message: await getTranslation(
+      throw new Error(
+        await getTranslation(
           {locale, tenant: tenantId},
           'Error registering, try again',
         ),
-        success: false,
-      };
+      );
     }
   }
 
-  try {
-    const contactConfig = await client.aOSPortalContactWorkspaceConfig.create({
-      data: {
-        name: `${email}-contact-config`,
-        portalWorkspace: {
-          select: {
-            id: workspace.id,
-          },
+  const contactConfig = await client.aOSPortalContactWorkspaceConfig.create({
+    data: {
+      name: `${email}-contact-config`,
+      portalWorkspace: {
+        select: {
+          id: workspace.id,
         },
-        isAdmin: true,
       },
-      select: {id: true},
-    });
+      isAdmin: true,
+    },
+    select: {id: true},
+  });
 
-    if (!contactConfig?.id) return registrationError;
+  if (!contactConfig?.id) throw new Error(registrationErrorMessage);
 
-    let result;
+  const isCompany = type === UserType.company;
+  const $name = isCompany ? companyName : name;
 
-    try {
-      const isCompany = type === UserType.company;
-      const $name = isCompany ? companyName : name;
-
-      result = await client.aOSPartner.update({
-        data: {
-          id: contact.id,
-          version: contact.version,
-          registrationCode: identificationNumber,
-          fixedPhone: companyNumber,
-          name: $name,
-          firstName,
-          password: password && (await hash(password)),
-          fullName: `${$name} ${firstName || ''}`,
-          simpleFullName: `${$name} ${firstName || ''}`,
-          isActivatedOnPortal: true,
-          localization: localization?.id
-            ? {select: {id: localization.id}}
-            : undefined,
-          contactWorkspaceConfigSet: {select: [{id: contactConfig.id}]},
-          ...(contactPartner.defaultWorkspace?.id && {
-            defaultWorkspace: {
-              select: {id: contactPartner.defaultWorkspace.id},
-            },
-          }),
+  const result = await client.aOSPartner.update({
+    data: {
+      id: contact.id,
+      version: contact.version,
+      registrationCode: identificationNumber,
+      fixedPhone: companyNumber,
+      name: $name,
+      firstName,
+      password: password && (await hash(password)),
+      fullName: `${$name} ${firstName || ''}`,
+      simpleFullName: `${$name} ${firstName || ''}`,
+      isActivatedOnPortal: true,
+      localization: localization?.id
+        ? {select: {id: localization.id}}
+        : undefined,
+      contactWorkspaceConfigSet: {select: [{id: contactConfig.id}]},
+      ...(contactPartner.defaultWorkspace?.id && {
+        defaultWorkspace: {
+          select: {id: contactPartner.defaultWorkspace.id},
         },
-        select: {id: true},
-      });
-    } catch (err) {
-      return registrationError;
-    }
+      }),
+    },
+    select: {id: true},
+  });
 
-    const $contact = result?.id && (await findContactById(result.id, client));
+  const $contact = result?.id && (await findContactById(result.id, client));
 
-    if ($contact) {
-      return {
-        success: true,
-        message: await getTranslation(
-          {locale, tenant: tenantId},
-          'Registered successfully',
-        ),
-      };
-    } else {
-      await client.aOSPortalContactWorkspaceConfig.delete({
-        id: contactConfig.id,
-        version: contactConfig.version,
-      });
-    }
-  } catch (err) {}
-
-  return error(
-    await getTranslation(
-      {locale, tenant: tenantId},
-      'Error registering, try again',
-    ),
-  );
+  if (!$contact) {
+    await client.aOSPortalContactWorkspaceConfig.delete({
+      id: contactConfig.id,
+      version: contactConfig.version,
+    });
+    throw new Error(
+      await getTranslation(
+        {locale, tenant: tenantId},
+        'Error registering, try again',
+      ),
+    );
+  }
 }
 
 async function findActiveAdminContactForWorkspace({
@@ -639,16 +589,18 @@ async function findActiveAdminContactForWorkspace({
   partnerId: Partner['id'];
   tenantId: Tenant['id'];
   client: Client;
-}) {
+}): Promise<{id: string; name: string | null | undefined} | null | undefined> {
   if (!url)
-    return error(
+    throw new Error(
       await getTranslation({tenant: tenantId}, 'Workspace is required'),
     );
 
   const workspace = await findWorkspaceByURL({url, client});
 
   if (!workspace)
-    return error(await getTranslation({tenant: tenantId}, 'Invalid workspace'));
+    throw new Error(
+      await getTranslation({tenant: tenantId}, 'Invalid workspace'),
+    );
 
   return client.aOSPartner.findOne({
     where: {
@@ -683,7 +635,7 @@ export async function registerByKeycloak({
   name?: string;
   workspaceURI: string;
   client: Client;
-}) {
+}): Promise<void> {
   const workspaceURL = `${getPublicEnvironment().GOOVEE_PUBLIC_HOST}${workspaceURI}`;
   const localization = await findRegistrationLocalization({
     locale,
@@ -699,16 +651,8 @@ export async function registerByKeycloak({
       client,
       localizationId: localization?.id,
     } as any);
-
-    return {
-      success: true,
-      message: await getTranslation(
-        {locale, tenant: tenantId},
-        'Registered successfully',
-      ),
-    };
   } catch (err) {
-    return error(
+    throw new Error(
       await getTranslation(
         {locale, tenant: tenantId},
         'Error registering, try again',

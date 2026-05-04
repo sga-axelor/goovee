@@ -48,12 +48,16 @@ export default async function Page(props: {
   }
   if (error) notFound();
 
-  const {workspace} = auth;
+  const {workspace, user, subapp} = auth;
+  const {client} = auth.tenant;
 
   const projects = await findProjectsWithTaskCount({
     take: +limit,
     skip: getSkip(limit, page),
-    auth,
+    client,
+    user,
+    subapp,
+    workspace,
   });
 
   const pages = getPages(projects, limit);

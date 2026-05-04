@@ -154,11 +154,22 @@ export async function mutate(
         },
       );
       const createData = await refinedSchema.parseAsync(action.data);
-      ticket = await createTicket({
-        data: createData,
-        workspaceUserId: workspace.workspaceUser?.id,
-        auth,
-      });
+      /* createTicket does create + update (to set fullName from generated id),
+         so we wrap in a transaction to keep them atomic. */
+      const {user, subapp} = auth;
+      const {client} = auth.tenant;
+      ticket = await client.$transaction(txClient =>
+        createTicket({
+          data: createData,
+          workspaceUserId: workspace.workspaceUser?.id,
+          client: txClient,
+          user,
+          subapp,
+          workspace,
+          tenantId,
+          workspaceURL,
+        }),
+      );
     } else {
       const refinedSchema = UpdateTicketSchema.superRefine(
         async (data, ctx) => {
@@ -197,7 +208,12 @@ export async function mutate(
       ticket = await updateTicket({
         data: updateData,
         workspaceUserId: workspace.workspaceUser?.id,
-        auth,
+        client: auth.tenant.client,
+        user: auth.user,
+        subapp: auth.subapp,
+        workspace,
+        tenant: auth.tenant,
+        workspaceURL,
       });
     }
 
@@ -270,7 +286,12 @@ export async function updateAssignment(
     await updateTicket({
       data: updateData,
       workspaceUserId: workspaceUser?.id,
-      auth,
+      client: auth.tenant.client,
+      user: auth.user,
+      subapp: auth.subapp,
+      workspace,
+      tenant: auth.tenant,
+      workspaceURL,
       fromWS,
     });
     return {success: true, data: true};
@@ -343,7 +364,12 @@ export async function closeTicket(
     await updateTicket({
       data: updateData,
       workspaceUserId: workspaceUser?.id,
-      auth,
+      client,
+      user: auth.user,
+      subapp: auth.subapp,
+      workspace,
+      tenant: auth.tenant,
+      workspaceURL,
       fromWS,
     });
 
@@ -411,7 +437,12 @@ export async function cancelTicket(
     await updateTicket({
       data: updateData,
       workspaceUserId: workspaceUser?.id,
-      auth,
+      client,
+      user: auth.user,
+      subapp: auth.subapp,
+      workspace,
+      tenant: auth.tenant,
+      workspaceURL,
       fromWS,
     });
 
@@ -450,7 +481,19 @@ export async function createRelatedLink(
   }
 
   try {
-    await createRelatedTicketLink({data, auth});
+    /* createRelatedTicketLink creates two link records + back-reference update,
+       so we wrap in a transaction to keep them atomic. */
+    const {client} = auth.tenant;
+    const {user, subapp} = auth;
+    await client.$transaction(txClient =>
+      createRelatedTicketLink({
+        data,
+        client: txClient,
+        user,
+        subapp,
+        workspace,
+      }),
+    );
     return {success: true, data: true};
   } catch (e) {
     return handleError(e);
@@ -488,7 +531,13 @@ export async function createChildLink(
     return {error: true, message: await t('Parent child relation not enabled')};
   }
   try {
-    await createChildTicketLink({data, auth});
+    await createChildTicketLink({
+      data,
+      client: auth.tenant.client,
+      user: auth.user,
+      subapp: auth.subapp,
+      workspace,
+    });
 
     return {success: true, data: true};
   } catch (e) {
@@ -523,7 +572,13 @@ export async function createParentLink(
   }
 
   try {
-    await createParentTicketLink({data, auth});
+    await createParentTicketLink({
+      data,
+      client: auth.tenant.client,
+      user: auth.user,
+      subapp: auth.subapp,
+      workspace,
+    });
     return {success: true, data: true};
   } catch (e) {
     return handleError(e);
@@ -562,7 +617,13 @@ export async function deleteChildLink(
   }
 
   try {
-    await deleteChildTicketLink({data, auth});
+    await deleteChildTicketLink({
+      data,
+      client: auth.tenant.client,
+      user: auth.user,
+      subapp: auth.subapp,
+      workspace,
+    });
     return {success: true, data: true};
   } catch (e) {
     return handleError(e);
@@ -601,7 +662,13 @@ export async function deleteParentLink(
   }
 
   try {
-    await deleteParentTicketLink({data, auth});
+    await deleteParentTicketLink({
+      data,
+      client: auth.tenant.client,
+      user: auth.user,
+      subapp: auth.subapp,
+      workspace,
+    });
     return {success: true, data: true};
   } catch (e) {
     return handleError(e);
@@ -636,7 +703,13 @@ export async function deleteRelatedLink(
   }
 
   try {
-    const count = await deleteRelatedTicketLink({data, auth});
+    const count = await deleteRelatedTicketLink({
+      data,
+      client: auth.tenant.client,
+      user: auth.user,
+      subapp: auth.subapp,
+      workspace,
+    });
 
     return {success: true, data: count};
   } catch (e) {
@@ -674,7 +747,10 @@ export async function searchTickets({
     search,
     projectId,
     excludeList,
-    auth,
+    client: auth.tenant.client,
+    user: auth.user,
+    subapp: auth.subapp,
+    workspace: auth.workspace,
   });
 
   return {success: true, data: clone(tickets)};
@@ -713,9 +789,13 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Invalid model type')};
   }
 
+  const {client} = auth.tenant;
   const ticket = await findTicketAccess({
     recordId: rest.recordId,
-    auth,
+    client,
+    user,
+    subapp,
+    workspace,
     select: {
       name: true,
       project: {id: true, name: true},
@@ -727,8 +807,6 @@ export const createComment: CreateComment = async formData => {
   if (!ticket) {
     return {error: true, message: await t('Record not found')};
   }
-
-  const {client} = auth.tenant;
 
   try {
     const res = await addComment({
@@ -886,16 +964,18 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('Invalid model type')};
   }
 
+  const {client} = auth.tenant;
   const ticket = await findTicketAccess({
     recordId: rest.recordId,
-    auth,
+    client,
+    user: auth.user,
+    subapp: auth.subapp,
+    workspace: auth.workspace,
   });
 
   if (!ticket) {
     return {error: true, message: await t('Record not found')};
   }
-
-  const {client} = auth.tenant;
 
   try {
     const data = await findComments({

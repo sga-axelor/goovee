@@ -160,75 +160,67 @@ export async function upload(formData: FormData, workspaceURL: string) {
     return `${new Date().getTime()}-${name}`;
   };
 
-  const create = async ({file, title, description}: any) => {
-    try {
-      const name = title || file.name;
-
-      const timestampFilename = getTimestampFilename(name);
-
-      await pump(
-        file.stream(),
-        fs.createWriteStream(path.resolve(getStoragePath(), timestampFilename)),
-      );
-
-      const timestamp = new Date();
-
-      await client.aOSDMSFile.create({
-        data: {
-          fileName: name,
-          isDirectory: false,
-          parent: {select: {id: Number(parent.id)}},
-          createdOn: timestamp as unknown as Date,
-          updatedOn: timestamp as unknown as Date,
-          workspaceSet: {
-            select: [{id: workspace.id}],
-          },
-          isPrivate,
-          permissionSelect,
-          ...(partnerSet?.length
-            ? {
-                partnerSet: {
-                  select: partnerSet.map(({id}: any) => ({id})),
-                },
-              }
-            : {}),
-          ...(partnerCategorySet?.length
-            ? {
-                partnerCategorySet: {
-                  select: partnerCategorySet.map(({id}: any) => ({id})),
-                },
-              }
-            : {}),
-          metaFile: {
-            create: {
-              fileName: name,
-              filePath: timestampFilename,
-              fileType: file.type,
-              fileSize: file.size,
-              sizeText: getFileSizeText(file.size),
-              description: description,
-              createdOn: timestamp,
-              updatedOn: timestamp,
-            },
-          },
-        },
-        select: {
-          id: true,
-        },
-      });
-    } catch (err) {}
+  type FileEntry = {
+    name: string;
+    timestampFilename: string;
+    file: File;
+    description: string;
   };
 
   try {
-    await Promise.all(
-      values.map(({title, description, file}: any) =>
-        create({
-          title: `${title}${path.extname(file.name)}`,
-          description,
-          file,
-        }),
-      ),
+    const fileEntries: FileEntry[] = await Promise.all(
+      values.map(async ({title, description, file}: any) => {
+        const titleWithExt = `${title}${path.extname(file.name)}`;
+        const name = titleWithExt || file.name;
+        const timestampFilename = getTimestampFilename(name);
+        await pump(
+          file.stream(),
+          fs.createWriteStream(
+            path.resolve(getStoragePath(), timestampFilename),
+          ),
+        );
+        return {name, timestampFilename, file, description};
+      }),
     );
+
+    const timestamp = new Date();
+    await client.aOSDMSFile.createAll({
+      data: fileEntries.map(({name, timestampFilename, file, description}) => ({
+        fileName: name,
+        isDirectory: false,
+        parent: {select: {id: Number(parent.id)}},
+        createdOn: timestamp,
+        updatedOn: timestamp,
+        workspaceSet: {
+          select: [{id: workspace.id}],
+        },
+        isPrivate,
+        permissionSelect,
+        ...(partnerSet?.length
+          ? {partnerSet: {select: partnerSet.map(({id}) => ({id}))}}
+          : {}),
+        ...(partnerCategorySet?.length
+          ? {
+              partnerCategorySet: {
+                select: partnerCategorySet.map(({id}) => ({id})),
+              },
+            }
+          : {}),
+        metaFile: {
+          create: {
+            fileName: name,
+            filePath: timestampFilename,
+            fileType: file.type,
+            fileSize: String(file.size),
+            sizeText: getFileSizeText(file.size),
+            description: description,
+            createdOn: timestamp,
+            updatedOn: timestamp,
+          },
+        },
+      })),
+      select: {id: true},
+    });
 
     revalidatePath(`${workspaceURL}/${SUBAPP_CODES.resources}/categories`);
   } catch (err) {

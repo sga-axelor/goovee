@@ -18,6 +18,7 @@ import {PortalWorkspace} from '@/orm/workspace';
 import {getSession} from '@/auth';
 import {getFileSizeText} from '@/utils/files';
 import {manager} from '@/tenant';
+import type {Client} from '@/goovee/.generated/client';
 import {TENANT_HEADER} from '@/proxy';
 import {filterPrivate} from '@/orm/filter';
 import {
@@ -508,73 +509,74 @@ export async function addPost({
 
   let attachmentListArray: {id: string; fileName: string; title: string}[] = [];
 
-  if (formData) {
-    const attachmentResponse = await uploadAttachment(formData);
-
-    if (attachmentResponse.some((item: any) => item.error)) {
-      return {
-        error: true,
-        message: await t('Something went wrong while attachment upload!'),
-      };
-    }
-
-    attachmentListArray = attachmentResponse.map(
-      ({title, metaFile}: AttachmentResponse) => ({
-        id: metaFile.id,
-        fileName: metaFile.fileName,
-        title,
-      }),
-    );
-  }
-
   const timeStamp = new Date();
   try {
-    const post = await client.aOSPortalForumPost.create({
-      select: {
-        attachmentList: {
-          select: {
-            metaFile: {
-              fileName: true,
-              fileType: true,
-              fileSize: true,
-              filePath: true,
-              sizeText: true,
-              createdOn: true,
-              updatedOn: true,
+    const post = await client.$transaction(async txClient => {
+      if (formData) {
+        const attachmentResponse = await uploadAttachment(formData, txClient);
+
+        if (attachmentResponse.some((item: any) => item.error)) {
+          throw new Error(
+            await t('Something went wrong while attachment upload!'),
+          );
+        }
+
+        attachmentListArray = attachmentResponse.map(
+          ({title, metaFile}: AttachmentResponse) => ({
+            id: metaFile.id,
+            fileName: metaFile.fileName,
+            title,
+          }),
+        );
+      }
+
+      return txClient.aOSPortalForumPost.create({
+        select: {
+          attachmentList: {
+            select: {
+              metaFile: {
+                fileName: true,
+                fileType: true,
+                fileSize: true,
+                filePath: true,
+                sizeText: true,
+                createdOn: true,
+                updatedOn: true,
+              },
             },
           },
+          title: true,
+          forumGroup: {
+            name: true,
+          },
+          postDateT: true,
+          content: true,
+          author: {
+            id: true,
+            simpleFullName: true,
+            fullName: true,
+          },
+          createdOn: true,
         },
-        title: true,
-        forumGroup: {
-          name: true,
+        data: {
+          postDateT: timeStamp,
+          createdOn: timeStamp,
+          forumGroup: {select: {id: group.id}},
+          title,
+          content,
+          author: {select: {id: user.id}},
+          attachmentList:
+            attachmentListArray.length > 0
+              ? {
+                  create: attachmentListArray.map(item => ({
+                    title: item.title,
+                    metaFile: {select: {id: item.id}},
+                  })),
+                }
+              : null,
         },
-        postDateT: true,
-        content: true,
-        author: {
-          id: true,
-          simpleFullName: true,
-          fullName: true,
-        },
-        createdOn: true,
-      },
-      data: {
-        postDateT: timeStamp,
-        createdOn: timeStamp,
-        forumGroup: {select: {id: group.id}},
-        title,
-        content,
-        author: {select: {id: user.id}},
-        attachmentList:
-          attachmentListArray.length > 0
-            ? {
-                create: attachmentListArray.map(item => ({
-                  title: item.title,
-                  metaFile: {select: {id: item.id}},
-                })),
-              }
-            : null,
-      },
-    });
+      });
+    }); // end $transaction
 
     const subscribers: any = await getSubscribersByGroup({
       groupID: group.id,
@@ -768,20 +770,10 @@ export async function fetchPosts({
   }).then(clone);
 }
 
-async function uploadAttachment(formData: FormData): Promise<any> {
-  const tenantId = (await headers()).get(TENANT_HEADER);
-
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await t('TenantId is required'),
-    };
-  }
-
-  const tenant = await manager.getTenant(tenantId);
-  if (!tenant) return {error: true, message: await t('Invalid tenant')};
-  const {client} = tenant;
-
+async function uploadAttachment(
+  formData: FormData,
+  client: Client,
+): Promise<any> {
   const values = extractFileValues(formData);
 
   const getTimestampFilename = (name: string) =>
@@ -808,7 +800,7 @@ async function uploadAttachment(formData: FormData): Promise<any> {
           fileName: name,
           filePath: timestampFilename,
           fileType: file.type,
-          fileSize: file.size,
+          fileSize: String(file.size),
           sizeText: getFileSizeText(file.size),
         },
         select: {

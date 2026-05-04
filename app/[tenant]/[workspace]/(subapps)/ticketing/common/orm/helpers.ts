@@ -1,8 +1,9 @@
 import {ROLE} from '@/constants';
 import type {AOSProject, AOSProjectTask} from '@/goovee/.generated/models';
 import type {Entity, OrderByArg, WhereOptions} from '@goovee/orm';
+import type {User} from '@/types';
+import type {Subapp, PortalWorkspace} from '@/orm/workspace';
 import {TYPE_SELECT} from '../constants';
-import {AuthProps} from '../utils/auth-helper';
 import {and} from '@/utils/orm';
 
 export type QueryProps<T extends Entity> = {
@@ -12,8 +13,17 @@ export type QueryProps<T extends Entity> = {
   skip?: number;
 };
 
-export function getProjectAccessFilter(props: AuthProps) {
-  const {user, workspace} = props;
+export type UserCtx = Pick<User, 'id' | 'isContact' | 'simpleFullName'>;
+export type SubappCtx = Pick<Subapp, 'isContactAdmin' | 'role'>;
+export type WorkspaceCtx = Pick<PortalWorkspace, 'id'>;
+
+export function getProjectAccessFilter({
+  user,
+  workspace,
+}: {
+  user: UserCtx;
+  workspace: WorkspaceCtx;
+}) {
   const where: WhereOptions<AOSProject> = {
     OR: [{archived: false}, {archived: null}],
     isBusinessProject: true,
@@ -36,18 +46,20 @@ export function getTicketAccessFilter() {
   return where;
 }
 
-export function getRestrictedTicketAccessFilter(props: AuthProps) {
+export function getRestrictedTicketAccessFilter({user}: {user: UserCtx}) {
   const where: WhereOptions<AOSProjectTask> = {
-    OR: [
-      {createdByContact: {id: props.user.id}},
-      {managedByContact: {id: props.user.id}},
-    ],
+    OR: [{createdByContact: {id: user.id}}, {managedByContact: {id: user.id}}],
   };
   return where;
 }
 
-export function withTicketAccessFilter(props: AuthProps) {
-  const {user, subapp} = props;
+export function withTicketAccessFilter({
+  user,
+  subapp,
+}: {
+  user: UserCtx;
+  subapp: SubappCtx;
+}) {
   const isRestricted =
     user.isContact && !subapp.isContactAdmin && subapp.role != ROLE.TOTAL;
   return function (where?: WhereOptions<AOSProjectTask>) {
@@ -55,7 +67,7 @@ export function withTicketAccessFilter(props: AuthProps) {
       return and<AOSProjectTask>([
         where,
         getTicketAccessFilter(),
-        getRestrictedTicketAccessFilter(props),
+        getRestrictedTicketAccessFilter({user}),
       ]);
     }
     return and<AOSProjectTask>([where, getTicketAccessFilter()]);

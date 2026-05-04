@@ -24,7 +24,7 @@ const showKeycloakOauth = process.env.SHOW_KEYCLOAK_OAUTH === 'true';
 const ERROR_CODES = defineErrorCodes({
   TENANT_ID_REQUIRED: 'Tenant ID is required',
   PARTNER_NOT_FOUND: 'Partner not found',
-  REGISTRATION_FAILED: 'Registration failed due to unexpected error',
+  REGISTRATION_FAILED: 'Registration failed',
 });
 
 const options = {
@@ -67,13 +67,24 @@ const options = {
                 const {success: inviteSuccess, data: inviteData} =
                   OAuthInviteRegisterSchema.safeParse(registrationData);
 
-                let res;
                 if (inviteSuccess) {
-                  res = await registerByInvite({
-                    ...inviteData,
-                    client,
-                    config,
-                  });
+                  try {
+                    await client.$transaction(async txClient => {
+                      await registerByInvite({
+                        ...inviteData,
+                        client: txClient,
+                        config,
+                      });
+                    });
+                  } catch (err) {
+                    if (err instanceof APIError) throw err;
+                    throw new APIError('UNPROCESSABLE_ENTITY', {
+                      message:
+                        err instanceof Error
+                          ? err.message
+                          : ERROR_CODES.REGISTRATION_FAILED.message,
+                    });
+                  }
                 } else {
                   const {
                     success: registerSuccess,
@@ -87,17 +98,23 @@ const options = {
                     });
                   }
 
-                  res = await register({
-                    ...registerData,
-                    client,
-                    config,
-                  });
-                }
-
-                if ('error' in res) {
-                  throw new APIError('UNPROCESSABLE_ENTITY', {
-                    message: res.message,
-                  });
+                  try {
+                    await client.$transaction(async txClient => {
+                      await register({
+                        ...registerData,
+                        client: txClient,
+                        config,
+                      });
+                    });
+                  } catch (err) {
+                    if (err instanceof APIError) throw err;
+                    throw new APIError('UNPROCESSABLE_ENTITY', {
+                      message:
+                        err instanceof Error
+                          ? err.message
+                          : ERROR_CODES.REGISTRATION_FAILED.message,
+                    });
+                  }
                 }
 
                 partner = await findGooveeUserByEmail(user.email, client);
@@ -121,14 +138,20 @@ const options = {
                   });
                 }
 
-                const res = await registerByKeycloak({
-                  ...keycloakData,
-                  client,
-                });
-
-                if ('error' in res) {
+                try {
+                  await client.$transaction(async txClient => {
+                    await registerByKeycloak({
+                      ...keycloakData,
+                      client: txClient,
+                    });
+                  });
+                } catch (err) {
+                  if (err instanceof APIError) throw err;
                   throw new APIError('UNPROCESSABLE_ENTITY', {
-                    message: res.message,
+                    message:
+                      err instanceof Error
+                        ? err.message
+                        : ERROR_CODES.REGISTRATION_FAILED.message,
                   });
                 }
 
