@@ -1,7 +1,18 @@
+import type SMTPPool from 'nodemailer/lib/smtp-pool';
+import type Mail from 'nodemailer/lib/mailer';
 import MailNotificationService from './mail';
 
+export interface MailNotificationData {
+  to?: string | string[] | null;
+  subject: string;
+  text?: string;
+  html?: string;
+  attachments?: Mail.Attachment[];
+  icalEvent?: Mail.IcalAttachment;
+}
+
 export interface NotificationService {
-  notify(data: any): Promise<any>;
+  notify(data: MailNotificationData): Promise<SMTPPool.SentMessageInfo>;
 }
 
 export enum NotificationType {
@@ -11,11 +22,11 @@ export enum NotificationType {
 export class NotificationManager {
   static getService(
     type: NotificationType,
-    options?: any,
+    options?: SMTPPool | SMTPPool.Options | string,
   ): NotificationService | null {
     switch (type) {
       case NotificationType.mail:
-        return new MailNotificationService(options);
+        return MailNotificationService.create(options);
       default:
         return null;
     }
