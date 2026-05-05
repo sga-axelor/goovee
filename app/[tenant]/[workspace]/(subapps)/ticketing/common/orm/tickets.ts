@@ -33,6 +33,7 @@ import type {
 } from '../types';
 import type {AuthProps} from '../utils/auth-helper';
 import {sendTrackMail} from '../utils/mail';
+import {findTicketStatuses} from './projects';
 import type {CreateTicketInfo, UpdateTicketInfo} from '../utils/validators';
 import type {QueryProps} from './helpers';
 import {getProjectAccessFilter, withTicketAccessFilter} from './helpers';
@@ -367,6 +368,16 @@ export async function updateTicket({
   if (!oldTicket) {
     // To make sure the user has access to the ticket.
     throw new Error(await t('Ticket not found'));
+  }
+
+  if (status && oldTicket.project?.id) {
+    const projectStatuses = await findTicketStatuses(
+      oldTicket.project.id,
+      client,
+    );
+    if (!projectStatuses.some(s => s.id === status)) {
+      throw new Error(await t('Selected status is not valid for this project'));
+    }
   }
 
   let newTicket: UTicket | null;
