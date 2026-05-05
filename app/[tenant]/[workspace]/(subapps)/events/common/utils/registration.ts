@@ -1,5 +1,6 @@
 import type {Client} from '@/goovee/.generated/client';
-import type {Participant} from '@/types';
+import type {Participant} from '../actions/validators';
+import {type RegistrationValues} from '../actions/validators';
 import {
   type EventConfig,
   type EventConfigPartner,
@@ -116,44 +117,15 @@ export function getTotalRegisteredParticipants(event: EventConfig): number {
   }, 0);
 }
 
-//TODO: create a zod schema instead of manual validation
-//This requires refctoring the registration form entirely
-export const validateRequiredFormFields = async (
-  values: Record<string, any>,
-  requiredFields: {field: string; message: string}[],
-  t: (key: string, ...args: any[]) => Promise<string>,
-) => {
-  const errors: string[] = [];
-
-  for (const {field, message} of requiredFields) {
-    const value = values[field];
-    if (!value || (typeof value === 'string' && !value.trim())) {
-      errors.push(await t('Participant {0}: {1}', 1, message));
-    }
-  }
-
-  const otherPeople = values.otherPeople || [];
-  for (const [index, person] of otherPeople.entries()) {
-    for (const {field, message} of requiredFields) {
-      const value = person[field];
-      if (!value || (typeof value === 'string' && !value.trim())) {
-        errors.push(await t('Person {0}: {1}', `${index + 2}`, message));
-      }
-    }
-  }
-
-  return errors.length ? {error: errors.join(', ')} : null;
-};
-
-export function getParticipantsFromValues(values: any): Participant[] {
+export function getParticipantsFromValues(
+  values: RegistrationValues,
+): Participant[] {
   const {otherPeople = [], ...rest} = values;
 
-  const participants: Participant[] = otherPeople.map(
-    (participant: Participant) => ({
-      ...participant,
-      emailAddress: participant.emailAddress?.toLowerCase(),
-    }),
-  );
+  const participants = otherPeople.map(participant => ({
+    ...participant,
+    emailAddress: participant.emailAddress.toLowerCase(),
+  }));
   participants.unshift(rest);
   participants.sort((a, b) => a.sequence - b.sequence);
   return participants;

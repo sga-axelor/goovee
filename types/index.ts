@@ -187,18 +187,6 @@ export type Item = {
   label: string;
 };
 
-export type Participant = {
-  id?: ID;
-  name: string;
-  surname: string;
-  emailAddress: string;
-  phone: string;
-  contactAttrs?: string;
-  subscriptionSet?: any[];
-  company?: string;
-  sequence: number;
-};
-
 export type Comment = {
   image?: any;
   contentComment: string;

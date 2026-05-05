@@ -1,10 +1,12 @@
+import type {Partner} from '@/orm/partner';
 import {PortalWorkspace} from '@/orm/workspace';
 import type {Cloned} from '@/types/util';
 import type {FullEvent} from '@/subapps/events/common/orm/event';
+import type {ModelField} from '@/orm/model-fields';
 
 export interface EventPageCardProps {
   eventDetails: Cloned<FullEvent>;
-  metaFields?: any[];
+  metaFields?: ModelField[];
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  user?: any;
+  user?: Partner | null;
 }

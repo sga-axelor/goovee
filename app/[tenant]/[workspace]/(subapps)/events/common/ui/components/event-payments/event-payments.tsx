@@ -24,6 +24,7 @@ import {
 import {mapParticipants} from '@/subapps/events/common/utils';
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
 import type {FullEvent} from '../../../orm/event';
+import type {ModelField} from '@/orm/model-fields';
 import {URL_PARAMS} from '@/subapps/events/common/constants';
 export function EventPayments({
   workspace,
@@ -39,9 +40,9 @@ export function EventPayments({
     'id' | 'displayAti' | 'facilityList' | 'priceScale'
   >;
   form: any;
-  metaFields: any;
-  metaFieldsFacilities: any;
-  additionalFieldSet: any;
+  metaFields: ModelField[];
+  metaFieldsFacilities: ModelField[];
+  additionalFieldSet: ModelField[] | null | undefined;
 }) {
   const workspaceURL = workspace?.url;
 
@@ -64,13 +65,13 @@ export function EventPayments({
     [workspaceURI, router],
   );
 
-  function getMappedParticipants(form: any, metaFields: any) {
+  function getMappedParticipants(form: any, metaFields: ModelField[]) {
     const values = form.getValues();
     return mapParticipants(
       values,
       metaFields,
       metaFieldsFacilities,
-      additionalFieldSet,
+      additionalFieldSet ?? [],
     );
   }
 
@@ -79,7 +80,7 @@ export function EventPayments({
     metaFields,
   }: {
     form: any;
-    metaFields: any;
+    metaFields: ModelField[];
   }): Promise<boolean> {
     try {
       const isValidForm = await form.trigger();
@@ -126,17 +127,13 @@ export function EventPayments({
           return await paypalCreateOrder({
             workspaceURL,
             values: formValues,
-            event: {
-              id: event.id,
-            },
+            eventId: event.id,
           });
         }}
-        onPaypalCaptureOrder={async (orderID: string) => {
-          const formValues = getMappedParticipants(form, metaFields);
+        onPaypalCaptureOrder={async orderID => {
           return await register({
             payment: {data: {id: orderID}, mode: PaymentOption.paypal},
-            workspace: {url: workspaceURL},
-            values: formValues,
+            workspaceURL,
             eventId: event.id,
           });
         }}
@@ -144,9 +141,7 @@ export function EventPayments({
         onStripeCreateCheckOutSession={async () => {
           const formValues = getMappedParticipants(form, metaFields);
           return await createStripeCheckoutSession({
-            event: {
-              id: event.id,
-            },
+            eventId: event.id,
             workspaceURL,
             values: formValues,
           });
@@ -161,28 +156,26 @@ export function EventPayments({
               data: {id: stripeSessionId},
               mode: PaymentOption.stripe,
             },
-            workspace: {url: workspaceURL},
+            workspaceURL,
             eventId: event.id,
           });
         }}
         onPayboxCreateOrder={async ({uri}) => {
           const formValues = getMappedParticipants(form, metaFields);
           return await payboxCreateOrder({
-            event: {id: event.id},
+            eventId: event.id,
             workspaceURL,
             values: formValues,
             uri,
           });
         }}
         onPayboxValidatePayment={async ({params}) => {
-          const formValues = getMappedParticipants(form, metaFields);
           return await register({
             payment: {
               mode: PaymentOption.paybox,
               data: {params},
             },
-            workspace: {url: workspaceURL},
-            values: formValues,
+            workspaceURL,
             eventId: event.id,
           });
         }}

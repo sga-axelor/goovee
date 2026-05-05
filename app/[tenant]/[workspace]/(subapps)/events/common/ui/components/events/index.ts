@@ -6,10 +6,4 @@ export {
   EventCategoryList,
   EventCategorySkeleton,
 } from './events';
-export type {
-  Event,
-  EventsProps,
-  Category,
-  CategoriesProps,
-  ListEvent,
-} from './types';
+export type {EventsProps, Category, CategoriesProps, ListEvent} from './types';

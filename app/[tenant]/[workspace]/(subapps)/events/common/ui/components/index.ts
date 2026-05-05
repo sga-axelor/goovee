@@ -9,7 +9,7 @@ export {
   EventCategoryList,
   EventCategorySkeleton,
 } from './events';
-export type {Event, ListEvent} from './events';
+export type {ListEvent} from './events';
 export type {EventsProps} from './events';
 export type {Category} from './events';
 export type {CategoriesProps} from './events';

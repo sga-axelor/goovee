@@ -145,21 +145,25 @@ export function formatStudioFields(items: any[], context?: any): Field[] {
     .map(formatField);
 }
 
-export function extractCustomData(
-  formState: any,
-  modelField: string,
-  customFields: any[],
-): any {
-  const result: any = {};
-  const customData: any = {};
+export function extractCustomData<
+  T extends Record<string, unknown>,
+  M extends string,
+>(
+  formState: T,
+  modelField: M,
+  customFields: {name: string}[],
+): Omit<T, M> & Record<M, string> {
+  const result: Record<string, unknown> = {};
+  const customData: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(formState)) {
-    if (customFields.find(({name}) => name == key)) {
+    if (customFields.find(f => f.name == key)) {
       customData[key] = value;
     } else {
       result[key] = value;
     }
   }
 
-  return {...result, [modelField]: JSON.stringify(customData)};
+  return {...result, [modelField]: JSON.stringify(customData)} as Omit<T, M> &
+    Record<M, string>;
 }

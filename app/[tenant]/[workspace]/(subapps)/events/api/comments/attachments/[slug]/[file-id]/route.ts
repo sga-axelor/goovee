@@ -59,7 +59,7 @@ export async function GET(
 
   const event = await findEvent({
     slug,
-    workspace,
+    workspaceURL,
     client,
     config,
     user,

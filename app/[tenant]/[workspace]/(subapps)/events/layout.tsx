@@ -56,7 +56,7 @@ export default async function Layout(props: {
   }
 
   const categories = await findEventCategories({
-    workspace,
+    workspaceURL: workspace.url,
     client,
     user,
   }).then(clone);

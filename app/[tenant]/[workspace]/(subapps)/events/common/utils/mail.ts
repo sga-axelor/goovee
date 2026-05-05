@@ -1,7 +1,7 @@
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/lib/core/auth';
 import NotificationManager, {NotificationType} from '@/lib/core/notification';
-import {Participant} from '@/types';
+import type {Participant} from '@/subapps/events/common/actions/validators';
 import {html} from '@/utils/template-string';
 import {findEvent} from '../orm/event';
 import {generateIcs} from './index';
@@ -165,7 +165,7 @@ export const generateRegistrationMailAction = async ({
 
   const event = await findEvent({
     id: eventId,
-    workspace: {url: workspaceURL},
+    workspaceURL,
     client,
     config,
     user,

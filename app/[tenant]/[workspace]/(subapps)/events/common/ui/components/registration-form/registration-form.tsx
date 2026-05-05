@@ -82,7 +82,7 @@ export const RegistrationForm = ({
 
   const isLoggedIn = !!user?.emailAddress;
   //NOTE: temprorary disable contacts list
-  const showContactsList = false && isLoggedIn && !user.isContact;
+  const showContactsList = false && isLoggedIn && !user?.isContact;
   const canPay = defaultPrice || facilityList?.length;
   const eventPrice = defaultPrice ? (displayAti ?? 0) : 0;
 
@@ -110,7 +110,7 @@ export const RegistrationForm = ({
         required: true,
         readonly: false,
         order: 1,
-        defaultValue: user.firstName || '',
+        defaultValue: user?.firstName || '',
       },
       {
         name: 'surname',
@@ -196,9 +196,9 @@ export const RegistrationForm = ({
     ],
   );
 
-  const metaFieldsFacilities = facilityList.flatMap(
-    facility => facility.additionalFieldSet,
-  );
+  const metaFieldsFacilities = facilityList
+    .flatMap(facility => facility.additionalFieldSet)
+    .filter(f => f !== null);
 
   const participantForm = useMemo(
     () => [
@@ -373,15 +373,20 @@ export const RegistrationForm = ({
         values,
         metaFields,
         metaFieldsFacilities,
-        additionalFieldSet,
+        (additionalFieldSet ?? []).filter(f => f !== null),
       );
-      const response = await register({
+      const {error, message} = await register({
         eventId,
         values: result,
-        workspace: {url: workspace.url},
+        workspaceURL: workspace.url,
       });
 
-      if (response.success) {
+      if (error) {
+        toast({
+          variant: 'destructive',
+          title: i18n.t(message),
+        });
+      } else {
         toast({
           variant: 'success',
           title: i18n.t(SUCCESS_REGISTER_MESSAGE),
@@ -389,11 +394,6 @@ export const RegistrationForm = ({
         router.push(
           `${workspaceURI}/${SUBAPP_CODES.events}/${slug}/${SUBAPP_PAGE.register}/${SUBAPP_PAGE.confirmation}`,
         );
-      } else {
-        toast({
-          variant: 'destructive',
-          title: i18n.t(response.message),
-        });
       }
     } catch (err) {
       toast({
@@ -493,7 +493,7 @@ export const RegistrationForm = ({
                     workspace={workspace}
                     event={{
                       id: eventId,
-                      displayAti: eventPrice,
+                      displayAti: String(eventPrice),
                       facilityList,
                       priceScale,
                     }}

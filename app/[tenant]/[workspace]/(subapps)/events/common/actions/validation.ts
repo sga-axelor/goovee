@@ -13,19 +13,19 @@ import {
   isLoginNeededForRegistration,
 } from '@/subapps/events/common/utils';
 import {SUBAPP_CODES} from '@/constants';
-import {Participant, User} from '@/types';
+import {User} from '@/types';
+import {type Participant} from './validators';
 import {PortalWorkspace, Subapp} from '@/orm/workspace';
 import {ActionResponse} from '@/types/action';
-import {REQUIRED_FIELDS} from '../constants';
 import {EventConfig, findEventConfig} from '../orm/event';
 import {
-  validateRequiredFormFields,
   getParticipantsFromValues,
   getTotalRegisteredParticipants,
   canEmailBeRegistered,
   isAlreadyRegistered,
 } from '../utils/registration';
 import {hasRegistrationEnded} from '../utils';
+import {type RegistrationValues} from './validators';
 
 type ValidationResult = {
   error: null | boolean;
@@ -113,7 +113,7 @@ export async function validateRegistration({
   client,
 }: {
   eventId: string;
-  values: any;
+  values: RegistrationValues;
   workspaceURL: string;
   client: Client;
 }): ActionResponse<{
@@ -123,22 +123,6 @@ export async function validateRegistration({
   user?: User;
   subapp: Subapp;
 }> {
-  if (!eventId) return error(await t('Event ID is missing!'));
-  if (!values) return error(await t('Values are missing!'));
-  // TODO: Handle the form validation here
-  if (!Object.keys(values)?.length) {
-    return error(await t('Form values are missing'));
-  }
-  const validationResult = await validateRequiredFormFields(
-    values,
-    REQUIRED_FIELDS,
-    t,
-  );
-  if (validationResult) {
-    return error(validationResult.error);
-  }
-  if (!workspaceURL) return error(await t('Workspace is missing!'));
-
   const session = await getSession();
   const user = session?.user;
 

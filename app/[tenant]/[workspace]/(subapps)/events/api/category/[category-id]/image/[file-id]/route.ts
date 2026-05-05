@@ -54,7 +54,7 @@ export async function GET(
 
   const category = await findEventCategory({
     client,
-    workspace,
+    workspaceURL,
     id: categoryId,
     user,
   });

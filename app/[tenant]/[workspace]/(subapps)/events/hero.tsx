@@ -38,21 +38,21 @@ export const Hero = ({
     <Search
       findQuery={async ({query}: any) => {
         try {
-          const response: any = await getAllEvents({
-            workspace,
+          const {error, message, data} = await getAllEvents({
+            workspaceURL: workspace.url,
             search: query,
           });
-          if (response?.error) {
+          if (error) {
             toast({
               variant: 'destructive',
               description: i18n.t(
-                response.error || 'Something went wrong while searching!',
+                message || 'Something went wrong while searching!',
               ),
             });
             return [];
           }
 
-          return response.events || [];
+          return data.events || [];
         } catch (error) {
           toast({
             variant: 'destructive',

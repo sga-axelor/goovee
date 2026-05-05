@@ -2,19 +2,34 @@ import icalgen, {
   ICalCalendarMethod,
   ICalEvent,
   ICalEventData,
+  ICalAttendeeRole,
+  ICalAttendeeStatus,
+  type ICalAttendeeData,
 } from 'ical-generator';
 
 // ---- CORE IMPORTS ---- //
-import {Participant} from '@/types';
+import type {Participant} from '@/subapps/events/common/actions/validators';
 import type {ErrorResponse} from '@/types/action';
 import {extractCustomData} from '@/ui/form';
 import {isSameDay} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
-import type {ListEvent} from '@/subapps/events/common/ui/components';
+import type {Cloned} from '@/types/util';
+import type {FullEvent, ListEvent} from '@/subapps/events/common/orm/event';
+import type {RegistrationValues} from '@/subapps/events/common/actions/validators';
+
+type IcsEvent = Pick<
+  FullEvent,
+  | 'eventTitle'
+  | 'eventPlace'
+  | 'eventDescription'
+  | 'eventAllDay'
+  | 'eventStartDateTime'
+  | 'eventEndDateTime'
+>;
 import {endOfDay} from 'date-fns';
 
-export const datesBetweenTwoDates = (data: ListEvent[]): Date[] => {
+export const datesBetweenTwoDates = (data: Cloned<ListEvent>[]): Date[] => {
   const Dates: Date[] = [];
 
   data.forEach(event => {
@@ -81,49 +96,50 @@ export function ical(
   return calendar.toString();
 }
 
-export const generateIcs = (event: any, participants: Participant[]) => {
-  const attendees: any = participants.map(participant => ({
-    email: participant.emailAddress,
-    name: `${participant.name} ${participant.surname}`,
-    rsvp: true,
-    role: 'REQ-PARTICIPANT',
-    status: 'NEEDS-ACTION',
-  }));
+export const generateIcs = (event: IcsEvent, participants: Participant[]) => {
+  const attendees: ICalAttendeeData[] = participants
+    .filter(p => p.emailAddress)
+    .map(p => ({
+      email: p.emailAddress!,
+      name: `${p.name} ${p.surname}`,
+      rsvp: true,
+      role: ICalAttendeeRole.REQ,
+      status: ICalAttendeeStatus.NEEDSACTION,
+    }));
 
   return ical({
-    start: event.eventStartDateTime,
-    end: getEventEndDate(event),
-    summary: event.eventTitle,
-    location: event.eventPlace,
-    description: event.eventDescription,
+    start: event.eventStartDateTime ?? new Date(),
+    end: getEventEndDate(event) ?? undefined,
+    summary: event.eventTitle ?? undefined,
+    location: event.eventPlace ?? undefined,
+    description: event.eventDescription ?? undefined,
     attendees,
   });
 };
 
+export type MetaField = {name: string};
+
 export function mapParticipants(
-  formValues: any,
-  metaFields: any,
-  metaFieldsFacilities: any,
-  additionalFieldSet: any,
-) {
-  const data = extractCustomData(formValues, 'contactAttrs', [
+  formValues: RegistrationValues & Record<string, unknown>,
+  metaFields: MetaField[],
+  metaFieldsFacilities: MetaField[],
+  additionalFieldSet: MetaField[],
+): RegistrationValues {
+  const customFields = [
     ...metaFields,
     ...metaFieldsFacilities,
     ...additionalFieldSet,
-  ]);
-  data.sequence = 0;
-
-  data.otherPeople =
-    data.otherPeople?.map((person: any, index: number) => ({
-      ...extractCustomData(person, 'contactAttrs', [
-        ...metaFields,
-        ...metaFieldsFacilities,
-        ...additionalFieldSet,
-      ]),
+  ];
+  const data = {
+    ...extractCustomData(formValues, 'contactAttrs', customFields),
+    sequence: 0,
+    otherPeople: (formValues.otherPeople ?? []).map((person, index) => ({
+      ...extractCustomData(person, 'contactAttrs', customFields),
       sequence: index + 1,
-    })) ?? [];
+    })),
+  };
 
-  return data;
+  return data as unknown as RegistrationValues;
 }
 
 export function getPartnerAddress(user: any): string {

@@ -262,7 +262,7 @@ async function EventsCard({
   const {events} = await findEvents({
     limit: 3,
     eventType: EVENT_TYPE.ACTIVE,
-    workspace,
+    workspaceURL: workspace.url,
     client,
     user,
     orderBy: {eventStartDateTime: ORDER_BY.ASC},

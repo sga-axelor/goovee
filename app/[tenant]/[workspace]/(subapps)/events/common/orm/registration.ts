@@ -1,5 +1,6 @@
 // ---- CORE IMPORTS ---- //
-import type {ID, Participant} from '@/types';
+import type {ID} from '@/types';
+import type {Participant} from '../actions/validators';
 import type {Client} from '@/goovee/.generated/client';
 
 // ---- LOCAL IMPORTS ---- //

@@ -9,8 +9,8 @@ import {workspacePathname} from '@/utils/workspace';
 import {manager} from '@/lib/core/tenant';
 
 // ---- LOCAL IMPORTS ---- //
-import Content from '@/app/[tenant]/[workspace]/(subapps)/events/[slug]/register/content';
-import {findModelFields, findSelectionItems} from '@/orm/model-fields';
+import {RegistrationForm} from '@/subapps/events/common/ui/components';
+import {findModelFields} from '@/orm/model-fields';
 import {
   CONTACT_ATTRS,
   PORTAL_PARTICIPANT_MODEL,
@@ -48,7 +48,7 @@ export default async function Page(props: {
 
   const eventDetails = await findEvent({
     slug,
-    workspace,
+    workspaceURL,
     client,
     config,
     user,
@@ -78,40 +78,20 @@ export default async function Page(props: {
     client,
   }).then(clone);
 
-  const fields = eventDetails.additionalFieldSet || [];
-  const result = [];
-
-  for (const _f of fields) {
-    if (_f.selection != null) {
-      const options = await findSelectionItems({
-        selectionName: _f.selection,
-        client,
-      });
-      result.push({..._f, selectionOptions: options});
-    } else {
-      result.push(_f);
-    }
-  }
-
-  const updatedEventDetails = JSON.parse(
-    JSON.stringify({
-      ...eventDetails,
-      additionalFieldSet: result,
-    }),
-  );
-
   const partner = user
     ? await findGooveeUserByEmail(user.email, client).then(clone)
-    : {};
+    : null;
 
   return (
-    <>
-      <Content
-        eventDetails={updatedEventDetails}
-        metaFields={metaFields}
-        workspace={workspace}
-        user={partner}
-      />
-    </>
+    <main className="container mx-auto flex-1 py-6 flex flex-col lg:flex-row gap-6 pb-20">
+      <div className="order-2 lg:order-1 space-y-6 w-full">
+        <RegistrationForm
+          eventDetails={eventDetails}
+          metaFields={metaFields}
+          workspace={workspace}
+          user={partner}
+        />
+      </div>
+    </main>
   );
 }

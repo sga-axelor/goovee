@@ -1,5 +1,6 @@
 'use server';
 
+import {z} from 'zod';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
@@ -20,25 +21,28 @@ import {findEvent} from '@/subapps/events/common/orm/event';
 import {error} from '@/subapps/events/common/utils';
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
 import {validateRegistration} from '@/subapps/events/common/actions/validation';
+import {
+  CreateStripeCheckoutSessionSchema,
+  PayboxCreateOrderSchema,
+  PaypalCreateOrderSchema,
+  type RegistrationValues,
+} from './validators';
 
-export async function createStripeCheckoutSession({
-  event,
-  workspaceURL,
-  values,
-}: {
-  event: {
-    id: string;
-  };
+export async function createStripeCheckoutSession(props: {
+  eventId: string;
   workspaceURL: string;
-  values: any;
+  values: RegistrationValues;
 }) {
+  const parsed = CreateStripeCheckoutSessionSchema.safeParse(props);
+  if (!parsed.success) return error(z.prettifyError(parsed.error));
+  const {eventId, workspaceURL, values} = parsed.data;
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) return error(await t('TenantId is required'));
   const tenant = await manager.getTenant(tenantId);
   if (!tenant) return error(await t('Tenant not found'));
   const {client, config} = tenant;
   const validationRes = await validateRegistration({
-    eventId: event?.id?.toString(),
+    eventId,
     values,
     workspaceURL,
     client,
@@ -67,10 +71,10 @@ export async function createStripeCheckoutSession({
   }
 
   const $event = await findEvent({
-    id: event.id,
+    id: eventId,
     client,
     config,
-    workspace,
+    workspaceURL,
   });
 
   if (!$event) {
@@ -128,17 +132,14 @@ export async function createStripeCheckoutSession({
   }
 }
 
-export async function paypalCreateOrder({
-  values,
-  workspaceURL,
-  event,
-}: {
-  values: any;
+export async function paypalCreateOrder(props: {
+  values: RegistrationValues;
   workspaceURL: string;
-  event: {
-    id: string;
-  };
+  eventId: string;
 }) {
+  const parsed = PaypalCreateOrderSchema.safeParse(props);
+  if (!parsed.success) return error(z.prettifyError(parsed.error));
+  const {values, workspaceURL, eventId} = parsed.data;
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) return error(await t('TenantId is required'));
 
@@ -147,7 +148,7 @@ export async function paypalCreateOrder({
   const {client, config} = tenant;
 
   const validationRes = await validateRegistration({
-    eventId: event?.id?.toString(),
+    eventId,
     values,
     workspaceURL,
     client: client,
@@ -177,10 +178,10 @@ export async function paypalCreateOrder({
   }
 
   const $event = await findEvent({
-    id: event.id,
+    id: eventId,
     client,
     config,
-    workspace,
+    workspaceURL,
   });
 
   if (!$event) {
@@ -221,19 +222,15 @@ export async function paypalCreateOrder({
   }
 }
 
-export async function payboxCreateOrder({
-  event,
-  workspaceURL,
-  values,
-  uri,
-}: {
-  event: {
-    id: string;
-  };
+export async function payboxCreateOrder(props: {
+  eventId: string;
   workspaceURL: string;
-  values: any;
+  values: RegistrationValues;
   uri: string;
 }) {
+  const parsed = PayboxCreateOrderSchema.safeParse(props);
+  if (!parsed.success) return error(z.prettifyError(parsed.error));
+  const {eventId, workspaceURL, values, uri} = parsed.data;
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) return error(await t('TenantId is required'));
 
@@ -242,7 +239,7 @@ export async function payboxCreateOrder({
   const {client, config} = tenant;
 
   const validationRes = await validateRegistration({
-    eventId: event?.id?.toString(),
+    eventId,
     values,
     workspaceURL,
     client,
@@ -270,10 +267,10 @@ export async function payboxCreateOrder({
   }
 
   const $event = await findEvent({
-    id: event.id,
+    id: eventId,
     client,
     config,
-    workspace,
+    workspaceURL,
   });
 
   if (!$event) {
@@ -290,14 +287,11 @@ export async function payboxCreateOrder({
   }
 
   let emailAddress;
-  let payerId;
   if (user) {
     const payer = await findGooveeUserByEmail(user.email, client);
     emailAddress = payer?.emailAddress?.address!;
-    payerId = payer?.id!;
   } else {
     emailAddress = values.emailAddress;
-    payerId = values.emailAddress;
   }
   try {
     const response = await createPayboxOrder({

@@ -73,13 +73,6 @@ export const EVENT_TAB_ITEMS = [
   },
 ];
 
-export const REQUIRED_FIELDS = [
-  {field: 'name', message: 'Name is required'},
-  {field: 'surname', message: 'Surname is required'},
-  {field: 'emailAddress', message: 'Email address is required'},
-  {field: 'phone', message: 'Phone number is required'},
-];
-
 export enum EVENT_STATUS {
   DRAFT = 0,
   PUBLISHED = 1,

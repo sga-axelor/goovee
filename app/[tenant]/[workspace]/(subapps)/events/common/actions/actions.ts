@@ -1,5 +1,6 @@
 'use server';
 
+import {z} from 'zod';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ----//
@@ -19,7 +20,6 @@ import {TENANT_HEADER} from '@/proxy';
 import {manager} from '@/tenant';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {ID, PaymentOption} from '@/types';
-import {PortalWorkspace} from '@/orm/workspace';
 import {ActionResponse} from '@/types/action';
 import type {Cloned} from '@/types/util';
 import {clone, scale} from '@/utils';
@@ -36,11 +36,24 @@ import {
   withWorkspace,
 } from '@/subapps/events/common/actions/validation';
 import {
+  FetchContactsSchema,
+  FetchEventSchema,
+  GetAllEventsSchema,
+  IsValidParticipantSchema,
+  RegisterInput,
+  RegisterSchema,
+  type RegistrationValues,
+} from './validators';
+import {
   findEvent,
   findEventConfig,
   findEvents,
+  type FullEvent,
+  type ListEvent,
 } from '@/subapps/events/common/orm/event';
-import {findContacts} from '@/subapps/events/common/orm/partner';
+import type {PageInfo} from '@/types';
+
+import {findContacts, type Contact} from '@/subapps/events/common/orm/partner';
 import {
   registerParticipants,
   type Registration,
@@ -61,41 +74,41 @@ import {notifyUser} from '@/pwa/utils';
 import {NotificationTag} from '@/pwa/tags';
 import {createInvoice} from '@/subapps/events/common/service';
 
-export async function getAllEvents({
-  limit,
-  page,
-  categories,
-  search,
-  day,
-  month,
-  year,
-  dates,
-  workspace,
-  tenantId,
-  onlyRegisteredEvent = false,
-}: {
+export async function getAllEvents(props: {
   limit?: number;
   page?: number;
-  categories?: any[];
-  filter?: string;
+  categories?: string[];
   search?: string;
   day?: string | number;
   month?: number;
   year?: number;
-  dates?: [Date | undefined];
-  workspace?: any;
-  tenantId?: any;
+  dates?: Date[];
+  workspaceURL: string;
   onlyRegisteredEvent?: boolean;
-}) {
-  tenantId = (await headers()).get(TENANT_HEADER) || tenantId;
+}): ActionResponse<{events: Cloned<ListEvent>[]; pageInfo: PageInfo}> {
+  const parsed = GetAllEventsSchema.safeParse(props);
+  if (!parsed.success)
+    return {error: true, message: z.prettifyError(parsed.error)};
+  const {
+    limit,
+    page,
+    categories,
+    search,
+    day,
+    month,
+    year,
+    dates,
+    workspaceURL,
+    onlyRegisteredEvent = false,
+  } = parsed.data;
+  const tenantId = (await headers()).get(TENANT_HEADER);
 
-  if (!(workspace && tenantId)) {
-    return {events: [], pageInfo: null};
+  if (!tenantId) {
+    return error(await t('Tenant ID is missing!'));
   }
-  const workspaceURL = workspace.url;
 
   const tenant = await manager.getTenant(tenantId);
-  if (!tenant) return {events: [], pageInfo: null};
+  if (!tenant) return error(await t('Tenant not found'));
   const {client} = tenant;
 
   const result = await validate([
@@ -120,29 +133,24 @@ export async function getAllEvents({
       month,
       year,
       selectedDates: dates,
-      workspace,
+      workspaceURL,
       client,
       user,
       onlyRegisteredEvent,
     }).then(clone);
-    return {events, pageInfo};
+    return {success: true as const, data: {events, pageInfo}};
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    return error(await t('Something went wrong'));
   }
 }
 
-// TODO: How to know if the amount paid is for the appropriate event only
-export async function register({
-  eventId,
-  values: _values,
-  workspace: {url: workspaceURL},
-  payment,
-}: {
-  eventId: any;
-  workspace: {url: PortalWorkspace['url']};
-  values?: any;
-  payment?: {data: {id?: string; params?: any}; mode: PaymentOption};
-}): ActionResponse<Cloned<Registration>> {
+export async function register(
+  props: RegisterInput,
+): ActionResponse<Cloned<Registration>> {
+  const parsed = RegisterSchema.safeParse(props);
+  if (!parsed.success) return error(z.prettifyError(parsed.error));
+  const {eventId, workspaceURL} = parsed.data;
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) return error(await t('Tenant ID is missing!'));
 
@@ -150,11 +158,15 @@ export async function register({
   if (!tenant) return error(await t('Tenant not found'));
   const {client, config} = tenant;
 
-  let paidAmount: number, values: any, context: PaymentContext | undefined;
-  if (payment) {
+  let paidAmount: number,
+    values: RegistrationValues,
+    context: PaymentContext | undefined,
+    paymentMode: PaymentOption | undefined;
+  if ('payment' in parsed.data) {
+    paymentMode = parsed.data.payment.mode;
     const paymentInfo = await getPaymentInfo({
-      mode: payment.mode,
-      data: payment.data,
+      mode: paymentMode,
+      data: parsed.data.payment.data,
       client,
     });
 
@@ -164,7 +176,7 @@ export async function register({
     paidAmount = paymentInfo.data.amount;
     context = paymentInfo.data.context;
   } else {
-    values = _values;
+    values = parsed.data.values;
     paidAmount = 0;
   }
 
@@ -183,7 +195,7 @@ export async function register({
 
   const $event = await findEvent({
     id: eventId,
-    workspace: {url: workspaceURL},
+    workspaceURL,
     user,
     client,
     config,
@@ -237,7 +249,7 @@ export async function register({
   if (paidAmount > 0) {
     const paymentModeId = getPaymentModeId(
       workspace?.config?.paymentOptionSet,
-      payment!.mode,
+      paymentMode!,
     );
 
     createInvoice({
@@ -294,13 +306,13 @@ export async function register({
   return {success: true, data: clone(registration)};
 }
 
-export async function fetchContacts({
-  search,
-  workspaceURL,
-}: {
+export async function fetchContacts(props: {
   search: string;
   workspaceURL: string;
-}) {
+}): ActionResponse<Contact[]> {
+  const parsed = FetchContactsSchema.safeParse(props);
+  if (!parsed.success) return error(z.prettifyError(parsed.error));
+  const {search, workspaceURL} = parsed.data;
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -309,7 +321,7 @@ export async function fetchContacts({
 
   const tenant = await manager.getTenant(tenantId);
   if (!tenant) return error(await t('Tenant not found'));
-  const {client, config} = tenant;
+  const {client} = tenant;
 
   const result = await validate([
     withWorkspace(workspaceURL, client, {checkAuth: false}),
@@ -321,12 +333,10 @@ export async function fetchContacts({
   }
 
   try {
-    const result = await findContacts({search, workspaceURL, client}).then(
-      clone,
-    );
-    return result;
+    const data = await findContacts({search, workspaceURL, client}).then(clone);
+    return {success: true as const, data};
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return error(await t('Something went wrong'));
   }
 }
@@ -336,7 +346,9 @@ export async function isValidParticipant(props: {
   eventId: ID;
   email: string;
 }): ActionResponse<true> {
-  const {workspaceURL, eventId, email} = props;
+  const parsed = IsValidParticipantSchema.safeParse(props);
+  if (!parsed.success) return error(z.prettifyError(parsed.error));
+  const {workspaceURL, eventId, email} = parsed.data;
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -351,7 +363,7 @@ export async function isValidParticipant(props: {
 
   const tenant = await manager.getTenant(tenantId);
   if (!tenant) return error(await t('Tenant not found'));
-  const {client, config} = tenant;
+  const {client} = tenant;
 
   const workspace = await findWorkspace({user, url: workspaceURL, client});
   if (!workspace) return error(await t('Invalid workspace'));
@@ -447,7 +459,7 @@ export const createComment: CreateComment = async formData => {
 
   const event = await findEvent({
     id: rest.recordId,
-    workspace,
+    workspaceURL,
     client,
     config,
     user,
@@ -512,7 +524,10 @@ export const createComment: CreateComment = async formData => {
 };
 
 export const fetchComments: FetchComments = async props => {
-  const {workspaceURL, ...rest} = FetchCommentsPropsSchema.parse(props);
+  const parsedComments = FetchCommentsPropsSchema.safeParse(props);
+  if (!parsedComments.success)
+    return {error: true, message: z.prettifyError(parsedComments.error)};
+  const {workspaceURL, ...rest} = parsedComments.data;
   const session = await getSession();
 
   const user = session?.user;
@@ -557,7 +572,7 @@ export const fetchComments: FetchComments = async props => {
 
   const event = await findEvent({
     id: rest.recordId,
-    workspace,
+    workspaceURL,
     client,
     config,
     user,
@@ -586,15 +601,13 @@ export const fetchComments: FetchComments = async props => {
   }
 };
 
-export const fetchEvent = async ({
-  slug,
-  workspaceURL,
-}: {
+export const fetchEvent = async (props: {
   slug: string;
   workspaceURL: string;
-}) => {
-  if (!slug) return error(await t('Missing event slug'));
-  if (!workspaceURL) return error(await t('Workspace URL is missing'));
+}): ActionResponse<Cloned<FullEvent>> => {
+  const parsed = FetchEventSchema.safeParse(props);
+  if (!parsed.success) return error(z.prettifyError(parsed.error));
+  const {slug, workspaceURL} = parsed.data;
 
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) return error(await t('Tenant ID is missing!'));
@@ -616,7 +629,7 @@ export const fetchEvent = async ({
 
   const event = await findEvent({
     slug,
-    workspace,
+    workspaceURL,
     client,
     config,
     user,

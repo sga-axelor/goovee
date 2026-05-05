@@ -83,11 +83,8 @@ export const EventCard = ({event}: EventCardProps) => {
               </p>
             </CardTitle>
             <CardDescription className="text-sm font-medium text-secondary">
-              {`${formatDateTime(event.eventStartDateTime, {
-                dateFormat: 'MMMM D YYYY - ',
-                timeFormat: 'h:mmA',
-              })}
-            ${event.eventEndDateTime && !event.eventAllDay ? i18n.t('to') : ''} 
+              {`${event.eventStartDateTime ? formatDateTime(event.eventStartDateTime, {dateFormat: 'MMMM D YYYY - ', timeFormat: 'h:mmA'}) : ''}
+            ${event.eventEndDateTime && !event.eventAllDay ? i18n.t('to') : ''}
              ${
                event.eventEndDateTime && !event.eventAllDay
                  ? formatDateTime(event.eventEndDateTime, {
@@ -98,7 +95,7 @@ export const EventCard = ({event}: EventCardProps) => {
              }
               `}
             </CardDescription>
-            <BadgeList items={event.eventCategorySet} />
+            <BadgeList items={event.eventCategorySet ?? undefined} />
           </CardHeader>
           <CardContent className="p-0 mt-1">
             <InnerHTML

@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
   buttonVariants,
 } from '@/ui/components';
+import {useToast} from '@/ui/hooks/use-toast';
 import {dateIsExist} from '@/utils/date';
 import {i18n} from '@/locale';
 
@@ -154,6 +155,7 @@ export function Calendar({
   onlyRegisteredEvent: boolean;
 }) {
   const [eventDates, setEventDates] = React.useState<Date[]>([]);
+  const {toast} = useToast();
 
   const today = date !== undefined ? new Date(date) : new Date();
 
@@ -219,13 +221,17 @@ export function Calendar({
   React.useEffect(() => {
     const fetchEventDates = async () => {
       try {
-        const {events: data}: any = await getAllEvents({
+        const {error, message, data} = await getAllEvents({
           month: month.getMonth() + 1,
           year: month.getFullYear(),
-          workspace,
+          workspaceURL: workspace.url,
           onlyRegisteredEvent,
         });
-        const allDates = datesBetweenTwoDates(data);
+        if (error) {
+          toast({variant: 'destructive', description: i18n.t(message)});
+          return;
+        }
+        const allDates = datesBetweenTwoDates(data.events ?? []);
 
         setEventDates(allDates);
       } catch (error) {

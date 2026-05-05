@@ -21,8 +21,12 @@ import {
   MY_REGISTRATION_TAB_ITEMS,
   MY_REGISTRATIONS,
 } from '@/subapps/events/common/constants';
-import {findEvents} from '@/subapps/events/common/orm/event';
-import {findEventCategories} from '@/subapps/events/common/orm/event-category';
+import {findEvents, type ListEvent} from '@/subapps/events/common/orm/event';
+import {
+  findEventCategories,
+  type Category,
+} from '@/subapps/events/common/orm/event-category';
+import type {PageInfo} from '@/types';
 import {
   EventCalendar,
   EventCardSkeleton,
@@ -132,10 +136,10 @@ async function Categories({
   user?: User;
   client: Client;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  category: any[];
+  category: string[];
 }) {
-  const categories: any = await findEventCategories({
-    workspace,
+  const categories: Cloned<Category>[] = await findEventCategories({
+    workspaceURL: workspace.url,
     client,
     user,
   }).then(clone);
@@ -156,7 +160,7 @@ async function EventList({
   query,
 }: {
   date: string;
-  category: any[];
+  category: string[];
   page: string | number;
   user?: User;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
@@ -164,20 +168,21 @@ async function EventList({
   type: string;
   query: string;
 }) {
-  const {events, pageInfo}: any = await findEvents({
-    limit: LIMIT,
-    page: page,
-    search: query,
-    categoryids: category,
-    day: new Date(date).getDate() || undefined,
-    month: new Date(date).getMonth() + 1 || undefined,
-    year: new Date(date).getFullYear() || undefined,
-    eventType: type,
-    workspace,
-    client,
-    user,
-    onlyRegisteredEvent: true,
-  }).then(clone);
+  const {events, pageInfo}: {events: Cloned<ListEvent>[]; pageInfo: PageInfo} =
+    await findEvents({
+      limit: LIMIT,
+      page: page,
+      search: query,
+      categoryids: category,
+      day: new Date(date).getDate() || undefined,
+      month: new Date(date).getMonth() + 1 || undefined,
+      year: new Date(date).getFullYear() || undefined,
+      eventType: type,
+      workspaceURL: workspace.url,
+      client,
+      user,
+      onlyRegisteredEvent: true,
+    }).then(clone);
 
   return <EventTabsContent pageInfo={pageInfo} events={events} />;
 }

@@ -113,15 +113,18 @@ export const CustomSelect = ({
     setInputValue(input.toLocaleLowerCase());
 
     try {
-      const data: any = await fetchContacts({search: input, workspaceURL});
+      const {error, message, data} = await fetchContacts({
+        search: input,
+        workspaceURL,
+      });
 
-      if (data && !data.error) {
-        setFilteredOptions(formatItems(data));
-      } else {
+      if (error) {
         toast({
           variant: 'destructive',
-          title: i18n.t(data?.message || 'Error while fetching contacts.'),
+          title: i18n.t(message || 'Error while fetching contacts.'),
         });
+      } else {
+        setFilteredOptions(formatItems(data));
       }
     } catch (error) {
       console.error('Error fetching options:', error);

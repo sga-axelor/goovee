@@ -1,9 +1,15 @@
 // ---- LOCAL IMPORTS ---- //
 import {Cloned} from '@/types/util';
 import {FullEvent} from '../orm/event';
+import type {RegistrationValues, Subscription} from '../actions/validators';
+
+type PriceCalcData = Pick<
+  RegistrationValues,
+  'subscriptionSet' | 'otherPeople'
+>;
 
 export const getCalculatedTotalPrice = (
-  data: Record<string, any>,
+  data: PriceCalcData,
   event: Pick<FullEvent | Cloned<FullEvent>, 'displayAti' | 'facilityList'>,
 ): {
   total: number;
@@ -14,11 +20,6 @@ export const getCalculatedTotalPrice = (
   const facilities = event.facilityList || [];
   const subscriptionPrices: {facility: string; price: number}[] = [];
 
-  const getFacilityPrice = (facilityName: string) => {
-    const facility = facilities.find(f => f.facility === facilityName);
-    return facility ? Number(facility.displayAti) || 0 : 0;
-  };
-
   const addToSubscriptionPrices = (facility: string, price: number) => {
     const existing = subscriptionPrices.find(s => s.facility === facility);
     if (existing) {
@@ -28,10 +29,11 @@ export const getCalculatedTotalPrice = (
     }
   };
 
-  const calculateSubscriptionsTotal = (subscriptions: any[]) => {
-    return subscriptions?.reduce((sum, subscription) => {
-      const price = getFacilityPrice(subscription.facility);
-      addToSubscriptionPrices(subscription.facility, price);
+  const calculateSubscriptionsTotal = (subs: Subscription[]) => {
+    return subs.reduce((sum, sub) => {
+      const facility = facilities.find(f => f.id === sub.id);
+      const price = facility ? Number(facility.displayAti) || 0 : 0;
+      addToSubscriptionPrices(facility?.facility ?? '', price);
       return sum + price;
     }, 0);
   };
@@ -44,7 +46,7 @@ export const getCalculatedTotalPrice = (
   if (Array.isArray(data.otherPeople) && data.otherPeople.length) {
     data.otherPeople.forEach(person => {
       total +=
-        calculateSubscriptionsTotal(person.subscriptionSet) +
+        calculateSubscriptionsTotal(person.subscriptionSet ?? []) +
         Number(event.displayAti);
     });
   }

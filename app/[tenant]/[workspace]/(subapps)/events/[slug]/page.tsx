@@ -38,7 +38,7 @@ export default async function Page(props: {
 
   const eventDetails: any = await findEvent({
     slug,
-    workspace,
+    workspaceURL,
     client,
     config,
     user,

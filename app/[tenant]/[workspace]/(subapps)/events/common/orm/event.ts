@@ -1,5 +1,5 @@
 // ---- CORE IMPORTS ---- //
-import type {Cloned, ExpandRecursively} from '@/types/util';
+import type {ExpandRecursively} from '@/types/util';
 import {
   DATE_FORMATS,
   DAY,
@@ -12,11 +12,11 @@ import {
   YEAR,
 } from '@/constants';
 import type {
-  AOSMetaJsonField,
   AOSPortalEvent,
   AOSPortalEventCategory,
 } from '@/goovee/.generated/models';
 import {dayjs} from '@/locale';
+import type {OpUnitType} from 'dayjs';
 import {formatNumber} from '@/locale/server/formatters';
 import {filterPrivate} from '@/orm/filter';
 import type {Client} from '@/goovee/.generated/client';
@@ -26,50 +26,27 @@ import type {PortalWorkspace} from '@/orm/workspace';
 import {getPageInfo} from '@/utils';
 import {formatDateToISOString, formatToTwoDigits} from '@/utils/date';
 import {and} from '@/utils/orm';
-import type {SelectOptions} from '@goovee/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {EVENT_STATUS, EVENT_TYPE} from '@/subapps/events/common/constants';
 import {findProductsFromWS} from '@/subapps/events/common/service';
-
-const additionalFieldSetFields = {
-  columnSequence: true,
-  name: true,
-  title: true,
-  type: true,
-  defaultValue: true,
-  model: true,
-  modelField: true,
-  selection: true,
-  widget: true,
-  help: true,
-  hidden: true,
-  required: true,
-  readonly: true,
-  nameField: true,
-  minSize: true,
-  maxSize: true,
-  precision: true,
-  scale: true,
-  sequence: true,
-  regex: true,
-  showIf: true,
-  contextField: true,
-  contextFieldValue: true,
-  widgetAttrs: true,
-  createdOn: true,
-  updatedOn: true,
-  targetJsonModel: {name: true},
-  jsonModel: {name: true},
-  targetModel: true,
-} as const satisfies SelectOptions<AOSMetaJsonField>;
+import {
+  findSelectionItems,
+  modelFieldSelect,
+  type ModelField,
+} from '@/orm/model-fields';
 
 const buildDateFilters = ({
   eventStartDateTimeCriteria,
   year,
   startDate,
   endDate,
-}: any) => {
+}: {
+  eventStartDateTimeCriteria?: object[];
+  year?: string | number;
+  startDate?: string;
+  endDate?: string;
+}) => {
   if (eventStartDateTimeCriteria) {
     return {OR: eventStartDateTimeCriteria};
   }
@@ -156,21 +133,19 @@ export type FullEvent = ExpandRecursively<
 export async function findEvent({
   id,
   slug,
-  workspace,
+  workspaceURL,
   config,
   client,
   user,
 }: {
   id?: ID;
   slug?: string;
-  workspace: {
-    url: PortalWorkspace['url'];
-  };
+  workspaceURL: string;
   config: TenantConfig;
   client: Client;
   user?: User;
 }) {
-  if (!((slug || id) && workspace)) return null;
+  if (!((slug || id) && workspaceURL)) return null;
 
   const privateFilter = await filterPrivate({user, client});
   const event = await client.aOSPortalEvent
@@ -183,7 +158,7 @@ export async function findEvent({
         {
           statusSelect: EVENT_STATUS.PUBLISHED,
           eventCategorySet: and<AOSPortalEventCategory>([
-            {workspace: {url: workspace.url}},
+            {workspace: {url: workspaceURL}},
             privateFilter,
           ]),
         },
@@ -223,12 +198,12 @@ export async function findEvent({
             facility: true,
             price: true,
             additionalFieldSet: {
-              select: additionalFieldSetFields,
+              select: modelFieldSelect,
             },
           },
         },
         additionalFieldSet: {
-          select: additionalFieldSetFields,
+          select: modelFieldSelect,
         },
 
         isPublic: true,
@@ -258,14 +233,15 @@ export async function findEvent({
   const {saleCurrency} = eventProduct || {};
 
   const productsFromWS = await findProductsFromWS({
-    workspaceURL: workspace.url,
+    workspaceURL,
     config,
     client,
     eventId: event.id,
   });
 
-  const displayWt = productsFromWS?.priceWT || defaultPrice?.toString();
-  const displayAti = productsFromWS?.priceATI || defaultPrice?.toString();
+  const displayWt: string = productsFromWS?.priceWT || defaultPrice?.toString();
+  const displayAti: string =
+    productsFromWS?.priceATI || defaultPrice?.toString();
 
   const currencySymbol = saleCurrency?.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = saleCurrency?.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
@@ -307,8 +283,20 @@ export async function findEvent({
       type: 'DECIMAL',
     });
 
+    const additionalFieldSet = (await Promise.all(
+      (facility.additionalFieldSet ?? []).map(async field => {
+        if (field.selection == null) return {...field, selectionOptions: null};
+        const selectionOptions = await findSelectionItems({
+          selectionName: field.selection,
+          client,
+        });
+        return {...field, selectionOptions};
+      }),
+    )) as ModelField[];
+
     return {
       ...facility,
+      additionalFieldSet,
       price: facility.price?.toString(),
       displayWt: facilityWt,
       displayAti: facilityAti,
@@ -321,10 +309,22 @@ export async function findEvent({
     };
   });
 
-  const eventLink = `${workspace.url}/${SUBAPP_CODES.events}/${event.slug}`;
+  const eventLink = `${workspaceURL}/${SUBAPP_CODES.events}/${event.slug}`;
+
+  const additionalFieldSet = (await Promise.all(
+    (event.additionalFieldSet ?? []).map(async field => {
+      if (field.selection == null) return {...field, selectionOptions: null};
+      const selectionOptions = await findSelectionItems({
+        selectionName: field.selection,
+        client,
+      });
+      return {...field, selectionOptions};
+    }),
+  )) as ModelField[];
 
   return {
     ...event,
+    additionalFieldSet,
     defaultPrice: event.defaultPrice?.toString(),
     displayWt,
     displayAti,
@@ -399,7 +399,7 @@ export async function findEvents({
   month,
   year,
   selectedDates,
-  workspace,
+  workspaceURL,
   client,
   user,
   onlyRegisteredEvent,
@@ -414,13 +414,13 @@ export async function findEvents({
   day?: string | number;
   month?: string | number;
   year?: string | number;
-  selectedDates?: any[];
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  selectedDates?: (Date | string)[];
+  workspaceURL: string;
   client: Client;
   user?: User;
   onlyRegisteredEvent?: boolean;
   eventType?: string;
-  orderBy?: any;
+  orderBy?: Record<string, string>;
 }): Promise<{events: ListEvent[]; pageInfo: PageInfo}> {
   const emptyPageInfo: PageInfo = {
     count: 0,
@@ -430,7 +430,7 @@ export async function findEvents({
     hasNext: false,
     hasPrev: false,
   };
-  if (!workspace) {
+  if (!workspaceURL) {
     return {
       events: [],
       pageInfo: emptyPageInfo,
@@ -444,7 +444,8 @@ export async function findEvents({
     };
   }
 
-  let date, predicate: any;
+  let date: ReturnType<typeof dayjs> | undefined;
+  let predicate: OpUnitType = DAY;
   if (day && month && year) {
     predicate = DAY;
     date = dayjs(
@@ -465,14 +466,16 @@ export async function findEvents({
     endDate = formatDateToISOString(date?.endOf(predicate));
   }
 
-  const eventStartDateTimeCriteria = selectedDates?.map((date: any) => ({
-    eventStartDateTime: {
-      between: [
-        dayjs(date).startOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
-        dayjs(date).endOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
-      ],
-    },
-  }));
+  const eventStartDateTimeCriteria = selectedDates?.map(
+    (date: Date | string) => ({
+      eventStartDateTime: {
+        between: [
+          dayjs(date).startOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
+          dayjs(date).endOf(DAY).format(DATE_FORMATS.timestamp_with_seconds),
+        ],
+      },
+    }),
+  );
   const currentDateTime = dayjs().toISOString();
   const todayStartTime = dayjs().startOf(DAY).toISOString();
   const privateFilter = await filterPrivate({user, client});
@@ -481,7 +484,7 @@ export async function findEvents({
       statusSelect: EVENT_STATUS.PUBLISHED,
       slug: {ne: null},
       eventCategorySet: and<AOSPortalEventCategory>([
-        {workspace: {id: workspace?.id}},
+        {workspace: {url: workspaceURL}},
         categoryids?.length && {id: {in: categoryids}},
         privateFilter,
       ]),
