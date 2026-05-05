@@ -1,218 +1,30 @@
 'use server';
 
-import axios from 'axios';
-import type {Cloned} from '@/types/util';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {DEFAULT_CURRENCY_CODE, MAIN_PRICE, SUBAPP_CODES} from '@/constants';
+import {DEFAULT_CURRENCY_CODE, SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/proxy';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {createPayboxOrder, findPayboxOrder} from '@/payment/paybox/actions';
 import {createPaypalOrder, findPaypalOrder} from '@/payment/paypal/actions';
 import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
-import {manager, type Tenant} from '@/tenant';
-import type {Client} from '@/goovee/.generated/client';
+import {manager} from '@/tenant';
 import {PaymentOption} from '@/types';
-import {PortalWorkspace} from '@/orm/workspace';
 import {computeTotal} from '@/utils/cart';
-import {calculateAdvanceAmount, getPaymentModeId} from '@/utils/payment';
+import {getPaymentModeId} from '@/utils/payment';
 
 // ---- LOCAL IMPORTS ---- //
 import {findGooveeUserByEmail} from '@/orm/partner';
-import {findProduct} from '@/subapps/shop/common/orm/product';
 import {shouldHidePricesAndPurchase} from '@/orm/product';
 import {markPaymentAsProcessed} from '@/lib/core/payment/common/orm';
-
-const formatNumber = (n: any) => n;
-
-function computeExpectedAmount({
-  total,
-  workspace,
-}: {
-  total: number | string;
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-}): string {
-  const payInAdvance = workspace.config?.payInAdvance;
-  const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
-
-  if (
-    payInAdvance &&
-    advancePaymentPercentage &&
-    Number(advancePaymentPercentage) > 0
-  ) {
-    return calculateAdvanceAmount({
-      amount: Number(total),
-      percentage: Number(advancePaymentPercentage),
-      payInAdvance,
-    }).toString();
-  }
-
-  return total.toString();
-}
-
-async function createOrder({
-  cart,
-  workspaceURL,
-  client,
-  config,
-  paymentModeId,
-  tenantId,
-}: {
-  cart: any;
-  workspaceURL: string;
-  client: Client;
-  config: Tenant['config'];
-  paymentModeId?: string;
-  tenantId?: Tenant['id'];
-}) {
-  if (!cart?.items?.length) {
-    return {
-      error: true,
-      message: await t(
-        'Your cart is empty. Please add items before placing an order.',
-      ),
-    };
-  }
-
-  if (!config?.aos?.url) {
-    return {
-      error: true,
-      message: await t('Order creation failed. Webservice not available'),
-    };
-  }
-
-  const {aos} = config;
-
-  const ws = `${aos.url}/ws/portal/orders/order`;
-
-  const session = await getSession();
-  const user = session?.user;
-
-  if (!user) {
-    return {
-      error: true,
-      message: await t('Unauthorized'),
-    };
-  }
-
-  const workspace = await findWorkspace({
-    url: workspaceURL,
-    user,
-    client,
-  });
-
-  if (!workspace) {
-    return {
-      error: true,
-      message: await t('Invalid workspace'),
-    };
-  }
-
-  try {
-    const computedProducts = await Promise.all(
-      cart.items.map((i: any) =>
-        findProduct({id: i.product, workspace, user, client}),
-      ),
-    );
-
-    const $cart = {
-      ...cart,
-      items: [
-        ...cart?.items?.map((i: any) => ({
-          ...i,
-          computedProduct: computedProducts.find(
-            cp => Number(cp?.product?.id) === Number(i.product),
-          ),
-        })),
-      ],
-    };
-
-    const {total} = computeTotal({
-      cart: $cart,
-      workspace,
-      formatNumber,
-    });
-
-    let partnerId, contactId;
-
-    if (user) {
-      const {id, isContact, mainPartnerId} = user;
-      if (isContact && mainPartnerId) {
-        partnerId = mainPartnerId;
-        contactId = id;
-      } else {
-        partnerId = id;
-      }
-    }
-
-    const {invoicingAddress, deliveryAddress} = cart;
-
-    const payInAdvance = workspace.config?.payInAdvance;
-    const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
-
-    let paidAmount;
-    if (payInAdvance && Number(advancePaymentPercentage) > 0) {
-      paidAmount = calculateAdvanceAmount({
-        amount: Number(total),
-        percentage: Number(advancePaymentPercentage),
-        payInAdvance,
-      }).toString();
-    } else {
-      paidAmount = Number(total).toString();
-    }
-
-    const isAtiPricing = workspace?.config?.mainPrice === MAIN_PRICE.ATI;
-    const payload = {
-      partnerId,
-      contactId,
-      shipping: 0,
-      total,
-      inAti: isAtiPricing,
-      items: $cart.items.map((i: any) => {
-        const {computedProduct, note, quantity} = i;
-        if (!computedProduct) return null;
-        const {product, price} = computedProduct;
-
-        return {
-          productId: product?.id,
-          note: note || '',
-          quantity,
-          price: isAtiPricing ? price?.ati : price?.wt,
-        };
-      }),
-      workspaceId: workspace.id,
-      invocingPartnerAddressId: invoicingAddress,
-      deliveryPartnerAddressId: deliveryAddress,
-      paidAmount,
-      paymentModeId,
-    };
-
-    const res = await axios.post(ws, payload, {
-      auth: {
-        username: aos.auth.username,
-        password: aos.auth.password,
-      },
-    });
-
-    if (res?.data?.status === -1) {
-      console.error('Order creation failed: ', res?.data?.message);
-      return {
-        error: true,
-        message: await t('Order creation failed. Please try again.'),
-      };
-    }
-
-    return res?.data;
-  } catch (err) {
-    return {
-      error: true,
-      message: await t('Error creating order. Try again.'),
-    };
-  }
-}
+import {
+  computeExpectedAmount,
+  createOrder,
+  formatNumber,
+} from '@/subapps/shop/common/utils/order';
 
 export async function paypalCaptureOrder({
   orderId,
@@ -351,24 +163,33 @@ export async function paypalCaptureOrder({
       PaymentOption.paypal,
     );
 
-    const res = await createOrder({
-      cart,
-      workspaceURL,
-      client,
-      config: tenant.config,
-      paymentModeId,
-      tenantId,
-    });
-    await markPaymentAsProcessed({
-      contextId: context.id,
-      version: context.version,
-      client,
-    });
-    return res;
+    try {
+      const res = await createOrder({
+        cart,
+        workspace,
+        user,
+        client,
+        config: tenant.config,
+        paymentModeId,
+      });
+      await markPaymentAsProcessed({
+        contextId: context.id,
+        version: context.version,
+        client,
+      });
+      return res;
+    } catch (err) {
+      return {
+        error: true,
+        message:
+          err instanceof Error ? err.message : await t('Something went wrong'),
+      };
+    }
   } catch (err) {
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message:
+        err instanceof Error ? err.message : await t('Something went wrong'),
     };
   }
 }
@@ -505,7 +326,8 @@ export async function paypalCreateOrder({
   } catch (err) {
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message:
+        err instanceof Error ? err.message : await t('Something went wrong'),
     };
   }
 }
@@ -657,7 +479,8 @@ export async function createStripeCheckoutSession({
   } catch (err) {
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message:
+        err instanceof Error ? err.message : await t('Something went wrong'),
     };
   }
 }
@@ -784,7 +607,8 @@ export async function validateStripePayment({
   } catch (err) {
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message:
+        err instanceof Error ? err.message : await t('Something went wrong'),
     };
   }
 
@@ -808,20 +632,28 @@ export async function validateStripePayment({
     PaymentOption.stripe,
   );
 
-  const res = await createOrder({
-    cart,
-    workspaceURL,
-    client,
-    config: tenant.config,
-    paymentModeId,
-    tenantId,
-  });
-  await markPaymentAsProcessed({
-    contextId: context.id,
-    version: context.version,
-    client,
-  });
-  return res;
+  try {
+    const res = await createOrder({
+      cart,
+      workspace,
+      user,
+      client,
+      config: tenant.config,
+      paymentModeId,
+    });
+    await markPaymentAsProcessed({
+      contextId: context.id,
+      version: context.version,
+      client,
+    });
+    return res;
+  } catch (err) {
+    return {
+      error: true,
+      message:
+        err instanceof Error ? err.message : await t('Something went wrong'),
+    };
+  }
 }
 
 export async function payboxCreateOrder({
@@ -962,7 +794,8 @@ export async function payboxCreateOrder({
   } catch (err) {
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message:
+        err instanceof Error ? err.message : await t('Something went wrong'),
     };
   }
 }
@@ -1086,7 +919,8 @@ export async function validatePayboxPayment({
   } catch (err) {
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message:
+        err instanceof Error ? err.message : await t('Something went wrong'),
     };
   }
 
@@ -1110,18 +944,26 @@ export async function validatePayboxPayment({
     PaymentOption.paybox,
   );
 
-  const res = await createOrder({
-    cart,
-    workspaceURL,
-    client,
-    config: tenant.config,
-    paymentModeId,
-    tenantId,
-  });
-  await markPaymentAsProcessed({
-    contextId: context.id,
-    version: context.version,
-    client,
-  });
-  return res;
+  try {
+    const res = await createOrder({
+      cart,
+      workspace,
+      user,
+      client,
+      config: tenant.config,
+      paymentModeId,
+    });
+    await markPaymentAsProcessed({
+      contextId: context.id,
+      version: context.version,
+      client,
+    });
+    return res;
+  } catch (err) {
+    return {
+      error: true,
+      message:
+        err instanceof Error ? err.message : await t('Something went wrong'),
+    };
+  }
 }

@@ -18,8 +18,7 @@ import {MAIN_PRICE} from '@/constants';
 import {findProduct as $findProduct} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
-
-const formatNumber = (n: any) => n;
+import {formatNumber} from '@/subapps/shop/common/utils/order';
 
 export async function findProduct({
   id,
