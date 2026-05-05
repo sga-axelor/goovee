@@ -1,6 +1,7 @@
 'use server';
 import type {ActionResponse} from '@/types/action';
 import {headers} from 'next/headers';
+import {z} from 'zod';
 
 // ---- CORE IMPORTS ---- //
 import {t} from '@/lib/core/locale/server';
@@ -12,14 +13,19 @@ import {clone} from '@/utils';
 import {findEntries} from '../orm';
 import type {ListEntry} from '../types';
 import {ensureAuth} from '../utils/auth-helper';
+import {
+  type SearchEntriesInput,
+  SearchEntriesSchema,
+} from '../utils/validators';
 
-export async function searchEntries({
-  search,
-  workspaceURL,
-}: {
-  search?: string;
-  workspaceURL: string;
-}): ActionResponse<Cloned<ListEntry>[]> {
+export async function searchEntries(
+  props: SearchEntriesInput,
+): ActionResponse<Cloned<ListEntry>[]> {
+  const parsed = SearchEntriesSchema.safeParse(props);
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+  const {search, workspaceURL} = parsed.data;
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {

@@ -1,0 +1,5 @@
+{
+  "title": "Add Zod input validation to server actions",
+  "type": "change",
+  "scope": ["directory"]
+}
