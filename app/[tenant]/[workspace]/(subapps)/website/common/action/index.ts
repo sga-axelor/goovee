@@ -1,6 +1,7 @@
 'use server';
 
 import {headers} from 'next/headers';
+import {z} from 'zod';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
@@ -8,8 +9,6 @@ import {SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
 import {TENANT_HEADER} from '@/proxy';
 import {findSubappAccess} from '@/orm/workspace';
-import type {ID, Website, WebsitePage} from '@/types';
-import type {PortalWorkspace} from '@/orm/workspace';
 import {manager} from '@/tenant';
 import type {ActionResponse} from '@/types/action';
 
@@ -24,31 +23,28 @@ import {
   getWiki1ContentFieldName,
   getWikiComponentCode,
 } from '../templates/wiki-1/meta';
+import {
+  type LocaleRedirectionInput,
+  LocaleRedirectionSchema,
+  UpdateWikiContentInput,
+  UpdateWikiContentSchema,
+} from './validators';
 
-export async function getLocaleRedirectionURL({
-  workspaceURL,
-  workspaceURI,
-  websiteSlug,
-  websitePageSlug,
-}: {
-  workspaceURL: PortalWorkspace['url'];
-  workspaceURI: string;
-  websiteSlug: Website['slug'];
-  websitePageSlug: WebsitePage['slug'];
-}) {
+export async function getLocaleRedirectionURL(
+  props: LocaleRedirectionInput,
+): ActionResponse<{url: string}> {
+  const parsed = LocaleRedirectionSchema.safeParse(props);
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+  const {workspaceURL, workspaceURI, websiteSlug, websitePageSlug} =
+    parsed.data;
   const session = await getSession();
   const user = session?.user;
 
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
-  }
-
-  if (!(workspaceURL && websiteSlug)) {
     return {
       error: true,
       message: await t('Bad request'),
@@ -102,7 +98,7 @@ export async function getLocaleRedirectionURL({
   }
 
   const languageListItem = mainWebsiteLanguages?.find(
-    (i: any) => i?.website?.slug === websiteSlug,
+    i => i?.website?.slug === websiteSlug,
   );
 
   if (!languageListItem) {
@@ -112,7 +108,7 @@ export async function getLocaleRedirectionURL({
     };
   }
 
-  const {language}: any = languageListItem;
+  const {language} = languageListItem;
 
   if (!language) {
     return {
@@ -157,21 +153,21 @@ export async function getLocaleRedirectionURL({
   };
 }
 
-export async function updateWikiContent({
-  workspaceURL,
-  websiteSlug,
-  websitePageSlug,
-  contentId,
-  contentVersion,
-  content,
-}: {
-  workspaceURL: PortalWorkspace['url'];
-  websiteSlug: Website['slug'];
-  websitePageSlug: WebsitePage['slug'];
-  contentId: ID;
-  contentVersion: number;
-  content: any;
-}): ActionResponse<{id: string; version: number}> {
+export async function updateWikiContent(
+  props: UpdateWikiContentInput,
+): ActionResponse<{id: string; version: number}> {
+  const parsed = UpdateWikiContentSchema.safeParse(props);
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+  const {
+    workspaceURL,
+    websiteSlug,
+    websitePageSlug,
+    contentId,
+    contentVersion,
+    content,
+  } = parsed.data;
   const session = await getSession();
   const user = session?.user;
 
@@ -185,13 +181,6 @@ export async function updateWikiContent({
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
-  }
-
-  if (!(workspaceURL && websiteSlug && contentId)) {
     return {
       error: true,
       message: await t('Bad request'),
@@ -224,11 +213,11 @@ export async function updateWikiContent({
 
   const websitePage = await findWebsitePageBySlug({
     websiteSlug,
-    websitePageSlug,
+    websitePageSlug: websitePageSlug ?? null,
     workspaceURL,
     user,
     client,
-    contentId: String(contentId),
+    contentId,
   });
 
   if (!websitePage) {
@@ -256,7 +245,7 @@ export async function updateWikiContent({
     data: {
       id: String(contentId),
       version: contentVersion,
-      attrs: {...attributes, [fieldName]: content} as any,
+      attrs: Promise.resolve({...attributes, [fieldName]: content}),
     },
     select: {id: true},
   });
