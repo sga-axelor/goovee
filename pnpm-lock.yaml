@@ -71,8 +71,8 @@ dependencies:
     specifier: ^2.3.0
     version: 2.3.0
   '@paypal/react-paypal-js':
-    specifier: ^8.8.2
-    version: 8.8.2(react-dom@19.2.5)(react@19.2.5)
+    specifier: ^9.2.0
+    version: 9.2.0(react-dom@19.2.5)(react@19.2.5)
   '@popperjs/core':
     specifier: ^2.11.8
     version: 2.11.8
@@ -513,7 +513,7 @@ packages:
       axios: 1.15.2
       detect-browser: 5.3.0
       detect-node: 2.1.0
-      form-data: 4.0.1
+      form-data: 4.0.5
       lodash.flatmap: 4.5.0
       tiny-warning: 1.0.3
       tslib: 2.8.1
@@ -551,7 +551,7 @@ packages:
       '@apimatic/schema': 0.7.21
       detect-browser: 5.3.0
       detect-node: 2.1.0
-      form-data: 4.0.1
+      form-data: 4.0.5
       lodash.defaultsdeep: 4.6.1
       lodash.flatmap: 4.5.0
       tiny-warning: 1.0.3
@@ -4274,8 +4274,8 @@ packages:
     dev: false
     optional: true
 
-  /@paypal/paypal-js@8.4.2:
-    resolution: {integrity: sha512-UbY2lvwW65KX4migWbAx8KK0TCbPdIxeHIHogpJ5Z6yta5Qd2+90rXyx8FGdp6wrcr1f/srotlxnBXvqYWyHog==}
+  /@paypal/paypal-js@9.7.0:
+    resolution: {integrity: sha512-eUQVZWTEhXhaPsYDmfUaOeV5zfeLUn7kCE7/BXm6uAtMhUoK0S7uPtUzosqfH1vZgjfUSyTzghDJtYxXyRRZig==}
     dependencies:
       promise-polyfill: 8.3.0
     dev: false
@@ -4294,16 +4294,17 @@ packages:
       - supports-color
     dev: false
 
-  /@paypal/react-paypal-js@8.8.2(react-dom@19.2.5)(react@19.2.5):
-    resolution: {integrity: sha512-ffSOb6o2pgdbZVpUgpGuvRApkUfo9D+9KKjZ44if79yjhiYCVXOu2XOCR1+aC1RfuUzwEDV4S3+OA1x0OSeCVw==}
+  /@paypal/react-paypal-js@9.2.0(react-dom@19.2.5)(react@19.2.5):
+    resolution: {integrity: sha512-wckuxilT+fYYwg0TYbEbxkclYeJnhIlThpNtV9RLXQA6uBbt5xPIzGv9wt2ykQTLiNIqhXhw1Hlz5yxUeCteKQ==}
     peerDependencies:
       react: '*'
       react-dom: '*'
     dependencies:
-      '@paypal/paypal-js': 8.4.2
+      '@paypal/paypal-js': 9.7.0
       '@paypal/sdk-constants': 1.0.150
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
+      server-only: 0.0.1
     dev: false
 
   /@paypal/sdk-constants@1.0.150:
@@ -10138,15 +10139,6 @@ packages:
     engines: {node: '>= 18'}
     dev: true
 
-  /form-data@4.0.1:
-    resolution: {integrity: sha512-tzN8e4TX8+kkxGPK8D5u0FNmjPUjw3lwC9lSLxxoB/+GtsJG91CO8bSWy73APlgAZzZbXEYZJuxjkHH2w+Ezhw==}
-    engines: {node: '>= 6'}
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      mime-types: 2.1.35
-    dev: false
-
   /form-data@4.0.5:
     resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
     engines: {node: '>= 6'}
@@ -10595,7 +10587,7 @@ packages:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
     engines: {node: '>= 14'}
     dependencies:
-      agent-base: 7.1.1
+      agent-base: 7.1.4
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color

@@ -17,10 +17,7 @@ export type PaypalProps = {
   disabled?: boolean;
   onApprove: (result: any) => void;
   onValidate?: (paymentOption: string) => Promise<boolean>;
-  createOrder: (
-    data: any,
-    actions: any,
-  ) => Promise<{
+  createOrder: () => Promise<{
     order?: {id: string};
     error?: any;
     message?: string;

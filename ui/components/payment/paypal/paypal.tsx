@@ -1,16 +1,21 @@
 'use client';
 
 import {useState} from 'react';
-import {PayPalButtons, PayPalScriptProvider} from '@paypal/react-paypal-js';
+import {
+  PayPalOneTimePaymentButton,
+  PayPalProvider,
+} from '@paypal/react-paypal-js/sdk-v6';
 
 // ---- CORE IMPORTS ---- //
-import {DEFAULT_CURRENCY_CODE} from '@/constants';
-import {i18n} from '@/locale';
+import {i18n, l10n} from '@/locale';
+import {transformLocale} from '@/locale/utils';
 import {PaymentOption} from '@/types';
 import {Portal, Spinner} from '@/ui/components';
 import {PaypalProps} from '@/ui/components/payment/types';
 import {useToast} from '@/ui/hooks';
 import {useEnvironment} from '@/environment';
+import {cn} from '@/utils/css';
+import styles from './paypal.module.scss';
 
 export function Paypal({
   disabled,
@@ -25,41 +30,31 @@ export function Paypal({
 }: PaypalProps) {
   const {toast} = useToast();
   const [verifying, setVerifying] = useState(false);
+  const env = useEnvironment();
 
-  const handleCreatePaypalOrder = async (
-    data: any,
-    actions: any,
-  ): Promise<any> => {
+  const handleCreateOrder = async (): Promise<{orderId: string}> => {
     if (onValidate) {
       const isValid = await onValidate(PaymentOption.paypal);
       if (!isValid) {
-        return '';
+        throw new Error('Validation failed');
       }
     }
 
-    try {
-      const result = await createOrder(data, actions);
-      if (result.error || !result.order?.id) {
-        toast({
-          variant: 'destructive',
-          title: result.message,
-        });
-      } else {
-        return result?.order?.id;
-      }
-    } catch (error) {
-      console.error('Error while creating paypal order:', error);
+    const result = await createOrder();
+    if (result.error || !result.order?.id) {
       toast({
         variant: 'destructive',
-        title: i18n.t('Error processing PayPal payment. Please try again.'),
+        title: result.message,
       });
+      throw new Error(result.message ?? 'Failed to create paypal order');
     }
+    return {orderId: result.order.id};
   };
 
-  const handleApprovePaypalOrder = async (data: any, actions: any) => {
+  const handleApprove = async (data: {orderId: string}): Promise<void> => {
     try {
       setVerifying(true);
-      const result = await captureOrder(data.orderID);
+      const result = await captureOrder(data.orderId);
       if (result?.error) {
         toast({
           variant: 'destructive',
@@ -87,32 +82,24 @@ export function Paypal({
     }
   };
 
-  const env = useEnvironment();
-
   return (
-    <PayPalScriptProvider
-      options={{
-        clientId: env.GOOVEE_PUBLIC_PAYPAL_CLIENT_ID!,
-        currency: DEFAULT_CURRENCY_CODE,
-        intent: 'capture',
-        disableFunding: 'card',
-      }}>
-      <PayPalButtons
-        style={{
-          color: 'blue',
-          shape: 'rect',
-          height: 50,
-          disableMaxWidth: true,
-        }}
-        className="mb-[-7px]"
-        disabled={disabled}
-        createOrder={handleCreatePaypalOrder}
-        onApprove={handleApprovePaypalOrder}
-      />
+    <PayPalProvider
+      clientId={env.GOOVEE_PUBLIC_PAYPAL_CLIENT_ID!}
+      components={['paypal-payments']}
+      locale={transformLocale(l10n.getLocale()) || undefined}
+      pageType="checkout">
+      <div className={cn('w-full', styles.wrapper)}>
+        <PayPalOneTimePaymentButton
+          disabled={disabled}
+          presentationMode="auto"
+          createOrder={handleCreateOrder}
+          onApprove={handleApprove}
+        />
+      </div>
       <Portal>
         <Spinner show={verifying} fullscreen />
       </Portal>
-    </PayPalScriptProvider>
+    </PayPalProvider>
   );
 }
 

@@ -33,7 +33,7 @@ export function Payments({
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   disabled?: boolean;
   onValidate: (paymentOption?: PaymentOption) => Promise<boolean>;
-  onPaypalCreatedOrder: (data: any, actions: any) => Promise<any>;
+  onPaypalCreatedOrder: () => Promise<any>;
   onPaypalCaptureOrder: (orderID: string) => Promise<any>;
   onApprove: (result: any) => Promise<void>;
   onStripeCreateCheckOutSession: () => Promise<any>;
