@@ -22,9 +22,9 @@ import {shouldHidePricesAndPurchase} from '@/orm/product';
 import {markPaymentAsProcessed} from '@/lib/core/payment/common/orm';
 import {
   computeExpectedAmount,
-  createOrder,
   formatNumber,
 } from '@/subapps/shop/common/utils/order';
+import {createOrder} from '@/subapps/shop/common/service';
 
 export async function paypalCaptureOrder({
   orderId,

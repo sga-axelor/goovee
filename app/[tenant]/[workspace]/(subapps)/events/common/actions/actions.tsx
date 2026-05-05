@@ -40,7 +40,6 @@ import {
   findEventConfig,
   findEvents,
 } from '@/subapps/events/common/orm/event';
-import {createInvoice} from '@/subapps/events/common/orm/invoice';
 import {findContacts} from '@/subapps/events/common/orm/partner';
 import {
   registerParticipants,
@@ -60,6 +59,7 @@ import {
 import {getPaymentInfo} from '@/subapps/events/common/utils/validate';
 import {notifyUser} from '@/pwa/utils';
 import {NotificationTag} from '@/pwa/tags';
+import {createInvoice} from '@/subapps/events/common/service';
 
 export async function getAllEvents({
   limit,

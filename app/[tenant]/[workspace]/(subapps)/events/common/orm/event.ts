@@ -30,7 +30,7 @@ import type {SelectOptions} from '@goovee/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {EVENT_STATUS, EVENT_TYPE} from '@/subapps/events/common/constants';
-import {findProductsFromWS} from '@/subapps/events/common/orm/product';
+import {findProductsFromWS} from '@/subapps/events/common/service';
 
 const additionalFieldSetFields = {
   columnSequence: true,
