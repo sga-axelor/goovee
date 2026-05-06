@@ -26,6 +26,8 @@ import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
 import type {FullEvent} from '../../../orm/event';
 import type {ModelField} from '@/orm/model-fields';
 import {URL_PARAMS} from '@/subapps/events/common/constants';
+import type {SuccessResponse} from '@/types/action';
+import {type Registration} from '../../../orm/registration';
 export function EventPayments({
   workspace,
   event,
@@ -54,13 +56,11 @@ export function EventPayments({
   const {workspaceURI} = useWorkspace();
 
   const redirectToEvents = useCallback(
-    async (result: any) => {
-      if (result) {
-        const {data} = result;
-        router.replace(
-          `${workspaceURI}/${SUBAPP_CODES.events}/${data.event.slug}/${SUBAPP_PAGE.register}/${SUBAPP_PAGE.confirmation}?${URL_PARAMS.isPaid}=true`,
-        );
-      }
+    async (result: SuccessResponse<Registration>) => {
+      if (!result.data.event?.slug) return;
+      router.replace(
+        `${workspaceURI}/${SUBAPP_CODES.events}/${result.data.event.slug}/${SUBAPP_PAGE.register}/${SUBAPP_PAGE.confirmation}?${URL_PARAMS.isPaid}=true`,
+      );
     },
     [workspaceURI, router],
   );

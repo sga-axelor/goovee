@@ -17,7 +17,7 @@ import {useEnvironment} from '@/environment';
 import {cn} from '@/utils/css';
 import styles from './paypal.module.scss';
 
-export function Paypal({
+export function Paypal<TData>({
   disabled,
   successMessage = 'Order requested successfully',
   errorMessage = 'Something went wrong while processing your request.',
@@ -27,7 +27,7 @@ export function Paypal({
   captureOrder,
   onPaymentSuccess,
   skipSuccessToast,
-}: PaypalProps) {
+}: PaypalProps<TData>) {
   const {toast} = useToast();
   const [verifying, setVerifying] = useState(false);
   const env = useEnvironment();

@@ -1,16 +1,16 @@
 'use client';
 
 // ---- CORE IMPPRTS ---- //
-import {ID, PaymentOption} from '@/types';
+import {PaymentOption} from '@/types';
 import type {Cloned} from '@/types/util';
 import {PortalWorkspace} from '@/orm/workspace';
-import {ErrorResponse, SuccessResponse} from '@/types/action';
+import {ActionResponse, SuccessResponse} from '@/types/action';
 import {Paybox, Paypal, Stripe, Up2pay, HubPISP} from '@/ui/components/payment';
 import {isPaymentOptionAvailable} from '@/utils/payment';
 import {getHubPispTransferTypes} from '@/payment/hubpisp/utils';
 import type {PaymentSSEProps} from '@/ui/components/payment/types';
 
-export function Payments({
+export function Payments<TData>({
   workspace,
   disabled,
   onValidate,
@@ -34,17 +34,15 @@ export function Payments({
   disabled?: boolean;
   onValidate: (paymentOption?: PaymentOption) => Promise<boolean>;
   onPaypalCreatedOrder: () => Promise<any>;
-  onPaypalCaptureOrder: (orderID: string) => Promise<any>;
-  onApprove: (result: any) => Promise<void>;
+  onPaypalCaptureOrder: (orderID: string) => ActionResponse<TData>;
+  onApprove: (result: SuccessResponse<TData>) => Promise<void>;
   onStripeCreateCheckOutSession: () => Promise<any>;
   onStripeValidateSession: (params: {
     stripeSessionId: string;
-  }) => Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>>;
+  }) => ActionResponse<TData>;
   onPaymentSuccess?: () => Promise<void> | void;
   onPayboxCreateOrder: ({uri}: {uri: string}) => Promise<any>;
-  onPayboxValidatePayment: (params: {
-    params: any;
-  }) => Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>>;
+  onPayboxValidatePayment: (params: {params: any}) => ActionResponse<TData>;
   onUp2payCreateOrder?: ({uri}: {uri: string}) => Promise<any>;
   onInitiatePispPayment?: ({
     uri,

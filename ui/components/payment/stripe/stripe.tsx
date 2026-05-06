@@ -26,7 +26,7 @@ import {BankTransferConfirmDialog} from './bank-transfer-confirmation-dialog';
 import {BANK_TRANSFER_STATUS} from '@/lib/core/payment/stripe/constants';
 import {PAYMENT_UPDATE_STATUS} from '@/lib/core/payment/sse/constants';
 
-export function Stripe({
+export function Stripe<TData>({
   disabled,
   successMessage = 'Payment successful!',
   errorMessage = 'Error processing payment, try again.',
@@ -38,7 +38,7 @@ export function Stripe({
   skipSuccessToast,
   onCreateBankTransferIntent,
   sse,
-}: StripeProps) {
+}: StripeProps<TData>) {
   const {toast} = useToast();
   const [verifying, setVerifying] = useState(false);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);

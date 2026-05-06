@@ -10,7 +10,7 @@ import {i18n} from '@/locale';
 import {PayboxProps} from '@/ui/components/payment/types';
 import {PaymentOption} from '@/types';
 
-export function Paybox({
+export function Paybox<TData>({
   disabled,
   onPaymentSuccess,
   onApprove,
@@ -20,7 +20,7 @@ export function Paybox({
   successMessage,
   errorMessage,
   skipSuccessToast,
-}: PayboxProps) {
+}: PayboxProps<TData>) {
   const {toast} = useToast();
   const [verifying, setVerifying] = useState(false);
   const {searchParams} = useSearchParams();

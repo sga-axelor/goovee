@@ -4,6 +4,7 @@ import {l10n} from '@/locale/server/l10n';
 import {DEFAULT_SCALE} from '@/locale/contants';
 import {addCurrency} from '@/locale/utils';
 import {Timezones} from '@/types/date';
+import {type Maybe} from '@/types/util';
 
 /**
  * Numbers
@@ -17,11 +18,19 @@ type NumberOpts = {
 };
 
 export async function formatNumber(
-  value?: string | number | null,
+  value: string | number,
+  opts?: NumberOpts,
+): Promise<string>;
+export async function formatNumber(
+  value: Maybe<string | number>,
+  opts?: NumberOpts,
+): Promise<string | null>;
+export async function formatNumber(
+  value: Maybe<string | number>,
   {scale, currency, type, locale}: NumberOpts = {},
-) {
-  if (value === null || value === undefined) {
-    return value;
+): Promise<string | null> {
+  if (value == null) {
+    return null;
   }
 
   if (type === 'DECIMAL') {
@@ -67,7 +76,7 @@ export async function formatNumber(
     return addCurrency(value, currency, lang);
   }
 
-  return value;
+  return String(value);
 }
 
 export async function formatInteger(value: string | number) {

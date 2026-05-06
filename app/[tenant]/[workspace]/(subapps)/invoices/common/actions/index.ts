@@ -58,6 +58,9 @@ import {
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 import {validatePaymentData} from '@/subapps/invoices/common/utils/validations';
 import {updateInvoice} from '@/subapps/invoices/common/service';
+import {type ActionResponse} from '@/types/action';
+import {type Invoice} from '@/subapps/invoices/common/types/invoices';
+import {type BankTransferIntentResult} from '@/ui/components/payment/types';
 
 const normalizeAmount = (
   value: string | number,
@@ -149,7 +152,7 @@ export async function paypalCaptureOrder({
   orderID: string;
   workspaceURL: string;
   token?: string;
-}) {
+}): ActionResponse<Invoice> {
   if (!orderID) {
     return {error: true, message: await t('Order ID is missing')};
   }
@@ -443,7 +446,7 @@ export async function validateStripePayment({
   workspaceURL: string;
   workspaceURI: string;
   token?: string;
-}) {
+}): ActionResponse<Invoice> {
   if (!stripeSessionId) {
     return {error: true, message: await t('Missing stripe session id!')};
   }
@@ -665,7 +668,7 @@ export async function createStripeBankTransferIntent({
   amount: string;
   workspaceURL: string;
   token?: string;
-}) {
+}): ActionResponse<BankTransferIntentResult> {
   const $headers = await headers();
 
   const tenantId = $headers.get(TENANT_HEADER);
@@ -776,7 +779,7 @@ export async function cancelStripeBankTransferPaymentIntent({
   workspaceURL: string;
   workspaceURI: string;
   token?: string;
-}) {
+}): ActionResponse<null> {
   if (!id) {
     return {error: true, message: await t('Missing stripe payment id!')};
   }
@@ -917,6 +920,7 @@ export async function cancelStripeBankTransferPaymentIntent({
     });
 
     revalidatePath(`${workspaceURI}/${SUBAPP_CODES.invoices}/${$invoice.id}`);
+    return {success: true, data: null};
   } catch (error) {
     console.error('Error Cancelling:', error);
     return {
@@ -1026,7 +1030,7 @@ export async function validatePayboxPayment({
   workspaceURL: string;
   workspaceURI: string;
   token?: string;
-}) {
+}): ActionResponse<Invoice> {
   if (!params) {
     return {error: true, message: await t('Bad request')};
   }

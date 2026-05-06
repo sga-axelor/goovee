@@ -3,7 +3,7 @@ import {HubPispLocalInstrument} from '@/lib/core/payment/hubpisp/constants';
 import {HubPispTransferType} from '@/lib/core/payment/hubpisp/types';
 import {BANK_TRANSFER_STATUS} from '@/lib/core/payment/stripe/constants';
 import {BankAccountType} from '@/lib/core/payment/stripe/types';
-import {ErrorResponse, SuccessResponse} from '@/types/action';
+import {ActionResponse, ErrorResponse, SuccessResponse} from '@/types/action';
 import {PaymentSource} from '@/lib/core/payment/common/type';
 import {PaymentUpdateStatus} from '@/lib/core/payment/sse/constants';
 
@@ -13,23 +13,23 @@ export type PaymentSSEProps = {
   onPaymentUpdate: (status: PaymentUpdateStatus) => void;
 };
 
-export type PaypalProps = {
+export type PaypalProps<TData = unknown> = {
   disabled?: boolean;
-  onApprove: (result: any) => void;
+  onApprove: (result: SuccessResponse<TData>) => void;
   onValidate?: (paymentOption: string) => Promise<boolean>;
   createOrder: () => Promise<{
     order?: {id: string};
     error?: any;
     message?: string;
   }>;
-  captureOrder: (orderID: string) => Promise<any>;
+  captureOrder: (orderID: string) => ActionResponse<TData>;
   onPaymentSuccess?: () => any;
   successMessage?: string;
   errorMessage?: string;
   skipSuccessToast?: boolean;
 };
 
-export type StripeProps = {
+export type StripeProps<TData = unknown> = {
   disabled?: boolean;
   successMessage?: string;
   errorMessage?: string;
@@ -40,8 +40,10 @@ export type StripeProps = {
     message?: string;
     client_secret?: string | null;
   }>;
-  onValidateSession: (params: {stripeSessionId: string}) => Promise<any>;
-  onApprove?: (result: any) => void;
+  onValidateSession: (params: {
+    stripeSessionId: string;
+  }) => ActionResponse<TData>;
+  onApprove?: (result: SuccessResponse<TData>) => void;
   onPaymentSuccess?: () => any;
   skipSuccessToast?: boolean;
   onCreateBankTransferIntent?: () => Promise<
@@ -107,7 +109,7 @@ export interface NormalizedBankDetails {
   accountHolderAddress?: BankAddress;
 }
 
-export type PayboxProps = {
+export type PayboxProps<TData = unknown> = {
   disabled?: boolean;
   successMessage?: string;
   errorMessage?: string;
@@ -117,9 +119,9 @@ export type PayboxProps = {
     params,
   }: {
     params: Record<string, string>;
-  }) => Promise<any>;
+  }) => ActionResponse<TData>;
   onPaymentSuccess?: () => void;
-  onApprove: (result: any) => void;
+  onApprove: (result: SuccessResponse<TData>) => void;
   skipSuccessToast?: boolean;
 };
 
