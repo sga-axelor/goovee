@@ -95,7 +95,7 @@ export const EventCard = ({event}: EventCardProps) => {
              }
               `}
             </CardDescription>
-            <BadgeList items={event.eventCategorySet ?? undefined} />
+            <BadgeList items={event.eventCategorySet} />
           </CardHeader>
           <CardContent className="p-0 mt-1">
             <InnerHTML

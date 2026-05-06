@@ -5,16 +5,22 @@ import {Badge} from '@/ui/components';
 import {cn} from '@/utils/css';
 import {PALETTE_COLORS} from '@/constants/theme';
 
+type BadgeItem = {
+  id: string | number;
+  name?: string | null;
+  color?: string | null;
+};
+
 export const BadgeList = ({
   items,
   rootClassName,
   labelClassName,
   onSelect,
 }: {
-  items: any[] | undefined;
+  items: BadgeItem[] | null | undefined;
   rootClassName?: string;
   labelClassName?: string;
-  onSelect?: (item: any) => void;
+  onSelect?: (item: BadgeItem) => void;
 }) => {
   return (
     <div
@@ -22,7 +28,7 @@ export const BadgeList = ({
         'flex items-center flex-wrap gap-y-2 gap-x-4 h-fit',
         rootClassName,
       )}>
-      {items?.map((item: any) => {
+      {items?.map(item => {
         return (
           <Badge
             key={item?.id}
