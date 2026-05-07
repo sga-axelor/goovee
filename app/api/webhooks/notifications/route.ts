@@ -23,21 +23,23 @@ async function findAppByCode({code, client}: {code: string; client: Client}) {
   });
 }
 
-function getCredentials(request: Request) {
-  const header = request.headers.get('authorization');
-
-  if (!header?.startsWith('Basic ')) return null;
-
+function isValidSignature(
+  body: string,
+  signature: string,
+  secret: string,
+): boolean {
   try {
-    const value = header.split(' ')[1];
-    const credentials = Buffer.from(value, 'base64').toString('utf-8');
-    const [username, password] = credentials.split(':');
+    const expected = crypto
+      .createHmac('sha256', secret)
+      .update(body)
+      .digest('hex');
 
-    if (!(username && password)) return null;
-
-    return {username, password};
-  } catch (err) {
-    return null;
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expected),
+    );
+  } catch {
+    return false;
   }
 }
 
@@ -292,9 +294,12 @@ function isValidTimestamp(timestamp: number) {
 }
 
 export async function POST(request: Request) {
-  const payload = await request.json();
+  const body = await request.text();
 
-  if (!payload) {
+  let payload;
+  try {
+    payload = JSON.parse(body);
+  } catch {
     return response('Payload is required', 400);
   }
 
@@ -307,39 +312,13 @@ export async function POST(request: Request) {
     );
   }
 
-  const validTimestamp = isValidTimestamp(timestamp);
-
-  if (!validTimestamp) {
+  if (!isValidTimestamp(timestamp)) {
     return response('Invalid timestamp', 400);
   }
 
-  const credentials = getCredentials(request);
+  const signature = request.headers.get('x-signature');
 
-  if (!credentials) {
-    return response('Unauthorized', 401);
-  }
-
-  const tenantConfig = await manager.getConfig(tenantId);
-
-  if (!tenantConfig) {
-    return response('Invalid Tenant', 400);
-  }
-
-  const validUsername =
-    tenantConfig.aos?.auth?.username &&
-    crypto.timingSafeEqual(
-      Buffer.from(tenantConfig.aos.auth.username),
-      Buffer.from(credentials.username),
-    );
-
-  const validPassword =
-    tenantConfig.aos?.auth?.password &&
-    crypto.timingSafeEqual(
-      Buffer.from(tenantConfig.aos.auth.password),
-      Buffer.from(credentials.password),
-    );
-
-  if (!(validUsername && validPassword)) {
+  if (!signature) {
     return response('Unauthorized', 401);
   }
 
@@ -348,6 +327,12 @@ export async function POST(request: Request) {
     return response('Unauthorized', 401);
   }
   const {client} = tenant;
+
+  const secret = tenant.config.aos.webhookSecret;
+
+  if (!secret || !isValidSignature(body, signature, secret)) {
+    return response('Unauthorized', 401);
+  }
 
   const workspace = await client.aOSPortalWorkspace.findOne({
     where: {url: workspaceUrl},

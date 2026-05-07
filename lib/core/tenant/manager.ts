@@ -22,6 +22,7 @@ const tenants: {[key: string]: TenantConfig} = [DEFAULT_TENANT].reduce(
           username: process.env.BASIC_AUTH_USERNAME,
           password: process.env.BASIC_AUTH_PASSWORD,
         },
+        webhookSecret: process.env.NOTIFICATION_WEBHOOK_SECRET,
       },
     },
   }),
@@ -63,6 +64,7 @@ export class SingleTenantManager implements TenantManager {
           username: process.env.BASIC_AUTH_USERNAME!,
           password: process.env.BASIC_AUTH_PASSWORD!,
         },
+        webhookSecret: process.env.NOTIFICATION_WEBHOOK_SECRET,
       },
     };
 
