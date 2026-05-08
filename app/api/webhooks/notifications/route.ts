@@ -5,7 +5,7 @@ import {z} from 'zod';
 
 import {manager} from '@/tenant';
 import type {Client} from '@/goovee/.generated/client';
-import {findPreferences} from '@/orm/notification';
+import {findSubscribers} from '@/orm/notification';
 import NotificationManager, {NotificationType} from '@/notification';
 import {getTranslation} from '@/locale/server';
 import {notifyUser} from '@/pwa/utils';
@@ -163,7 +163,7 @@ async function sendMail({
   user: User;
   tenantId: string;
   mail?: {subject?: string; body?: string};
-  entity: {id: string; version: number; route: string};
+  entity: {id: string; route: string};
   app: App;
 }) {
   const mailService = NotificationManager.getService(NotificationType.mail);
@@ -196,7 +196,7 @@ async function sendSystemNotification({
   user: User;
   tenantId: string;
   mail?: {subject?: string; body?: string};
-  entity: {id: string; version: number; route: string};
+  entity: {id: string; route: string};
   app: App;
   workspace: {
     id: string;
@@ -247,78 +247,26 @@ async function sendNotifications(data: {
   const {tenantId, workspace, code, record, mail, client, app} = data;
 
   try {
-    const users = await client.aOSPartner
-      .find({
-        where: {
-          isActivatedOnPortal: true,
-          emailAddress: {address: {ne: null}},
-        },
-        select: {
-          id: true,
-          emailAddress: {address: true},
-          localization: {code: true},
-          isContact: true,
-          simpleFullName: true,
-          fullName: true,
-          mainPartner: {
-            id: true,
-          },
-        },
-      })
-      .then(users =>
-        users.map(u => ({
-          id: u.id,
-          name: u.fullName,
-          email: u.emailAddress!.address!,
-          locale: u.localization?.code,
-          isContact: u.isContact,
-          simpleFullName: u.simpleFullName,
-          mainPartnerId: u.isContact ? u.mainPartner?.id : undefined,
-          tenantId,
-          image: null,
-        })),
-      );
+    const subscribers = await findSubscribers({
+      code,
+      workspaceUrl: workspace.url,
+      recordId: record.id,
+      tenantId,
+      client,
+    });
 
-    const subscribers: {
-      user: User;
-      entity: any;
-    }[] = [];
-
-    const checkSubscription = async (user: User) => {
-      const preference = await findPreferences({
+    processBatch(subscribers, async ({user, entity}) => {
+      sendMail({user, tenantId, mail, entity, app});
+      sendSystemNotification({
         user,
+        tenantId,
+        mail,
+        entity,
+        app,
+        workspace,
         client,
-        code,
-        url: workspace.url,
       });
-
-      if (!preference?.activateNotification) return;
-
-      const entity = preference.subscriptions.find(
-        s => Number(s.id) === Number(record.id),
-      );
-
-      const isSubscribed = entity?.activateNotification;
-
-      if (isSubscribed) {
-        subscribers.push({user, entity});
-      }
-    };
-
-    processBatch(users, checkSubscription).then(() =>
-      processBatch(subscribers, async ({user, entity}) => {
-        sendMail({user, tenantId, mail, entity, app});
-        sendSystemNotification({
-          user,
-          tenantId,
-          mail,
-          entity,
-          app,
-          workspace,
-          client,
-        });
-      }),
-    );
+    });
   } catch (err) {}
 }
 

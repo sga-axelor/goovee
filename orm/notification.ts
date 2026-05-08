@@ -1,8 +1,9 @@
 import type {Client} from '@/goovee/.generated/client';
-import {AOSPortalUserPreference} from '@/goovee/.generated/models';
+import {AOSPartner, AOSPortalUserPreference} from '@/goovee/.generated/models';
 import type {
   CreateArgs,
   Entity,
+  Payload,
   Repository,
   SelectOptions,
   UpdateArgs,
@@ -12,7 +13,7 @@ import type {User} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 import type {NotificationAppCode} from '@/utils/validators';
 import {findSubappAccess} from './workspace';
-import {filterPrivate} from './filter';
+import {filterPartnersByRecordAccess, filterPrivate} from './filter';
 
 type Params = {
   code: NotificationAppCode;
@@ -467,7 +468,7 @@ async function findForumGroups(params: Params) {
         id: i.forumGroup?.id || '',
         version: i.forumGroup?.version || 0,
         name: i.forumGroup?.name || '',
-        route: routes[SUBAPP_CODES.forum]({url, id: i.id}),
+        route: routes[SUBAPP_CODES.forum]({url, id: i.forumGroup?.id || ''}),
       })),
     )
     .catch(() => []);
@@ -831,4 +832,314 @@ export async function updatePreferences(params: UpdateParams) {
   }
 
   return updatePreferenceHandlers[params?.code]?.(params);
+}
+
+const partnerSelect = {
+  emailAddress: {address: true},
+  localization: {code: true},
+  isContact: true,
+  simpleFullName: true,
+  fullName: true,
+  mainPartner: {id: true},
+} as const;
+
+type Partner = Payload<AOSPartner, {select: typeof partnerSelect}>;
+
+function partnerToUser(partner: Partner, tenantId: string): User {
+  return {
+    id: partner.id,
+    name: partner.fullName,
+    email: partner.emailAddress!.address!,
+    locale: partner.localization?.code,
+    isContact: partner.isContact,
+    simpleFullName: partner.simpleFullName,
+    mainPartnerId: partner.isContact ? partner.mainPartner?.id : undefined,
+    tenantId,
+    image: null,
+  };
+}
+
+type Subscriber = {user: User; entity: {id: string; route: string}};
+
+function partnersToSubscribers({
+  partners,
+  recordId,
+  route,
+  tenantId,
+}: {
+  partners: ReadonlyArray<Partner>;
+  recordId: string;
+  route: string;
+  tenantId: string;
+}): Subscriber[] {
+  return partners
+    .map(partner => {
+      if (!partner.emailAddress?.address) return null;
+      return {
+        user: partnerToUser(partner, tenantId),
+        entity: {id: recordId, route},
+      };
+    })
+    .filter((r): r is Subscriber => r != null);
+}
+
+type FindSubscribersParams = {
+  code: NotificationAppCode;
+  workspaceUrl: string;
+  recordId: string;
+  tenantId: string;
+  client: Client;
+};
+
+async function findEventCategorySubscribers(params: FindSubscribersParams) {
+  const {code, workspaceUrl, recordId, tenantId, client} = params;
+
+  const record = await client.aOSPortalEventCategory.findOne({
+    where: {id: recordId},
+    select: {
+      isPrivate: true,
+      partnerSet: {select: {id: true}},
+      partnerCategorySet: {select: {id: true}},
+    },
+  });
+  if (!record) return [];
+
+  const partners = await client.aOSPartner.find({
+    where: {
+      isActivatedOnPortal: true,
+      emailAddress: {address: {ne: null}},
+      ...filterPartnersByRecordAccess(record),
+      portalUserPreferenceList: {
+        activateNotification: true,
+        app: {code},
+        workspace: {url: workspaceUrl},
+        eventNotificationConfigs: {
+          activateNotification: true,
+          eventCategory: {id: recordId},
+        },
+      },
+    },
+    select: partnerSelect,
+  });
+
+  const route = routes[SUBAPP_CODES.events]({url: workspaceUrl, id: recordId});
+  return partnersToSubscribers({partners, recordId, route, tenantId});
+}
+
+async function findNewsCategorySubscribers(params: FindSubscribersParams) {
+  const {code, workspaceUrl, recordId, tenantId, client} = params;
+
+  const record = await client.aOSPortalNewsCategory.findOne({
+    where: {id: recordId},
+    select: {
+      isPrivate: true,
+      slug: true,
+      partnerSet: {select: {id: true}},
+      partnerCategorySet: {select: {id: true}},
+    },
+  });
+  if (!record) return [];
+
+  const partners = await client.aOSPartner.find({
+    where: {
+      isActivatedOnPortal: true,
+      emailAddress: {address: {ne: null}},
+      ...filterPartnersByRecordAccess(record),
+      portalUserPreferenceList: {
+        activateNotification: true,
+        app: {code},
+        workspace: {url: workspaceUrl},
+        newsNotificationConfigs: {
+          activateNotification: true,
+          newsCategory: {id: recordId},
+        },
+      },
+    },
+    select: partnerSelect,
+  });
+
+  const route = routes[SUBAPP_CODES.news]({
+    url: workspaceUrl,
+    slug: record.slug || '',
+  });
+  return partnersToSubscribers({partners, recordId, route, tenantId});
+}
+
+async function findResourceFolderSubscribers(params: FindSubscribersParams) {
+  const {code, workspaceUrl, recordId, tenantId, client} = params;
+
+  const record = await client.aOSDMSFile.findOne({
+    where: {id: recordId},
+    select: {
+      isPrivate: true,
+      partnerSet: {select: {id: true}},
+      partnerCategorySet: {select: {id: true}},
+    },
+  });
+  if (!record) return [];
+
+  const partners = await client.aOSPartner.find({
+    where: {
+      isActivatedOnPortal: true,
+      emailAddress: {address: {ne: null}},
+      ...filterPartnersByRecordAccess(record),
+      portalUserPreferenceList: {
+        activateNotification: true,
+        app: {code},
+        workspace: {url: workspaceUrl},
+        resourceNotificationConfigs: {
+          activateNotification: true,
+          folder: {id: recordId},
+        },
+      },
+    },
+    select: partnerSelect,
+  });
+
+  const route = routes[SUBAPP_CODES.resources]({
+    url: workspaceUrl,
+    id: recordId,
+  });
+  return partnersToSubscribers({partners, recordId, route, tenantId});
+}
+
+async function findForumGroupSubscribers(params: FindSubscribersParams) {
+  const {code, workspaceUrl, recordId, tenantId, client} = params;
+
+  const record = await client.aOSPortalForumGroup.findOne({
+    where: {id: recordId},
+    select: {
+      isPrivate: true,
+      partnerSet: {select: {id: true}},
+      partnerCategorySet: {select: {id: true}},
+    },
+  });
+  if (!record) return [];
+
+  const partners = await client.aOSPartner.find({
+    where: {
+      isActivatedOnPortal: true,
+      emailAddress: {address: {ne: null}},
+      ...filterPartnersByRecordAccess(record),
+      portalUserPreferenceList: {
+        activateNotification: true,
+        app: {code},
+        workspace: {url: workspaceUrl},
+        forumNotificationConfigs: {
+          activateNotification: true,
+          forumGroup: {id: recordId},
+        },
+      },
+    },
+    select: partnerSelect,
+  });
+
+  const route = routes[SUBAPP_CODES.forum]({url: workspaceUrl, id: recordId});
+  return partnersToSubscribers({partners, recordId, route, tenantId});
+}
+
+async function findTicketSubscribers(
+  params: FindSubscribersParams,
+): Promise<Subscriber[]> {
+  const {code, workspaceUrl, recordId, tenantId, client} = params;
+
+  const task = await client.aOSProjectTask.findOne({
+    where: {
+      id: recordId,
+      typeSelect: 'ticket',
+      isPrivate: false,
+      project: {
+        portalWorkspace: {url: workspaceUrl},
+        isBusinessProject: true,
+        projectStatus: {isCompleted: false},
+      },
+      OR: [
+        {
+          managedByContact: {
+            isActivatedOnPortal: true,
+            emailAddress: {address: {ne: null}},
+          },
+        },
+        {
+          createdByContact: {
+            isActivatedOnPortal: true,
+            emailAddress: {address: {ne: null}},
+          },
+        },
+      ],
+    },
+    select: {
+      project: {id: true},
+      managedByContact: {
+        ...partnerSelect,
+        portalUserPreferenceList: {
+          where: {
+            activateNotification: true,
+            app: {code},
+            workspace: {url: workspaceUrl},
+          },
+          select: {id: true},
+        },
+      },
+      createdByContact: {
+        ...partnerSelect,
+        portalUserPreferenceList: {
+          where: {
+            activateNotification: true,
+            app: {code},
+            workspace: {url: workspaceUrl},
+          },
+          select: {id: true},
+        },
+      },
+    },
+  });
+
+  if (!task) {
+    return [];
+  }
+
+  const subscribers: Subscriber[] = [];
+  const uniqueContacts = new Map<string, Partner>();
+
+  if (task.managedByContact?.portalUserPreferenceList?.length) {
+    uniqueContacts.set(task.managedByContact.id, task.managedByContact);
+  }
+  if (task.createdByContact?.portalUserPreferenceList?.length) {
+    uniqueContacts.set(task.createdByContact.id, task.createdByContact);
+  }
+
+  for (const partner of uniqueContacts.values()) {
+    const route = routes[SUBAPP_CODES.ticketing]({
+      url: workspaceUrl,
+      id: recordId,
+      pid: task.project?.id || '',
+    });
+
+    subscribers.push({
+      user: partnerToUser(partner, tenantId),
+      entity: {id: recordId, route},
+    });
+  }
+
+  return subscribers;
+}
+
+export async function findSubscribers(
+  params: FindSubscribersParams,
+): Promise<Subscriber[]> {
+  switch (params.code) {
+    case SUBAPP_CODES.events:
+      return findEventCategorySubscribers(params);
+    case SUBAPP_CODES.news:
+      return findNewsCategorySubscribers(params);
+    case SUBAPP_CODES.resources:
+      return findResourceFolderSubscribers(params);
+    case SUBAPP_CODES.forum:
+      return findForumGroupSubscribers(params);
+    case SUBAPP_CODES.ticketing:
+      return findTicketSubscribers(params);
+    default:
+      return [];
+  }
 }
