@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from '@/ui/components/select';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {Website} from '@/types';
 import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
@@ -30,7 +29,7 @@ export function LanguageSelection({languageList, active}: any) {
 
   if (!languageList?.length) return null;
 
-  const handleLanguageChange = async (websiteSlug: Website['slug']) => {
+  const handleLanguageChange = async (websiteSlug: string) => {
     const result = await getLocaleRedirectionURL({
       workspaceURL,
       workspaceURI,
