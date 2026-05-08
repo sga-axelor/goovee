@@ -1,15 +1,25 @@
 import crypto from 'crypto';
 import sanitizeHtml from 'sanitize-html';
 import {NextResponse} from 'next/server';
+import {z} from 'zod';
 
 import {manager} from '@/tenant';
 import type {Client} from '@/goovee/.generated/client';
 import {findPreferences} from '@/orm/notification';
 import NotificationManager, {NotificationType} from '@/notification';
 import {getTranslation} from '@/locale/server';
-import type {App as PortalApp} from '@/orm/workspace';
 import {notifyUser} from '@/pwa/utils';
 import {NotificationTag} from '@/pwa/tags';
+import {
+  IdSchema,
+  TenantIdSchema,
+  WorkspaceURLSchema,
+  NotificationAppCodeSchema,
+  type NotificationAppCode,
+} from '@/utils/validators';
+import {User} from '@/types';
+
+type App = NonNullable<Awaited<ReturnType<typeof findAppByCode>>>;
 
 async function findAppByCode({code, client}: {code: string; client: Client}) {
   return client.aOSPortalApp.findOne({
@@ -49,9 +59,9 @@ function response(data: any, status: number) {
 
 const BATCH_SIZE = 10;
 
-async function processBatch(
-  data: any[],
-  action: (data: any) => Promise<void>,
+async function processBatch<T>(
+  data: T[],
+  action: (data: NoInfer<T>) => Promise<void>,
   batchSize: number = BATCH_SIZE,
 ): Promise<void> {
   const chunks = chunkArray(data, batchSize);
@@ -69,14 +79,24 @@ function chunkArray<T>(array: T[], size: number): T[][] {
   return result;
 }
 
-async function notificationTemplate({user, tenantId, app, entity}: any) {
+async function notificationTemplate({
+  user,
+  tenantId,
+  app,
+  entity,
+}: {
+  user: User;
+  tenantId: string;
+  app: App;
+  entity: any;
+}) {
   return `<!DOCTYPE html>
     <html>
     <head>
         <title>${await getTranslation(
           {locale: user.locale, tenant: tenantId},
           '{0} - Notifications from Goovee',
-          app.name,
+          app.name || '',
         )}</title>
         <style>
             body {
@@ -117,7 +137,7 @@ async function notificationTemplate({user, tenantId, app, entity}: any) {
                 <h1>${await getTranslation(
                   {locale: user.locale, tenant: tenantId},
                   `You have received new notification from Goovee {0}`,
-                  app.name,
+                  app.name || '',
                 )}
                 </h1>
             </div>
@@ -140,11 +160,11 @@ async function sendMail({
   app,
   entity,
 }: {
-  user: any;
+  user: User;
   tenantId: string;
   mail?: {subject?: string; body?: string};
   entity: {id: string; version: number; route: string};
-  app: PortalApp;
+  app: App;
 }) {
   const mailService = NotificationManager.getService(NotificationType.mail);
 
@@ -173,17 +193,18 @@ async function sendSystemNotification({
   workspace,
   client,
 }: {
-  user: any;
+  user: User;
   tenantId: string;
   mail?: {subject?: string; body?: string};
   entity: {id: string; version: number; route: string};
-  app: PortalApp;
+  app: App;
   workspace: {
     id: string;
-    name: string;
+    version: number;
+    name: string | null;
     url: string;
   };
-  client: any;
+  client: Client;
 }) {
   notifyUser({
     userId: user.id,
@@ -210,41 +231,62 @@ async function sendNotifications(data: {
   tenantId: string;
   workspace: {
     id: string;
-    name: string;
+    version: number;
+    name: string | null;
     url: string;
   };
-  code: string;
+  code: NotificationAppCode;
   record: {id: string};
   mail?: {
     subject?: string;
     body?: string;
   };
   client: Client;
+  app: App;
 }) {
-  const {tenantId, workspace, code, record, mail, client} = data;
+  const {tenantId, workspace, code, record, mail, client, app} = data;
 
   try {
     const users = await client.aOSPartner
       .find({
+        where: {
+          isActivatedOnPortal: true,
+          emailAddress: {address: {ne: null}},
+        },
         select: {
           id: true,
           emailAddress: {address: true},
           localization: {code: true},
+          isContact: true,
+          simpleFullName: true,
+          fullName: true,
+          mainPartner: {
+            id: true,
+          },
         },
       })
       .then(users =>
         users.map(u => ({
           id: u.id,
-          email: u.emailAddress?.address,
+          name: u.fullName,
+          email: u.emailAddress!.address!,
           locale: u.localization?.code,
+          isContact: u.isContact,
+          simpleFullName: u.simpleFullName,
+          mainPartnerId: u.isContact ? u.mainPartner?.id : undefined,
+          tenantId,
+          image: null,
         })),
       );
 
-    const subscribers: any = [];
+    const subscribers: {
+      user: User;
+      entity: any;
+    }[] = [];
 
-    const checkSubscription = async (user: any) => {
+    const checkSubscription = async (user: User) => {
       const preference = await findPreferences({
-        user: user as any,
+        user,
         client,
         code,
         url: workspace.url,
@@ -253,7 +295,7 @@ async function sendNotifications(data: {
       if (!preference?.activateNotification) return;
 
       const entity = preference.subscriptions.find(
-        (s: any) => Number(s.id) === Number(record.id),
+        s => Number(s.id) === Number(record.id),
       );
 
       const isSubscribed = entity?.activateNotification;
@@ -263,24 +305,19 @@ async function sendNotifications(data: {
       }
     };
 
-    const app: any = await findAppByCode({code, client});
-
     processBatch(users, checkSubscription).then(() =>
-      processBatch(
-        subscribers,
-        async ({user, entity}: {user: any; entity: any}) => {
-          sendMail({user, tenantId, mail, entity, app});
-          sendSystemNotification({
-            user,
-            tenantId,
-            mail,
-            entity,
-            app,
-            workspace,
-            client,
-          });
-        },
-      ),
+      processBatch(subscribers, async ({user, entity}) => {
+        sendMail({user, tenantId, mail, entity, app});
+        sendSystemNotification({
+          user,
+          tenantId,
+          mail,
+          entity,
+          app,
+          workspace,
+          client,
+        });
+      }),
     );
   } catch (err) {}
 }
@@ -293,6 +330,22 @@ function isValidTimestamp(timestamp: number) {
   return ts <= current && current - ts < FIVE_MINUTES_MS;
 }
 
+const NotificationWebhookPayloadSchema = z.object({
+  tenantId: TenantIdSchema,
+  workspaceUrl: WorkspaceURLSchema,
+  code: NotificationAppCodeSchema,
+  record: z.object({
+    id: IdSchema,
+  }),
+  timestamp: z.number().int('Timestamp must be an integer'),
+  mail: z
+    .object({
+      subject: z.string().optional(),
+      body: z.string().optional(),
+    })
+    .optional(),
+});
+
 export async function POST(request: Request) {
   const body = await request.text();
 
@@ -303,14 +356,12 @@ export async function POST(request: Request) {
     return response('Payload is required', 400);
   }
 
-  const {tenantId, workspaceUrl, code, record, timestamp} = payload;
-
-  if (!(tenantId && workspaceUrl && code && record?.id && timestamp)) {
-    return response(
-      'Tenant, workspace code, record and timestamp is required',
-      400,
-    );
+  const parsed = NotificationWebhookPayloadSchema.safeParse(payload);
+  if (!parsed.success) {
+    return response(z.prettifyError(parsed.error), 400);
   }
+
+  const {tenantId, workspaceUrl, code, record, timestamp, mail} = parsed.data;
 
   if (!isValidTimestamp(timestamp)) {
     return response('Invalid timestamp', 400);
@@ -343,7 +394,20 @@ export async function POST(request: Request) {
     return response('Invalid Workspace', 401);
   }
 
-  sendNotifications({...payload, workspace, client});
+  const app = await findAppByCode({code, client});
+  if (!app) {
+    return response('Invalid App', 401);
+  }
+
+  sendNotifications({
+    tenantId,
+    code,
+    record,
+    mail,
+    client,
+    workspace,
+    app,
+  });
 
   return response('Success', 200);
 }

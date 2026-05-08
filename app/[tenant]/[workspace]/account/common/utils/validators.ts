@@ -4,6 +4,7 @@ import {
   OTPSchema,
   WorkspaceURLSchema,
   RoleSelectSchema,
+  NotificationAppCodeSchema,
 } from '@/utils/validators';
 
 /* -------- Personal -------- */
@@ -39,7 +40,7 @@ export type RemoveWorkspace = z.infer<typeof RemoveWorkspaceSchema>;
 
 /* -------- Notifications -------- */
 export const UpdateNotificationPreferenceSchema = z.object({
-  code: z.string().min(1, 'Code is required'),
+  code: NotificationAppCodeSchema,
   workspaceURL: WorkspaceURLSchema,
   workspaceURI: z.string().min(1),
   tenant: z.string().min(1, 'Tenant is required'),

@@ -8,6 +8,7 @@ import {Separator} from '@/ui/components/separator';
 import {useWorkspace} from '../../workspace-context';
 import {Checkbox} from '@/ui/components/checkbox';
 import {useToast} from '@/ui/hooks';
+import type {NotificationAppCode} from '@/utils/validators';
 
 // ---- LOCAL IMPORTS ---- //
 import {updatePreference} from './action';
@@ -20,7 +21,7 @@ export function Preference({
 }: {
   preference: any;
   title: string;
-  code: string;
+  code: NotificationAppCode;
   hideSubscription?: boolean;
 }) {
   const {tenant, workspaceURI, workspaceURL} = useWorkspace();

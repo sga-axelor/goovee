@@ -39,13 +39,15 @@ export default async function Page(props: {
     forumPreference,
     ticketingPreference,
   ] = await Promise.allSettled(
-    [
-      SUBAPP_CODES.events,
-      SUBAPP_CODES.news,
-      SUBAPP_CODES.resources,
-      SUBAPP_CODES.forum,
-      SUBAPP_CODES.ticketing,
-    ].map(code =>
+    (
+      [
+        SUBAPP_CODES.events,
+        SUBAPP_CODES.news,
+        SUBAPP_CODES.resources,
+        SUBAPP_CODES.forum,
+        SUBAPP_CODES.ticketing,
+      ] as const
+    ).map(code =>
       findPreferences({
         code,
         client,

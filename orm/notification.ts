@@ -1,15 +1,42 @@
 import type {Client} from '@/goovee/.generated/client';
+import {AOSPortalUserPreference} from '@/goovee/.generated/models';
+import type {
+  CreateArgs,
+  Entity,
+  Repository,
+  SelectOptions,
+  UpdateArgs,
+} from '@goovee/orm';
 import {SUBAPP_CODES} from '@/constants';
 import type {User} from '@/types';
-import type {App as PortalApp, PortalWorkspace} from '@/orm/workspace';
+import type {PortalWorkspace} from '@/orm/workspace';
+import type {NotificationAppCode} from '@/utils/validators';
 import {findSubappAccess} from './workspace';
 import {filterPrivate} from './filter';
 
 type Params = {
-  code: string;
+  code: NotificationAppCode;
   user: User;
   url: PortalWorkspace['url'];
   client: Client;
+};
+
+export type PreferenceResponse = {
+  id: string;
+  version: number;
+  activateNotification: boolean | null;
+  code: NotificationAppCode;
+  subscriptions: Array<{
+    id: string;
+    version: number;
+    name: string | null;
+    slug?: string | null;
+    fileName?: string | null;
+    parent?: {id: string; version: number} | null;
+    route: string;
+    config?: {id: string; name: string};
+    activateNotification: boolean;
+  }>;
 };
 
 type UpdateParams = Params & {
@@ -20,7 +47,7 @@ type UpdateParams = Params & {
   activateNotification?: boolean;
 };
 
-const preferencefields: any = {
+const preferencefields = {
   [SUBAPP_CODES.events]: {
     eventNotificationConfigs: {
       select: {
@@ -53,12 +80,44 @@ const preferencefields: any = {
       },
     },
   },
+  [SUBAPP_CODES.ticketing]: {} as never,
+} as const satisfies Record<
+  NotificationAppCode,
+  SelectOptions<AOSPortalUserPreference>
+>;
+
+type PartnerPreference = {
+  id: string;
+  version: number;
+  activateNotification: boolean | null;
+  eventNotificationConfigs?: Array<{
+    id: string;
+    version: number;
+    activateNotification: boolean | null;
+    eventCategory: {id: string; version: number; name: string | null} | null;
+  }> | null;
+  newsNotificationConfigs?: Array<{
+    id: string;
+    version: number;
+    activateNotification: boolean | null;
+    newsCategory: {id: string; version: number; name: string | null} | null;
+  }> | null;
+  resourceNotificationConfigs?: Array<{
+    id: string;
+    version: number;
+    activateNotification: boolean | null;
+    folder: {id: string; version: number; fileName: string | null} | null;
+  }> | null;
+  forumNotificationConfigs?: Array<{
+    id: string;
+    version: number;
+    activateNotification: boolean | null;
+    forumGroup: {id: string; version: number; name: string | null} | null;
+  }> | null;
 };
-
-const pick = (obj: any = {}, ...keys: string[]) =>
-  Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key)));
-
-export async function findPartnerPreference(params: Params) {
+export async function findPartnerPreference(
+  params: Params,
+): Promise<PartnerPreference | null> {
   const {code, url, user, client} = params;
 
   const preference = await client.aOSPartner
@@ -81,12 +140,18 @@ export async function findPartnerPreference(params: Params) {
         },
       },
     })
-    .then((res: any) => res?.portalUserPreferenceList?.[0]);
+    .then(
+      res =>
+        (res?.portalUserPreferenceList?.[0] as PartnerPreference | undefined) ??
+        null,
+    );
 
   return preference;
 }
 
-async function createPartnerPreference(params: UpdateParams) {
+async function createPartnerPreference(
+  params: UpdateParams,
+): Promise<PartnerPreference | null> {
   const {code, url, user, client} = params;
 
   const partner = await client.aOSPartner.findOne({
@@ -146,7 +211,11 @@ async function createPartnerPreference(params: UpdateParams) {
         },
       },
     })
-    .then((res: any) => res?.portalUserPreferenceList?.[0]);
+    .then(
+      res =>
+        (res?.portalUserPreferenceList?.[0] as PartnerPreference | undefined) ??
+        null,
+    );
 
   return preference;
 }
@@ -194,9 +263,11 @@ async function findEventsCategories(params: Params) {
         name: true,
       },
     })
-    .then((categories: any) =>
-      categories?.map((c: any) => ({
-        ...c,
+    .then(categories =>
+      categories?.map(c => ({
+        id: c.id,
+        version: c.version,
+        name: c.name,
         route: routes[SUBAPP_CODES.events]({url, id: c.id}),
       })),
     )
@@ -205,25 +276,35 @@ async function findEventsCategories(params: Params) {
   return categories;
 }
 
-async function findEventsPreferences(params: Params) {
+async function findEventsPreferences(
+  params: Params,
+): Promise<PreferenceResponse | null> {
   const categories = await findEventsCategories(params);
   const preference = await findPartnerPreference(params);
 
-  const getSubscription = (category: any) =>
-    preference?.eventNotificationConfigs?.find(
-      (e: any) => e.eventCategory?.id === category?.id,
+  if (!preference) {
+    return null;
+  }
+
+  const getSubscription = (categoryId: string) =>
+    preference.eventNotificationConfigs?.find(
+      e => e.eventCategory?.id === categoryId,
     );
 
   return {
-    ...pick(preference, 'id', 'version', 'activateNotification'),
-    code: params.code,
-    subscriptions: categories.map((c: any) => {
-      const subscription = getSubscription(c);
-      return {
-        ...c,
-        activateNotification: Boolean(subscription?.activateNotification),
-      };
-    }),
+    id: preference.id,
+    version: preference.version,
+    activateNotification: preference.activateNotification || false,
+    code: SUBAPP_CODES.events,
+    subscriptions: categories.map(c => ({
+      id: c.id,
+      version: c.version,
+      name: c.name,
+      route: c.route,
+      activateNotification: Boolean(
+        getSubscription(c.id)?.activateNotification,
+      ),
+    })),
   };
 }
 
@@ -241,37 +322,54 @@ async function findNewsCategories(params: Params) {
         slug: true,
       },
     })
-    .then((categories: any) =>
-      categories?.map((c: any) => ({
-        ...c,
-        route: routes[SUBAPP_CODES.news]({url, slug: c.slug}),
-      })),
+    .then(
+      categories =>
+        categories
+          ?.filter(c => c.slug)
+          ?.map(c => ({
+            id: c.id,
+            version: c.version,
+            name: c.name,
+            slug: c.slug || '',
+            route: routes[SUBAPP_CODES.news]({url, slug: c.slug || ''}),
+          })) || [],
     )
     .catch(() => []);
 
   return categories;
 }
 
-async function findNewsPreferences(params: Params) {
+async function findNewsPreferences(
+  params: Params,
+): Promise<PreferenceResponse | null> {
   const categories = await findNewsCategories(params);
   const preference = await findPartnerPreference(params);
 
-  const getSubscription = (category: any) => {
-    return preference?.newsNotificationConfigs?.find(
-      (e: any) => e.newsCategory?.id === category?.id,
+  if (!preference) {
+    return null;
+  }
+
+  const getSubscription = (categoryId: string) => {
+    return preference.newsNotificationConfigs?.find(
+      e => e.newsCategory?.id === categoryId,
     );
   };
 
   return {
-    ...pick(preference, 'id', 'version', 'activateNotification'),
-    code: params.code,
-    subscriptions: categories.map((c: any) => {
-      const subscription = getSubscription(c);
-      return {
-        ...c,
-        activateNotification: Boolean(subscription?.activateNotification),
-      };
-    }),
+    id: preference.id,
+    version: preference.version,
+    activateNotification: preference.activateNotification || false,
+    code: SUBAPP_CODES.news,
+    subscriptions: categories.map(c => ({
+      id: c.id,
+      version: c.version,
+      name: c.name,
+      slug: c.slug,
+      route: c.route,
+      activateNotification: Boolean(
+        getSubscription(c.id)?.activateNotification,
+      ),
+    })),
   };
 }
 
@@ -293,38 +391,54 @@ async function findResourcesFolders(params: Params) {
         parent: {id: true},
       },
     })
-    .then(result =>
-      result?.map(i => ({
-        ...i,
-        name: i.fileName,
-        route: routes[SUBAPP_CODES.resources]({url, id: i.id}),
-      })),
+    .then(
+      result =>
+        result?.map(i => ({
+          id: i.id,
+          version: i.version,
+          name: i.fileName || '',
+          fileName: i.fileName,
+          parent: i.parent,
+          route: routes[SUBAPP_CODES.resources]({url, id: i.id}),
+        })) || [],
     )
     .catch(() => []);
 
   return folders;
 }
 
-async function findResourcesPreferences(params: Params) {
+async function findResourcesPreferences(
+  params: Params,
+): Promise<PreferenceResponse | null> {
   const folders = await findResourcesFolders(params);
   const preference = await findPartnerPreference(params);
 
-  const getSubscription = (folder: any) => {
-    return preference?.resourceNotificationConfigs?.find(
-      (e: any) => e.folder?.id === folder?.id,
+  if (!preference) {
+    return null;
+  }
+
+  const getSubscription = (folderId: string) => {
+    return preference.resourceNotificationConfigs?.find(
+      e => e.folder?.id === folderId,
     );
   };
 
   return {
-    ...pick(preference, 'id', 'version', 'activateNotification'),
-    code: params.code,
-    subscriptions: folders.map(c => {
-      const subscription = getSubscription(c);
-      return {
-        ...c,
-        activateNotification: Boolean(subscription?.activateNotification),
-      };
-    }),
+    id: preference.id,
+    version: preference.version,
+    activateNotification: preference.activateNotification,
+    code: SUBAPP_CODES.resources,
+    subscriptions: folders.map(c => ({
+      id: c.id,
+      version: c.version,
+      name: c.name,
+      fileName: c.fileName,
+      parent: c.parent,
+      route: c.route,
+      activateNotification: Boolean(
+        getSubscription(c.id)?.activateNotification,
+      ),
+    })),
   };
 }
 
@@ -350,7 +464,9 @@ async function findForumGroups(params: Params) {
     })
     .then(result =>
       result?.map(i => ({
-        ...i.forumGroup,
+        id: i.forumGroup?.id || '',
+        version: i.forumGroup?.version || 0,
+        name: i.forumGroup?.name || '',
         route: routes[SUBAPP_CODES.forum]({url, id: i.id}),
       })),
     )
@@ -359,26 +475,36 @@ async function findForumGroups(params: Params) {
   return groups;
 }
 
-async function findForumPreferences(params: Params) {
+async function findForumPreferences(
+  params: Params,
+): Promise<PreferenceResponse | null> {
   const groups = await findForumGroups(params);
   const preference = await findPartnerPreference(params);
 
-  const getSubscription = (group: any) => {
-    return preference?.forumNotificationConfigs?.find(
-      (e: any) => e.forumGroup?.id === group?.id,
+  if (!preference) {
+    return null;
+  }
+
+  const getSubscription = (groupId: string) => {
+    return preference.forumNotificationConfigs?.find(
+      e => e.forumGroup?.id === groupId,
     );
   };
 
   return {
-    ...pick(preference, 'id', 'version', 'activateNotification'),
-    code: params.code,
-    subscriptions: groups.map(c => {
-      const subscription = getSubscription(c);
-      return {
-        ...c,
-        activateNotification: Boolean(subscription?.activateNotification),
-      };
-    }),
+    id: preference.id,
+    version: preference.version,
+    activateNotification: preference.activateNotification,
+    code: SUBAPP_CODES.forum,
+    subscriptions: groups.map(c => ({
+      id: c.id,
+      version: c.version,
+      name: c.name,
+      route: c.route,
+      activateNotification: Boolean(
+        getSubscription(c.id)?.activateNotification,
+      ),
+    })),
   };
 }
 
@@ -403,8 +529,9 @@ async function findTickets(params: Params) {
       select: {id: true, fullName: true, name: true, project: {id: true}},
     })
     .then(result =>
-      result?.map(({id, fullName, name, project}) => ({
+      result?.map(({id, version, fullName, name, project}) => ({
         id,
+        version,
         name: fullName || name,
         route: routes[SUBAPP_CODES.ticketing]({url, id, pid: project?.id!}),
       })),
@@ -414,15 +541,26 @@ async function findTickets(params: Params) {
   return tickets;
 }
 
-async function findTicketingPreferences(params: Params) {
+async function findTicketingPreferences(
+  params: Params,
+): Promise<PreferenceResponse | null> {
   const tickets = await findTickets(params);
   const preference = await findPartnerPreference(params);
 
+  if (!preference) {
+    return null;
+  }
+
   return {
-    ...pick(preference, 'id', 'version', 'activateNotification'),
-    code: params.code,
+    id: preference.id,
+    version: preference.version,
+    activateNotification: preference.activateNotification || false,
+    code: SUBAPP_CODES.ticketing,
     subscriptions: tickets.map(t => ({
-      ...t,
+      id: t.id,
+      version: t.version,
+      name: t.name,
+      route: t.route,
       config: {
         id: t.id,
         name: t.name,
@@ -432,7 +570,10 @@ async function findTicketingPreferences(params: Params) {
   };
 }
 
-const preferences: any = {
+const preferences: Record<
+  string,
+  (params: Params) => Promise<PreferenceResponse | null>
+> = {
   [SUBAPP_CODES.events]: findEventsPreferences,
   [SUBAPP_CODES.news]: findNewsPreferences,
   [SUBAPP_CODES.resources]: findResourcesPreferences,
@@ -450,31 +591,82 @@ export async function findPreferences(params: Params) {
   return preferences[params?.code]?.(params);
 }
 
-const updatePreferenceConfigs: any = {
+type EventNotificationConfigResult = {
+  id: string;
+  version: number;
+  eventCategory: {id: string; version: number} | null;
+  activateNotification: boolean | null;
+  portalUserPreference: {id: string; version: number} | null;
+};
+
+type NewsNotificationConfigResult = {
+  id: string;
+  version: number;
+  newsCategory: {id: string; version: number} | null;
+  activateNotification: boolean | null;
+  portalUserPreference: {id: string; version: number} | null;
+};
+
+type ResourceNotificationConfigResult = {
+  id: string;
+  version: number;
+  folder: {id: string; version: number} | null;
+  activateNotification: boolean | null;
+  portalUserPreference: {id: string; version: number} | null;
+};
+
+type ForumNotificationConfigResult = {
+  id: string;
+  version: number;
+  forumGroup: {id: string; version: number} | null;
+  activateNotification: boolean | null;
+  portalUserPreference: {id: string; version: number} | null;
+};
+
+type UpdatePreferenceConfig = {
+  configField: string;
+  recordField: string;
+  entity: (client: Client) => Repository<Entity>;
+};
+
+const updatePreferenceConfigs: Record<string, UpdatePreferenceConfig> = {
   [SUBAPP_CODES.events]: {
     configField: 'eventNotificationConfigs',
     recordField: 'eventCategory',
-    entity: (c: any) => c.aOSPortalEventNotificationConfig,
+    entity: (c: Client) => c.aOSPortalEventNotificationConfig,
   },
   [SUBAPP_CODES.news]: {
     configField: 'newsNotificationConfigs',
     recordField: 'newsCategory',
-    entity: (c: any) => c.aOSPortalNewsNotificationConfig,
+    entity: (c: Client) => c.aOSPortalNewsNotificationConfig,
   },
   [SUBAPP_CODES.resources]: {
     configField: 'resourceNotificationConfigs',
     recordField: 'folder',
-    entity: (c: any) => c.aOSPortalResourceNotificationConfig,
+    entity: (c: Client) => c.aOSPortalResourceNotificationConfig,
   },
   [SUBAPP_CODES.forum]: {
     configField: 'forumNotificationConfigs',
     recordField: 'forumGroup',
-    entity: (c: any) => c.aOSPortalForumNotificationConfig,
+    entity: (c: Client) => c.aOSPortalForumNotificationConfig,
   },
 };
 
-export async function updatePartnerPreference(params: UpdateParams) {
+export async function updatePartnerPreference(
+  params: UpdateParams,
+): Promise<
+  | PartnerPreference
+  | EventNotificationConfigResult
+  | NewsNotificationConfigResult
+  | ResourceNotificationConfigResult
+  | ForumNotificationConfigResult
+  | null
+> {
   let preference = await findOrCreatePartnerPreference(params);
+
+  if (!preference) {
+    return null;
+  }
 
   const {code, client, record, activateNotification = false} = params;
 
@@ -487,33 +679,44 @@ export async function updatePartnerPreference(params: UpdateParams) {
       },
       select: {
         activateNotification: true,
+        ...preferencefields[code],
       },
     });
 
     return preference;
   }
 
-  const {entity, configField, recordField} = updatePreferenceConfigs[code];
+  const config = updatePreferenceConfigs[code];
+  if (!config) {
+    return null;
+  }
 
-  const existing = preference[configField]?.find(
-    (i: any) => i[recordField]?.id === record.id,
-  );
+  const {entity, configField, recordField} = config;
+  const configArray = preference[configField as keyof PartnerPreference];
 
-  const data: any = {
+  let existing: Record<string, unknown> | undefined;
+  if (Array.isArray(configArray)) {
+    existing = configArray.find(i => {
+      const item = i as Record<string, any>;
+      const relation = item[recordField];
+      return relation && (relation as Record<string, unknown>).id === record.id;
+    }) as Record<string, unknown> | undefined;
+  }
+
+  const data: Record<string, unknown> = {
     activateNotification: record.activateNotification || false,
   };
 
   if (existing) {
-    data.id = existing.id;
-    data.version = existing.version;
+    data.id = existing['id'];
+    data.version = existing['version'];
   } else {
     data[recordField] = {select: {id: record.id}};
     data.portalUserPreference = {select: {id: preference.id}};
   }
 
-  const c = entity(client);
-
-  const fields = {
+  const repository = entity(client);
+  const fields: Record<string, unknown> = {
     id: true,
     version: true,
     [recordField]: {
@@ -523,38 +726,52 @@ export async function updatePartnerPreference(params: UpdateParams) {
     portalUserPreference: {id: true},
   };
 
-  return existing
-    ? c.update({data, select: fields})
-    : c.create({data, select: fields});
+  return (existing
+    ? repository.update({data: data as UpdateArgs<Entity>, select: fields})
+    : repository.create({
+        data: data as CreateArgs<Entity>,
+        select: fields,
+      })) as unknown as Promise<
+    | EventNotificationConfigResult
+    | NewsNotificationConfigResult
+    | ResourceNotificationConfigResult
+    | ForumNotificationConfigResult
+  >;
 }
 
-async function updateEventsPreferences(params: UpdateParams) {
+async function updateEventsPreferences(
+  params: UpdateParams,
+): Promise<PartnerPreference | null> {
   const categories = await findEventsCategories(params);
 
   const {record} = params;
 
   if (record?.id) {
-    const category = categories.find((c: any) => c.id === record.id);
+    const category = categories.find(c => c.id === record.id);
     if (!category) return null;
   }
 
   return updatePartnerPreference(params);
 }
 
-async function updateNewsPreferences(params: UpdateParams) {
+async function updateNewsPreferences(
+  params: UpdateParams,
+): Promise<PartnerPreference | NewsNotificationConfigResult | null> {
   const categories = await findNewsCategories(params);
 
   const {record} = params;
 
   if (record?.id) {
-    const category = categories.find((c: any) => c.id === record.id);
+    const category = categories.find(c => c.id === record.id);
     if (!category) return null;
   }
 
   return updatePartnerPreference(params);
 }
 
-async function updateResourcesPreferences(params: UpdateParams) {
+async function updateResourcesPreferences(
+  params: UpdateParams,
+): Promise<PartnerPreference | ResourceNotificationConfigResult | null> {
   const folders = await findResourcesFolders(params);
 
   const {record} = params;
@@ -567,7 +784,9 @@ async function updateResourcesPreferences(params: UpdateParams) {
   return updatePartnerPreference(params);
 }
 
-async function updateForumPreferences(params: UpdateParams) {
+async function updateForumPreferences(
+  params: UpdateParams,
+): Promise<PartnerPreference | ForumNotificationConfigResult | null> {
   const groups = await findForumGroups(params);
 
   const {record} = params;
@@ -580,17 +799,23 @@ async function updateForumPreferences(params: UpdateParams) {
   return updatePartnerPreference(params);
 }
 
-async function updateTicketingPreferences(params: UpdateParams) {
+async function updateTicketingPreferences(
+  params: UpdateParams,
+): Promise<PartnerPreference | null> {
   const {record} = params;
 
   if (record?.id) {
-    return;
+    return null;
   }
 
   return updatePartnerPreference(params);
 }
 
-const updatePreferenceHandlers: any = {
+type UpdatePreferenceHandler = (
+  params: UpdateParams,
+) => Promise<PartnerPreference | null>;
+
+const updatePreferenceHandlers: Record<string, UpdatePreferenceHandler> = {
   [SUBAPP_CODES.events]: updateEventsPreferences,
   [SUBAPP_CODES.news]: updateNewsPreferences,
   [SUBAPP_CODES.resources]: updateResourcesPreferences,

@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {SUBAPP_CODES} from '@/constants';
 
 export const IdSchema = z
   .string()
@@ -24,3 +25,13 @@ export const WorkspaceURLSchema = z.url({protocol: /^https?$/});
 export const RoleSelectSchema = z.enum(['restricted', 'total']);
 
 export type RoleSelect = z.infer<typeof RoleSelectSchema>;
+
+export const NotificationAppCodeSchema = z.enum([
+  SUBAPP_CODES.events,
+  SUBAPP_CODES.news,
+  SUBAPP_CODES.resources,
+  SUBAPP_CODES.forum,
+  SUBAPP_CODES.ticketing,
+]);
+
+export type NotificationAppCode = z.infer<typeof NotificationAppCodeSchema>;

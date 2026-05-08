@@ -19,7 +19,11 @@ const getTranslations = cache(async function getBundle(
 });
 
 export async function getTranslation(
-  {locale, user, tenant}: {locale?: string; user?: any; tenant?: string} = {},
+  {
+    locale,
+    user,
+    tenant,
+  }: {locale?: string | null; user?: any; tenant?: string} = {},
   key: string,
   ...interpolations: string[]
 ) {
@@ -29,7 +33,7 @@ export async function getTranslation(
 
   if (!user && !locale) {
     const session = await getSession();
-    const $user: any = session?.user;
+    const $user = session?.user;
     if ($user?.locale) {
       locale = $user.locale;
     }
