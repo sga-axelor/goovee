@@ -11,7 +11,6 @@ import {getTranslation} from '@/locale/server';
 import {notifyUser} from '@/pwa/utils';
 import {NotificationTag} from '@/pwa/tags';
 import {
-  IdSchema,
   TenantIdSchema,
   WorkspaceURLSchema,
   NotificationAppCodeSchema,
@@ -162,7 +161,7 @@ async function sendMail({
 }: {
   user: User;
   tenantId: string;
-  mail?: {subject?: string; body?: string};
+  mail?: Mail | null;
   entity: {id: string; route: string};
   app: App;
 }) {
@@ -195,7 +194,7 @@ async function sendSystemNotification({
 }: {
   user: User;
   tenantId: string;
-  mail?: {subject?: string; body?: string};
+  mail?: Mail | null;
   entity: {id: string; route: string};
   app: App;
   workspace: {
@@ -236,21 +235,21 @@ async function sendNotifications(data: {
     url: string;
   };
   code: NotificationAppCode;
-  record: {id: string};
+  recordId: string;
   mail?: {
-    subject?: string;
-    body?: string;
-  };
+    subject?: string | null;
+    body?: string | null;
+  } | null;
   client: Client;
   app: App;
 }) {
-  const {tenantId, workspace, code, record, mail, client, app} = data;
+  const {tenantId, workspace, code, recordId, mail, client, app} = data;
 
   try {
     const subscribers = await findSubscribers({
       code,
       workspaceUrl: workspace.url,
-      recordId: record.id,
+      recordId,
       tenantId,
       client,
     });
@@ -278,20 +277,22 @@ function isValidTimestamp(timestamp: number) {
   return ts <= current && current - ts < FIVE_MINUTES_MS;
 }
 
+const MailSchema = z.object({
+  subject: z.string().nullish(),
+  body: z.string().nullish(),
+});
+
+type Mail = z.infer<typeof MailSchema>;
+
 const NotificationWebhookPayloadSchema = z.object({
   tenantId: TenantIdSchema,
   workspaceUrl: WorkspaceURLSchema,
   code: NotificationAppCodeSchema,
   record: z.object({
-    id: IdSchema,
+    id: z.union([z.string(), z.number()]),
   }),
   timestamp: z.number().int('Timestamp must be an integer'),
-  mail: z
-    .object({
-      subject: z.string().optional(),
-      body: z.string().optional(),
-    })
-    .optional(),
+  mail: MailSchema.nullish(),
 });
 
 export async function POST(request: Request) {
@@ -350,7 +351,7 @@ export async function POST(request: Request) {
   sendNotifications({
     tenantId,
     code,
-    record,
+    recordId: String(record.id),
     mail,
     client,
     workspace,
