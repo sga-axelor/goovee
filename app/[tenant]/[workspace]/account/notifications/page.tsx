@@ -13,6 +13,7 @@ import {manager} from '@/tenant';
 import {Title} from '../common/ui/components';
 import {Preference} from './preference';
 import {DevicePushPreference} from './device-push-preference';
+import {findSubapps} from '@/orm/workspace';
 
 export default async function Page(props: {
   params: Promise<{tenant: string; workspace: string}>;
@@ -31,6 +32,8 @@ export default async function Page(props: {
   const tenant = await manager.getTenant(tenantId);
   if (!tenant) return notFound();
   const {client} = tenant;
+
+  const apps = await findSubapps({user, url, client});
 
   const [
     eventsPreference,
@@ -59,6 +62,22 @@ export default async function Page(props: {
     results.map(r => (r.status === 'fulfilled' && r.value ? r.value : null)),
   );
 
+  const showEvents = apps.some(
+    app => app.code === SUBAPP_CODES.events && app.isInstalled,
+  );
+  const showNews = apps.some(
+    app => app.code === SUBAPP_CODES.news && app.isInstalled,
+  );
+  const showResources = apps.some(
+    app => app.code === SUBAPP_CODES.resources && app.isInstalled,
+  );
+  const showTicketing = apps.some(
+    app => app.code === SUBAPP_CODES.ticketing && app.isInstalled,
+  );
+  const showForum = apps.some(
+    app => app.code === SUBAPP_CODES.forum && app.isInstalled,
+  );
+
   return (
     <div className="bg-white p-2 lg:p-0 lg:bg-inherit">
       <div className="space-y-20">
@@ -68,32 +87,42 @@ export default async function Page(props: {
           <DevicePushPreference />
           <Title text={await t('Email Notifications')} />
           <Separator />
-          <Preference
-            title={await t('Events')}
-            code={SUBAPP_CODES.events}
-            preference={eventsPreference}
-          />
-          <Preference
-            title={await t('News')}
-            code={SUBAPP_CODES.news}
-            preference={newsPreference}
-          />
-          <Preference
-            title={await t('Resources')}
-            code={SUBAPP_CODES.resources}
-            preference={resourcesPreference}
-          />
-          <Preference
-            title={await t('Forum')}
-            code={SUBAPP_CODES.forum}
-            preference={forumPreference}
-          />
-          <Preference
-            title={await t('Ticketing')}
-            code={SUBAPP_CODES.ticketing}
-            preference={ticketingPreference}
-            hideSubscription={true}
-          />
+          {showEvents && (
+            <Preference
+              title={await t('Events')}
+              code={SUBAPP_CODES.events}
+              preference={eventsPreference}
+            />
+          )}
+          {showNews && (
+            <Preference
+              title={await t('News')}
+              code={SUBAPP_CODES.news}
+              preference={newsPreference}
+            />
+          )}
+          {showResources && (
+            <Preference
+              title={await t('Resources')}
+              code={SUBAPP_CODES.resources}
+              preference={resourcesPreference}
+            />
+          )}
+          {showForum && (
+            <Preference
+              title={await t('Forum')}
+              code={SUBAPP_CODES.forum}
+              preference={forumPreference}
+            />
+          )}
+          {showTicketing && (
+            <Preference
+              title={await t('Ticketing')}
+              code={SUBAPP_CODES.ticketing}
+              preference={ticketingPreference}
+              hideSubscription={true}
+            />
+          )}
         </div>
       </div>
     </div>
