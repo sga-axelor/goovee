@@ -73,6 +73,7 @@ export const portalAppConfigFields = {
   },
   hyperlinkList: {
     select: {
+      title: true,
       link: true,
       logo: {id: true},
     },

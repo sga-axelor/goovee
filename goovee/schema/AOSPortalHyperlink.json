@@ -16,6 +16,10 @@
       "type": "ManyToOne",
       "name": "portalAppConfig",
       "target": "AOSPortalAppConfig"
+    },
+    {
+      "type": "String",
+      "name": "title"
     }
   ]
 }

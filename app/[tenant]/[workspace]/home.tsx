@@ -486,12 +486,13 @@ async function HyperlinkCard({
         <a
           key={item.id}
           href={item.link || '#'}
+          title={item.title ?? undefined}
           target="_blank"
           rel="noopener noreferrer"
           className="block p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
           <Image
             src={`${workspaceURI}/api/hyperlink/${item.id}/logo`}
-            alt={`Related Link ${item.id}`}
+            alt={item.title || 'Related Link'}
             width={200}
             height={100}
             className="w-full h-auto object-contain"
