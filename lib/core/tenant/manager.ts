@@ -8,6 +8,20 @@ import {getStoragePath} from '@/storage/index';
 
 const CACHE_CAPACITY = 20;
 
+function getAOSAuth() {
+  const apiKey = process.env.AOS_API_KEY;
+  const username = process.env.BASIC_AUTH_USERNAME;
+  const password = process.env.BASIC_AUTH_PASSWORD;
+
+  if (!apiKey && (!username || !password)) {
+    throw new Error(
+      'AOS auth not configured: set AOS_API_KEY or BASIC_AUTH_USERNAME/BASIC_AUTH_PASSWORD',
+    );
+  }
+
+  return {username, password, apiKey};
+}
+
 const tenants: {[key: string]: TenantConfig} = [DEFAULT_TENANT].reduce(
   (acc, id) => ({
     ...acc,
@@ -18,10 +32,7 @@ const tenants: {[key: string]: TenantConfig} = [DEFAULT_TENANT].reduce(
       aos: {
         url: process.env.AOS_URL,
         storage: getStoragePath(),
-        auth: {
-          username: process.env.BASIC_AUTH_USERNAME,
-          password: process.env.BASIC_AUTH_PASSWORD,
-        },
+        auth: getAOSAuth(),
         webhookSecret: process.env.NOTIFICATION_WEBHOOK_SECRET,
       },
     },
@@ -60,10 +71,7 @@ export class SingleTenantManager implements TenantManager {
       aos: {
         url: process.env.AOS_URL!,
         storage: getStoragePath(),
-        auth: {
-          username: process.env.BASIC_AUTH_USERNAME!,
-          password: process.env.BASIC_AUTH_PASSWORD!,
-        },
+        auth: getAOSAuth(),
         webhookSecret: process.env.NOTIFICATION_WEBHOOK_SECRET,
       },
     };

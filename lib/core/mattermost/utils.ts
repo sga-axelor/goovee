@@ -25,10 +25,3 @@ export function isCreateMattermostUsersEnabled(): boolean {
 export function getAosUrl(config: TenantConfig): string {
   return config?.aos?.url;
 }
-
-export function getBasicAuthCredentials(config: TenantConfig): {
-  username: string;
-  password: string;
-} {
-  return config.aos.auth;
-}

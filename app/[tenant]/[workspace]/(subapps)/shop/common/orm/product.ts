@@ -2,6 +2,7 @@ import axios from 'axios';
 import type {Cloned} from '@/types/util';
 
 // ---- CORE IMPORTS ---- //
+import {getAOSAuthHeaders} from '@/tenant/auth';
 import {clone, scale} from '@/utils';
 import {
   DEFAULT_CURRENCY_SCALE,
@@ -721,12 +722,7 @@ export async function findProductsFromWS({
           partnerId: user?.id,
           companyId: workspace?.config?.company?.id,
         },
-        {
-          auth: {
-            username: aos.auth.username,
-            password: aos.auth.password,
-          },
-        },
+        {headers: getAOSAuthHeaders(aos.auth)},
       )
       .then(({data}) => data);
 

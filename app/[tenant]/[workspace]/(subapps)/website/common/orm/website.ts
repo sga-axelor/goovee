@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
+import {getAOSAuthHeaders} from '@/tenant/auth';
 import {filterPrivate} from '@/orm/filter';
 import type {TenantConfig} from '@/tenant';
 import type {Client} from '@/goovee/.generated/client';
@@ -1012,7 +1013,7 @@ async function findModelRecords({
           _domainContext: {ids},
         },
       },
-      {auth: aos.auth},
+      {headers: getAOSAuthHeaders(aos.auth)},
     )
     .then(res => res?.data)
     .catch(() => console.log('Error with trying to fetch model fields'));

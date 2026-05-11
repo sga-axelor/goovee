@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
+import {getAOSAuthHeaders} from '@/tenant/auth';
 import {t} from '@/locale/server';
 import type {TenantConfig} from '@/tenant';
 import {ID} from '@/types';
@@ -49,10 +50,7 @@ export async function createInvoice({
     };
 
     const {data} = await axios.post(ws, payload, {
-      auth: {
-        username: aos.auth.username,
-        password: aos.auth.password,
-      },
+      headers: getAOSAuthHeaders(aos.auth),
     });
 
     if (data?.status === -1) {
@@ -122,12 +120,7 @@ export async function findProductsFromWS({
       partnerId,
     };
     const res = await axios
-      .post(ws, reqBody, {
-        auth: {
-          username: aos.auth.username,
-          password: aos.auth.password,
-        },
-      })
+      .post(ws, reqBody, {headers: getAOSAuthHeaders(aos.auth)})
       .then(({data}) => data);
 
     if (res?.data?.status === -1) {

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {headers} from 'next/headers';
+import {getAOSAuthHeaders} from '@/tenant/auth';
 
 import {manager} from '@/lib/core/tenant';
 import {TENANT_HEADER} from '@/proxy';
@@ -13,9 +14,7 @@ export async function getModelData(model: string) {
   if (!aos?.url) return [];
 
   const res = await axios
-    .get(`${aos.url}/ws/rest/${model}`, {
-      auth: aos.auth,
-    })
+    .get(`${aos.url}/ws/rest/${model}`, {headers: getAOSAuthHeaders(aos.auth)})
     .then(res => res?.data)
     .catch(() => console.log('Error with trying to fetch model data'));
 
@@ -31,7 +30,9 @@ export async function getModelFields(model: string) {
   if (!aos?.url) return [];
 
   const res = await axios
-    .get(`${aos.url}/ws/meta/fields/${model}`, {auth: aos.auth})
+    .get(`${aos.url}/ws/meta/fields/${model}`, {
+      headers: getAOSAuthHeaders(aos.auth),
+    })
     .then(res => res?.data?.data)
     .catch(() => console.log('Error with trying to fetch model fields'));
 

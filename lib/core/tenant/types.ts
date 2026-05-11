@@ -14,8 +14,9 @@ export type TenantConfig = {
     url: string;
     storage: string;
     auth: {
-      username: string;
-      password: string;
+      username?: string;
+      password?: string;
+      apiKey?: string;
     };
     webhookSecret?: string;
   };

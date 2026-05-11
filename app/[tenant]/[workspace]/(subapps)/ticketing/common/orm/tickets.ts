@@ -3,6 +3,7 @@ import type {ID} from '@/types';
 import axios from 'axios';
 
 // ---- CORE IMPORTS ---- //
+import {getAOSAuthHeaders} from '@/tenant/auth';
 import {MAIL_MESSAGE_TYPE, type Track} from '@/comments';
 import {addComment} from '@/comments/orm';
 import {ModelMap, ORDER_BY, SUBAPP_CODES} from '@/constants';
@@ -437,7 +438,7 @@ export async function updateTicket({
           },
           fields: ['project'],
         },
-        {auth: {username: aos.auth.username, password: aos.auth.password}},
+        {headers: getAOSAuthHeaders(aos.auth)},
       )
       .then(({data}) => data);
 

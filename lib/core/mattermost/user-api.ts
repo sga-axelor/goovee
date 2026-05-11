@@ -4,8 +4,8 @@ import {
   getAdminToken,
   isCreateMattermostUsersEnabled,
   getAosUrl,
-  getBasicAuthCredentials,
 } from './utils';
+import {getAOSAuthHeaders} from '@/tenant/auth';
 import type {TenantConfig} from '@/tenant';
 import type {
   MattermostUser,
@@ -109,7 +109,6 @@ async function createMattermostUser(
 ): Promise<CreateMattermostUserResult> {
   try {
     const aosUrl = getAosUrl(params.config);
-    const auth = getBasicAuthCredentials(params.config);
 
     if (!aosUrl) {
       return {
@@ -131,8 +130,8 @@ async function createMattermostUser(
     await axios.post(url, requestBody, {
       headers: {
         'Content-Type': 'application/json',
+        ...getAOSAuthHeaders(params.config.aos.auth),
       },
-      auth,
     });
 
     return {
