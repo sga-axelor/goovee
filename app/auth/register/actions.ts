@@ -5,20 +5,14 @@ import {revalidatePath} from 'next/cache';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
-import {register} from '@/lib/core/auth/orm';
 import {getTranslation} from '@/locale/server';
 import {
   findDefaultPartnerWorkspaceConfig,
   findWorkspaces,
 } from '@/orm/workspace';
-import {Scope} from '@/otp/constants';
-import {findOne, isValid, markUsed} from '@/otp/orm';
 import {manager} from '@/tenant';
-import type {ActionResponse} from '@/types/action';
 import {
-  EmailRegisterSchema,
   SubscribeSchema,
-  type EmailRegister,
   type Subscribe,
 } from '@/lib/core/auth/validation-utils';
 
@@ -189,76 +183,4 @@ export async function subscribe(data: Subscribe) {
   return error(
     await getTranslation({tenant: tenantId}, 'Error subscribing, try again'),
   );
-}
-
-export async function registerByEmail(
-  data: EmailRegister,
-): ActionResponse<true> {
-  const validation = EmailRegisterSchema.safeParse(data);
-
-  if (!validation.success) {
-    return {error: true, message: z.prettifyError(validation.error)};
-  }
-
-  const {
-    email,
-    tenantId,
-    otp,
-    type,
-    name,
-    password,
-    workspaceURL,
-    firstName,
-    companyName,
-    identificationNumber,
-    companyNumber,
-    locale,
-  } = validation.data;
-
-  const tenant = await manager.getTenant(tenantId);
-  if (!tenant)
-    return error(await getTranslation({tenant: tenantId}, 'Invalid tenant'));
-  const {client, config} = tenant;
-
-  const otpResult = await findOne({
-    scope: Scope.Registration,
-    entity: email,
-    client,
-  });
-
-  if (!otpResult) {
-    return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
-  }
-
-  if (!(await isValid({id: otpResult.id, value: otp, client}))) {
-    return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
-  }
-
-  try {
-    await client.$transaction(async txClient => {
-      await markUsed({id: otpResult.id, client: txClient});
-      await register({
-        email,
-        tenantId,
-        type,
-        name,
-        password,
-        workspaceURL,
-        firstName,
-        companyName,
-        identificationNumber,
-        companyNumber,
-        locale,
-        client: txClient,
-        config,
-      });
-    });
-    return {success: true, data: true};
-  } catch (err) {
-    return error(
-      err instanceof Error
-        ? err.message
-        : await getTranslation({tenant: tenantId}, 'Registration failed'),
-    );
-  }
 }

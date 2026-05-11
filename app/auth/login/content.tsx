@@ -91,7 +91,9 @@ export default function Content({
     } else {
       console.error(login.error);
       toast({
-        title: i18n.t('Login unsuccessful, Try again'),
+        title: login.error.message
+          ? i18n.t(login.error.message)
+          : i18n.t('Login unsuccessful, Try again'),
         variant: 'destructive',
       });
       setSubmitting(false);

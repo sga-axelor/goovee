@@ -44,8 +44,7 @@ import {cn} from '@/utils/css';
 import {InnerHTML} from '@/ui/components/inner-html';
 
 // ---- LOCAL IMPORTS ---- //
-import {generateOTP} from './actions';
-import {registerByEmail, subscribe} from '../actions';
+import {subscribe} from '../actions';
 import {WorkspaceForRegistration} from '@/orm/workspace';
 import {PasswordSchema} from '@/utils/validators';
 
@@ -186,23 +185,25 @@ export default function SignUp({
     if (!(workspace && tenantId)) return;
 
     try {
-      const res: any = await registerByEmail({
+      const res = await authClient.credentials.register({
         ...values,
         workspaceURL: workspace?.url,
         tenantId,
         locale: l10n.getLocale(),
       });
 
-      if (res.success) {
+      if (!res.error) {
         toast({
           variant: 'success',
           title: i18n.t('Registered successfully'),
         });
         router.push(`/auth/login?${searchQuery}`);
-      } else if (res.error) {
+      } else {
         toast({
           variant: 'destructive',
-          title: res.message,
+          title: res.error.message
+            ? i18n.t(res.error.message)
+            : i18n.t('Error registering, try again'),
         });
       }
     } catch (err) {
@@ -257,8 +258,21 @@ export default function SignUp({
     if (!tenantId) return;
 
     try {
-      await generateOTP({email, tenantId, workspaceURL: workspace?.url});
-      reset(1);
+      const res = await authClient.credentials.register.sendOtp({
+        email,
+        tenantId,
+        workspaceURL: workspace?.url,
+      });
+      if (!res.error) {
+        reset(1);
+      } else {
+        form.setError('email', {
+          type: 'custom',
+          message: res.error.message
+            ? i18n.t(res.error.message)
+            : i18n.t('Invalid email address'),
+        });
+      }
     } catch (err) {
       form.setError('email', {
         type: 'custom',

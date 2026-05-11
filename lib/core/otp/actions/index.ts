@@ -102,9 +102,9 @@ export async function generateOTP({
   tenantId?: string;
   client: Client;
   mailConfig?: MailConfig;
-}) {
+}): Promise<{error: boolean; message: string} | undefined> {
   try {
-    const result: any = await create({
+    const result = await create({
       force: true,
       scope: scope || Scope.Registration,
       entity: email,

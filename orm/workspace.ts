@@ -553,7 +553,7 @@ export async function findWorkspace({
   client,
 }: {
   url?: string;
-  user?: User;
+  user?: Pick<User, 'id' | 'isContact' | 'mainPartnerId'>;
   client: Client;
 }): Promise<PortalWorkspace | null> {
   if (!url) return null;

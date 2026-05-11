@@ -5,17 +5,11 @@ import {revalidatePath} from 'next/cache';
 
 import {deleteInviteById} from '@/app/[tenant]/[workspace]/account/common/orm/invites';
 import {getSession} from '@/auth';
-import {registerByInvite} from '@/lib/core/auth/orm';
 import {getTranslation} from '@/locale/server';
 import {findPartnerByEmail, updatePartner} from '@/orm/partner';
-import {Scope} from '@/otp/constants';
-import {findOne, isValid, markUsed} from '@/otp/orm';
 import {manager} from '@/tenant';
-import type {ActionResponse} from '@/types/action';
 import {
-  EmailInviteRegisterSchema,
   InviteSubscribeSchema,
-  type InviteEmailRegister,
   type InviteSubscribe,
 } from '@/lib/core/auth/validation-utils';
 
@@ -28,68 +22,11 @@ function error(message: string): {error: true; message: string} {
   };
 }
 
-export async function registerByEmail(
-  data: InviteEmailRegister,
-): ActionResponse<{query: string}> {
-  const validation = EmailInviteRegisterSchema.safeParse(data);
-
-  if (!validation.success) {
-    return error(z.prettifyError(validation.error));
-  }
-
-  const {email, tenantId, otp, firstName, name, password, inviteId, locale} =
-    validation.data;
-
-  const tenant = await manager.getTenant(tenantId);
-  if (!tenant)
-    return error(await getTranslation({tenant: tenantId}, 'Invalid tenant'));
-  const {client, config} = tenant;
-
-  const otpResult = await findOne({
-    scope: Scope.Registration,
-    entity: email,
-    client,
-  });
-
-  if (!otpResult) {
-    return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
-  }
-
-  if (!(await isValid({id: otpResult.id, value: otp, client}))) {
-    return error(await getTranslation({tenant: tenantId}, 'Invalid OTP'));
-  }
-
-  try {
-    const query = await client.$transaction(async txClient => {
-      await markUsed({id: otpResult.id, client: txClient});
-      const {query} = await registerByInvite({
-        email,
-        tenantId,
-        firstName,
-        name,
-        password,
-        inviteId,
-        locale,
-        client: txClient,
-        config,
-      });
-      return query;
-    });
-    return {success: true, data: {query}};
-  } catch (err) {
-    return error(
-      err instanceof Error
-        ? err.message
-        : await getTranslation({tenant: tenantId}, 'Registration failed'),
-    );
-  }
-}
-
 export async function subscribe(data: InviteSubscribe) {
   const validation = InviteSubscribeSchema.safeParse(data);
 
   if (!validation.success) {
-    return error(z.prettifyError(validation.error));
+    return {error: true, message: z.prettifyError(validation.error)};
   }
 
   const {workspaceURL, tenantId, inviteId} = validation.data;

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import Link from 'next/link';
 import {z} from 'zod';
@@ -22,7 +21,7 @@ import {Label} from '@/ui/components/label';
 import {Button} from '@/ui/components/button';
 import {SEARCH_PARAMS} from '@/constants';
 import {useToast} from '@/ui/hooks';
-import {requestResetPassword} from './action';
+import {authClient} from '@/lib/auth-client';
 
 const formSchema = z.object({
   email: z.email().min(1, 'Email is required'),
@@ -44,17 +43,26 @@ export default function Content() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const res: any = await requestResetPassword({
-      email: values.email,
-      tenantId: tenantId!,
-      searchQuery,
-    });
-    if (res.success && res.data?.url) {
-      router.push(res.data.url);
-    } else {
+    try {
+      const res = await authClient.credentials.resetPassword.request({
+        email: values.email,
+        tenantId: tenantId!,
+        searchQuery,
+      });
+      if (!res.error && res.data?.data?.url) {
+        router.push(res.data.data.url);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: res.error?.message
+            ? i18n.t(res.error.message)
+            : i18n.t('Error resetting password. Try again.'),
+        });
+      }
+    } catch (err) {
       toast({
         variant: 'destructive',
-        title: res.message || i18n.t('Error resetting password. Try again.'),
+        title: i18n.t('Error resetting password. Try again.'),
       });
     }
   };

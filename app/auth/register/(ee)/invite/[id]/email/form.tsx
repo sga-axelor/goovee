@@ -25,10 +25,8 @@ import {Input} from '@/ui/components/input';
 import {Separator} from '@/ui/components';
 import {SEARCH_PARAMS} from '@/constants';
 import {cn} from '@/utils/css';
-import {generateOTP} from './actions';
+import {authClient} from '@/lib/auth-client';
 
-// ---- LOCAL IMPORTS ----//
-import {registerByEmail} from '../action';
 import Link from 'next/link';
 
 const formSchema = z
@@ -91,24 +89,26 @@ export default function SignUp({
     }
 
     try {
-      const res: any = await registerByEmail({
+      const res = await authClient.credentials.invite.register({
         ...values,
         tenantId,
         inviteId,
         locale: l10n.getLocale(),
       });
 
-      if (res.success) {
+      if (!res.error) {
         toast({
           variant: 'success',
           title: i18n.t('Registration successfully done.'),
         });
 
-        router.push(`/auth/login${res?.data?.query}`);
-      } else if (res.error) {
+        router.push(`/auth/login${res.data?.data?.query}`);
+      } else {
         toast({
           variant: 'destructive',
-          title: res.message,
+          title: res.error.message
+            ? i18n.t(res.error.message)
+            : i18n.t('Error registering, try again'),
         });
       }
     } catch (err) {
@@ -131,8 +131,20 @@ export default function SignUp({
     if (!tenantId) return;
 
     try {
-      await generateOTP({inviteId, tenantId});
-      reset(1);
+      const res = await authClient.credentials.invite.sendOtp({
+        inviteId,
+        tenantId,
+      });
+      if (!res.error) {
+        reset(1);
+      } else {
+        form.setError('email', {
+          type: 'custom',
+          message: res.error.message
+            ? i18n.t(res.error.message)
+            : i18n.t('Invalid email address'),
+        });
+      }
     } catch (err) {
       form.setError('email', {
         type: 'custom',

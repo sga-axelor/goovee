@@ -94,7 +94,9 @@ export function htmlToNormalString(htmlString: string) {
   return plainText;
 }
 
-export function getPartnerId(user: User): string {
+export function getPartnerId(
+  user: Pick<User, 'id' | 'isContact' | 'mainPartnerId'>,
+): string {
   return String(user.isContact ? user.mainPartnerId : user.id);
 }
 

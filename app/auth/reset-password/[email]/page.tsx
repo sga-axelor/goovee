@@ -23,8 +23,6 @@ import {Input} from '@/ui/components/input';
 import {Label} from '@/ui/components/label';
 import {Button} from '@/ui/components/button';
 
-// ---- LOCAL IMPORTS ---- //
-import {resetPassword} from '../action';
 import {useState, use} from 'react';
 import {authClient} from '@/lib/auth-client';
 import {PasswordSchema} from '@/utils/validators';
@@ -71,24 +69,32 @@ export default function Page(props: {params: Promise<{email: string}>}) {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const {email, password, confirmPassword, otp} = values;
 
-    const res: any = await resetPassword({
-      email,
-      password,
-      confirmPassword,
-      otp,
-      tenantId: tenantId!,
-    });
-
-    if (res.success) {
-      toast({
-        variant: 'success',
-        title: res.message,
+    try {
+      const res = await authClient.credentials.resetPassword({
+        email,
+        password,
+        confirmPassword,
+        otp,
+        tenantId: tenantId!,
       });
-      router.push(`/auth/login?${searchQuery}`);
-    } else if (res.error) {
+
+      if (!res.error) {
+        toast({
+          variant: 'success',
+          title: res.data?.message,
+        });
+        router.push(`/auth/login?${searchQuery}`);
+      } else {
+        toast({
+          variant: 'destructive',
+          title:
+            res.error.message || i18n.t('Error resetting password. Try again.'),
+        });
+      }
+    } catch (err) {
       toast({
         variant: 'destructive',
-        title: res.message,
+        title: i18n.t('Error resetting password. Try again.'),
       });
     }
   };
