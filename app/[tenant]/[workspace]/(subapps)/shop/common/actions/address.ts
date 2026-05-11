@@ -15,6 +15,7 @@ import {
 import type {ID} from '@/types';
 import {clone, getPartnerId} from '@/utils';
 import {manager} from '@/tenant';
+import {IdSchema} from '@/utils/validators';
 
 export async function findDefaultInvoicing() {
   const session = await getSession();
@@ -51,6 +52,8 @@ export async function findDefaultDelivery() {
 }
 
 export async function findAddress(id: ID) {
+  if (!IdSchema.safeParse(id).success) return null;
+
   const session = await getSession();
   const user = session?.user;
 

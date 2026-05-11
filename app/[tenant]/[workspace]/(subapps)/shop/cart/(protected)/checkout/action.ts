@@ -1,5 +1,6 @@
 'use server';
 
+import {z} from 'zod';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
@@ -25,14 +26,23 @@ import {
   formatNumber,
 } from '@/subapps/shop/common/utils/order';
 import {createOrder} from '@/subapps/shop/common/service';
+import {
+  CartOrderSchema,
+  PayboxCreateOrderSchema,
+  PaypalCaptureOrderSchema,
+  ValidatePayboxPaymentSchema,
+  ValidateStripePaymentSchema,
+  type CartOrderInput,
+  type PayboxCreateOrderInput,
+  type PaypalCaptureOrderInput,
+  type ValidatePayboxPaymentInput,
+  type ValidateStripePaymentInput,
+} from '@/subapps/shop/common/validators';
 
 export async function paypalCaptureOrder({
   orderId,
   workspaceURL,
-}: {
-  orderId: string;
-  workspaceURL: string;
-}) {
+}: PaypalCaptureOrderInput) {
   const session = await getSession();
 
   if (!session) {
@@ -42,18 +52,12 @@ export async function paypalCaptureOrder({
     };
   }
 
-  if (!orderId) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
-  }
-
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
+  const parsedPaypalCapture = PaypalCaptureOrderSchema.safeParse({
+    orderId,
+    workspaceURL,
+  });
+  if (!parsedPaypalCapture.success) {
+    return {error: true, message: z.prettifyError(parsedPaypalCapture.error)};
   }
 
   const user = session?.user;
@@ -194,13 +198,7 @@ export async function paypalCaptureOrder({
   }
 }
 
-export async function paypalCreateOrder({
-  cart,
-  workspaceURL,
-}: {
-  cart: any;
-  workspaceURL: string;
-}) {
+export async function paypalCreateOrder({cart, workspaceURL}: CartOrderInput) {
   const session = await getSession();
 
   if (!session) {
@@ -210,18 +208,9 @@ export async function paypalCreateOrder({
     };
   }
 
-  if (!cart?.items?.length) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
-  }
-
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
+  const parsedCartOrder = CartOrderSchema.safeParse({cart, workspaceURL});
+  if (!parsedCartOrder.success) {
+    return {error: true, message: z.prettifyError(parsedCartOrder.error)};
   }
 
   const tenantId = (await headers()).get(TENANT_HEADER);
@@ -335,12 +324,8 @@ export async function paypalCreateOrder({
 export async function createStripeCheckoutSession({
   cart,
   workspaceURL,
-}: {
-  cart: any;
-  workspaceURL: string;
-}) {
+}: CartOrderInput) {
   const session = await getSession();
-
   if (!session) {
     return {
       error: true,
@@ -348,18 +333,9 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  if (!cart?.items?.length) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
-  }
-
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
+  const parsedCartOrder = CartOrderSchema.safeParse({cart, workspaceURL});
+  if (!parsedCartOrder.success) {
+    return {error: true, message: z.prettifyError(parsedCartOrder.error)};
   }
 
   const tenantId = (await headers()).get(TENANT_HEADER);
@@ -488,12 +464,8 @@ export async function createStripeCheckoutSession({
 export async function validateStripePayment({
   stripeSessionId,
   workspaceURL,
-}: {
-  stripeSessionId: string;
-  workspaceURL: string;
-}) {
+}: ValidateStripePaymentInput) {
   const session = await getSession();
-
   if (!session) {
     return {
       error: true,
@@ -501,10 +473,14 @@ export async function validateStripePayment({
     };
   }
 
-  if (!workspaceURL) {
+  const parsedStripeValidation = ValidateStripePaymentSchema.safeParse({
+    stripeSessionId,
+    workspaceURL,
+  });
+  if (!parsedStripeValidation.success) {
     return {
       error: true,
-      message: await t('Bad request'),
+      message: z.prettifyError(parsedStripeValidation.error),
     };
   }
 
@@ -572,13 +548,6 @@ export async function validateStripePayment({
     return {
       error: true,
       message: await t('Stripe is not available'),
-    };
-  }
-
-  if (!stripeSessionId) {
-    return {
-      error: true,
-      message: await t('Bad request'),
     };
   }
 
@@ -660,11 +629,7 @@ export async function payboxCreateOrder({
   cart,
   workspaceURL,
   uri,
-}: {
-  cart: any;
-  workspaceURL: string;
-  uri: string;
-}) {
+}: PayboxCreateOrderInput) {
   const session = await getSession();
 
   if (!session) {
@@ -674,18 +639,13 @@ export async function payboxCreateOrder({
     };
   }
 
-  if (!cart?.items?.length) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
-  }
-
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
+  const parsedPayboxCreate = PayboxCreateOrderSchema.safeParse({
+    cart,
+    workspaceURL,
+    uri,
+  });
+  if (!parsedPayboxCreate.success) {
+    return {error: true, message: z.prettifyError(parsedPayboxCreate.error)};
   }
 
   const tenantId = (await headers()).get(TENANT_HEADER);
@@ -803,10 +763,7 @@ export async function payboxCreateOrder({
 export async function validatePayboxPayment({
   params,
   workspaceURL,
-}: {
-  params: any;
-  workspaceURL: string;
-}) {
+}: ValidatePayboxPaymentInput) {
   const session = await getSession();
 
   if (!session) {
@@ -816,10 +773,14 @@ export async function validatePayboxPayment({
     };
   }
 
-  if (!workspaceURL) {
+  const parsedPayboxValidation = ValidatePayboxPaymentSchema.safeParse({
+    params,
+    workspaceURL,
+  });
+  if (!parsedPayboxValidation.success) {
     return {
       error: true,
-      message: await t('Bad request'),
+      message: z.prettifyError(parsedPayboxValidation.error),
     };
   }
 
@@ -900,13 +861,6 @@ export async function validatePayboxPayment({
     return {
       error: true,
       message: await t('Unauthorized'),
-    };
-  }
-
-  if (!params) {
-    return {
-      error: true,
-      message: await t('Bad request'),
     };
   }
 

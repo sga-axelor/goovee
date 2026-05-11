@@ -16,6 +16,8 @@ import {findProduct as $findProduct} from '@/subapps/shop/common/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
 import {requestOrder} from '@/subapps/shop/common/service';
+import {IdSchema} from '@/utils/validators';
+import {CartSchema, type CartInput} from '@/subapps/shop/common/validators';
 
 export async function findProduct({
   id,
@@ -24,6 +26,8 @@ export async function findProduct({
   id: Product['id'];
   workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
 }) {
+  if (!IdSchema.safeParse(id).success) return null;
+
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -64,9 +68,11 @@ export async function requestQuotation({
   cart,
   workspace,
 }: {
-  cart: any;
+  cart: CartInput;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
 }) {
+  if (!CartSchema.safeParse(cart).success) return null;
+
   return requestOrder({
     cart,
     workspace,

@@ -7,7 +7,7 @@ import {
   DEFAULT_CURRENCY_SYMBOL,
   MAIN_PRICE,
 } from '@/constants';
-import type {Cart, ComputedProduct} from '@/types';
+import type {ComputedProduct} from '@/types';
 import type {PortalAppConfig, PortalWorkspace} from '@/orm/workspace';
 import {formatNumber} from '@/locale/formatters';
 
@@ -16,7 +16,12 @@ export function computeTotal({
   workspace,
   formatNumber: formatNumberProp = formatNumber,
 }: {
-  cart: Cart;
+  cart: {
+    items?: Array<{
+      quantity?: string | number;
+      computedProduct?: ComputedProduct;
+    }>;
+  };
   workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
   formatNumber?: any;
 }) {
@@ -53,7 +58,7 @@ export function computeTotal({
       subtotal: 0,
       tax: 0,
     } as {subtotal: number; tax: number},
-  );
+  ) ?? {subtotal: 0, tax: 0};
 
   const firstItem = (cart?.items?.[0] as any)?.computedProduct;
 
