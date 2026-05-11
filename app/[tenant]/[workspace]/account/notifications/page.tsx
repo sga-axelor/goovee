@@ -55,7 +55,9 @@ export default async function Page(props: {
         user,
       }),
     ),
-  ).then(results => results.map(r => r.status === 'fulfilled' && r.value));
+  ).then(results =>
+    results.map(r => (r.status === 'fulfilled' && r.value ? r.value : null)),
+  );
 
   return (
     <div className="bg-white p-2 lg:p-0 lg:bg-inherit">

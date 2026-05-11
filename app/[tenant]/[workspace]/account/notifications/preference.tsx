@@ -3,7 +3,6 @@
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {App as PortalApp} from '@/orm/workspace';
 import {Separator} from '@/ui/components/separator';
 import {useWorkspace} from '../../workspace-context';
 import {Checkbox} from '@/ui/components/checkbox';
@@ -12,6 +11,9 @@ import type {NotificationAppCode} from '@/utils/validators';
 
 // ---- LOCAL IMPORTS ---- //
 import {updatePreference} from './action';
+import type {PreferenceResponse} from '@/orm/notification';
+import {CheckedState} from '@radix-ui/react-checkbox';
+import type {UpdateNotificationPreference} from '../common/utils/validators';
 
 export function Preference({
   preference,
@@ -19,7 +21,7 @@ export function Preference({
   code,
   hideSubscription,
 }: {
-  preference: any;
+  preference: PreferenceResponse | null;
   title: string;
   code: NotificationAppCode;
   hideSubscription?: boolean;
@@ -29,25 +31,29 @@ export function Preference({
   const router = useRouter();
 
   const changePreference =
-    (root?: boolean) => async (activateNotification: any, record?: any) => {
-      const result: any = await updatePreference({
+    (root?: boolean) =>
+    async (activateNotification: CheckedState, subscriptionId?: string) => {
+      if (activateNotification === 'indeterminate') return;
+      const data: UpdateNotificationPreference['data'] | undefined = root
+        ? {activateNotification}
+        : subscriptionId
+          ? {
+              activateNotification,
+              record: {
+                id: subscriptionId,
+                activateNotification,
+              },
+            }
+          : undefined;
+
+      if (!data) return;
+
+      const result = await updatePreference({
         workspaceURL,
         workspaceURI,
         tenant,
         code,
-        data: {
-          ...(root
-            ? {
-                activateNotification,
-              }
-            : {
-                activateNotification: true,
-                record: {
-                  id: record?.id,
-                  activateNotification,
-                },
-              }),
-        },
+        data,
       });
 
       if ('success' in result) {
@@ -60,16 +66,12 @@ export function Preference({
       }
     };
 
-  if (!preference) {
-    return null;
-  }
-
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 items-center gap-2 p-1">
         <h5 className="font-medium">{title}</h5>
         <Checkbox
-          defaultChecked={preference.activateNotification}
+          defaultChecked={preference?.activateNotification || false}
           name="activateNotification"
           onCheckedChange={changePreference(true)}
           variant="success"
@@ -77,7 +79,7 @@ export function Preference({
       </div>
       {!hideSubscription && preference?.activateNotification && (
         <div className="space-y-2">
-          {preference?.subscriptions?.map((subscription: any, i: number) => (
+          {preference?.subscriptions?.map((subscription, i: number) => (
             <div
               className="grid grid-cols-2 items-center gap-2 p-1"
               key={subscription?.id}>
@@ -86,7 +88,7 @@ export function Preference({
                 defaultChecked={subscription.activateNotification}
                 name="activateNotification"
                 onCheckedChange={e =>
-                  changePreference(false)(e, {id: subscription.id})
+                  changePreference(false)(e, subscription.id)
                 }
                 variant="success"
               />
