@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {z} from 'zod';
 import {manager} from '@/tenant';
 import {getSession} from '@/lib/core/auth';
-import {treeifyError} from 'zod';
 import {PushSubscriptionSchema} from '@/pwa/types';
 
 export async function POST(
@@ -27,7 +27,7 @@ export async function POST(
 
   if (!result.success) {
     return NextResponse.json(
-      {error: 'Invalid subscription', details: treeifyError(result.error)},
+      {error: 'Invalid subscription', details: z.prettifyError(result.error)},
       {status: 400},
     );
   }

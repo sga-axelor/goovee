@@ -1,30 +1,56 @@
 export const dynamic = 'force-dynamic';
 
 import {NextResponse} from 'next/server';
+import {z} from 'zod';
 
 // ---- CORE IMPORTS ---- //
-import {PAYMENT_SOURCE, PaymentSource} from '@/lib/core/payment/common/type';
 import {subscribe, unsubscribe} from '@/lib/core/payment/sse';
+import {PaymentSourceSchema} from '@/lib/core/payment/common/validators';
+import {IdSchema} from '@/utils/validators';
 
-const VALID_SOURCES = Object.values(PAYMENT_SOURCE) as string[];
 const KEEP_ALIVE_INTERVAL_MS = 30_000;
 
-export async function GET(request: Request) {
-  const {searchParams} = new URL(request.url);
+const SSEQuerySchema = z.object({
+  source: PaymentSourceSchema,
+  entityId: IdSchema,
+  contextId: IdSchema,
+});
+
+type SSEQuery = z.infer<typeof SSEQuerySchema>;
+
+function parseQuery(searchParams: URLSearchParams): {
+  data?: SSEQuery;
+  error?: string;
+} {
   const source = searchParams.get('source');
   const entityId = searchParams.get('entityId');
   const contextId = searchParams.get('contextId');
 
-  if (!source || !VALID_SOURCES.includes(source) || !entityId || !contextId) {
-    return new NextResponse('Bad Request', {status: 400});
+  const result = SSEQuerySchema.safeParse({source, entityId, contextId});
+
+  if (!result.success) {
+    return {error: z.prettifyError(result.error)};
   }
+
+  return {data: result.data};
+}
+
+export async function GET(request: Request) {
+  const {searchParams} = new URL(request.url);
+  const {data, error} = parseQuery(searchParams);
+
+  if (error) {
+    return new NextResponse(error, {status: 400});
+  }
+
+  const {source, entityId, contextId} = data!;
 
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
       try {
-        subscribe(source as PaymentSource, entityId, contextId, controller);
+        subscribe(source, entityId, contextId, controller);
       } catch (err) {
         controller.error(err);
         return;
@@ -42,7 +68,7 @@ export async function GET(request: Request) {
         clearInterval(keepAlive);
 
         try {
-          unsubscribe(source as PaymentSource, entityId, contextId, controller);
+          unsubscribe(source, entityId, contextId, controller);
         } catch {
           // ignore unsubscribe errors on disconnect
         }

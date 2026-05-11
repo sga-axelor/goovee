@@ -15,14 +15,13 @@ export const PAYMENT_TYPE = {
 
 export type PaymentType = (typeof PAYMENT_TYPE)[keyof typeof PAYMENT_TYPE];
 
-export const PAYMENT_SOURCE = {
-  INVOICES: 'invoices',
-  SHOP: 'shop',
-  EVENTS: 'events',
-} as const;
+export enum PAYMENT_SOURCE {
+  INVOICES = 'invoices',
+  SHOP = 'shop',
+  EVENTS = 'events',
+}
 
-export type PaymentSource =
-  (typeof PAYMENT_SOURCE)[keyof typeof PAYMENT_SOURCE];
+export type PaymentSource = PAYMENT_SOURCE;
 
 export type PaymentContextData = {
   id: string;

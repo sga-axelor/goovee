@@ -47,7 +47,7 @@ export async function GET(
 
   if (
     id === product?.picture?.id ||
-    product?.portalImageList?.some((i: any) => i?.picture?.id === id) ||
+    product?.portalImageList?.some(i => i?.picture?.id === id) ||
     id === product?.thumbnailImage?.id
   ) {
     const file = await findFile({
