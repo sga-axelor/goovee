@@ -1,7 +1,5 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
-
 // ---- CORE IMPORTS ---- //
 import {Separator} from '@/ui/components/separator';
 import {useWorkspace} from '../../workspace-context';
@@ -14,6 +12,8 @@ import {updatePreference} from './action';
 import type {PreferenceResponse} from '@/orm/notification';
 import {CheckedState} from '@radix-ui/react-checkbox';
 import type {UpdateNotificationPreference} from '../common/utils/validators';
+import {i18n} from '@/lib/core/locale';
+import {useState} from 'react';
 
 export function Preference({
   preference,
@@ -28,7 +28,6 @@ export function Preference({
 }) {
   const {tenant, workspaceURI, workspaceURL} = useWorkspace();
   const {toast} = useToast();
-  const router = useRouter();
 
   const changePreference =
     (root?: boolean) =>
@@ -48,19 +47,24 @@ export function Preference({
 
       if (!data) return;
 
-      const result = await updatePreference({
-        workspaceURL,
-        workspaceURI,
-        tenant,
-        code,
-        data,
-      });
-
-      if ('success' in result) {
-        router.refresh();
-      } else {
+      try {
+        const result = await updatePreference({
+          workspaceURL,
+          workspaceURI,
+          tenant,
+          code,
+          data,
+        });
+        if ('error' in result) {
+          toast({
+            title: result.message,
+            variant: 'destructive',
+          });
+        }
+      } catch (err) {
         toast({
-          title: result.message,
+          title:
+            err instanceof Error ? err.message : i18n.t('Something went wrong'),
           variant: 'destructive',
         });
       }
