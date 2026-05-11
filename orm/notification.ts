@@ -239,7 +239,7 @@ const routes = {
   [SUBAPP_CODES.resources]: ({url, id}: {url: string; id: string}) =>
     `${url}/${[SUBAPP_CODES.resources]}/categories?id=${id}`,
   [SUBAPP_CODES.forum]: ({url, id}: {url: string; id: string}) =>
-    `${url}/${[SUBAPP_CODES.forum]}/group/id=${id}`,
+    `${url}/${[SUBAPP_CODES.forum]}/group/${id}`,
   [SUBAPP_CODES.ticketing]: ({
     url,
     id,
