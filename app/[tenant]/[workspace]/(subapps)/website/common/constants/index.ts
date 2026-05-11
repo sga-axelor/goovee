@@ -1,5 +1,22 @@
-import {LayoutMountType, MountType} from '../types';
 import {Type} from '../types/templates';
+
+export enum MOUNT_TYPE {
+  PAGE = 'page',
+  FOOTER = 'footer',
+  HEADER = 'header',
+  MENU = 'menu',
+}
+
+export const mountTypes: MOUNT_TYPE[] = [
+  MOUNT_TYPE.PAGE,
+  MOUNT_TYPE.FOOTER,
+  MOUNT_TYPE.HEADER,
+  MOUNT_TYPE.MENU,
+];
+
+export const layoutMountTypes = mountTypes.filter(
+  type => type !== MOUNT_TYPE.PAGE,
+);
 
 export const NAVIGATION_POSITION = {
   BLOCK: 1,
@@ -61,21 +78,3 @@ export const WidgetAttrsMap: Record<Type, Record<string, string>> = {
   time: {showTitle: 'true'},
   panel: {showTitle: 'false'},
 };
-
-export const MOUNT_TYPE = {
-  PAGE: 'page',
-  FOOTER: 'footer',
-  HEADER: 'header',
-  MENU: 'menu',
-} satisfies Record<string, MountType>;
-
-export const mountTypes: MountType[] = [
-  MOUNT_TYPE.PAGE,
-  MOUNT_TYPE.FOOTER,
-  MOUNT_TYPE.HEADER,
-  MOUNT_TYPE.MENU,
-];
-
-export const layoutMountTypes: LayoutMountType[] = mountTypes.filter(
-  type => type !== MOUNT_TYPE.PAGE,
-);

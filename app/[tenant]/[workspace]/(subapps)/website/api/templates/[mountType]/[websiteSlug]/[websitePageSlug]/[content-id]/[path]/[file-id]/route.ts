@@ -1,3 +1,4 @@
+import {z} from 'zod';
 import {SUBAPP_CODES} from '@/constants';
 import {getSession} from '@/lib/core/auth';
 import {findSubappAccess, findWorkspace} from '@/orm/workspace';
@@ -10,14 +11,9 @@ import {
 } from '@/subapps/website/common/orm/website';
 import {get} from 'lodash-es';
 import {findFile, streamFile} from '@/utils/download';
-import {
-  MountType,
-  LayoutMountType,
-} from '@/app/[tenant]/[workspace]/(subapps)/website/common/types';
-import {
-  MOUNT_TYPE,
-  mountTypes,
-} from '@/app/[tenant]/[workspace]/(subapps)/website/common/constants';
+import {LayoutMountType} from '@/app/[tenant]/[workspace]/(subapps)/website/common/types';
+import {MOUNT_TYPE} from '@/app/[tenant]/[workspace]/(subapps)/website/common/constants';
+import {MountTypeSchema} from '@/app/[tenant]/[workspace]/(subapps)/website/common/utils/validators';
 import {manager} from '@/tenant';
 
 export async function GET(
@@ -47,12 +43,17 @@ export async function GET(
     websitePageSlug,
     websiteSlug,
     path,
-    mountType,
+    mountType: mountTypeParam,
   } = params;
 
-  if (!mountTypes.includes(mountType as MountType)) {
-    return new NextResponse('Invalid mount type', {status: 400});
+  const mountTypeResult = MountTypeSchema.safeParse(mountTypeParam);
+  if (!mountTypeResult.success) {
+    return new NextResponse(z.prettifyError(mountTypeResult.error), {
+      status: 400,
+    });
   }
+  const mountType = mountTypeResult.data;
+
   if (mountType === MOUNT_TYPE.MENU) {
     return new NextResponse('file download not supported for menu', {
       status: 400,
@@ -115,7 +116,7 @@ export async function GET(
       workspaceURI,
       user,
       client,
-      mountTypes: [mountType as LayoutMountType],
+      mountTypes: [mountType],
       path: stringToPath(path),
     });
     if (!website) {
@@ -151,6 +152,8 @@ export async function GET(
   return streamFile(file);
 }
 
+//TODO: To be 100% sure that it's a meta file, we should check model definition
+//instead of relying on file structure
 const isMetaFile = (file: any): boolean => {
   return !!(file?.filePath && file?.fileName && file?.id);
 };

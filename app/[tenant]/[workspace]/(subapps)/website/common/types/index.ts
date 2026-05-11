@@ -1,4 +1,5 @@
 import {ID} from '@/types';
+import {MOUNT_TYPE} from '../constants';
 
 export type MenuItem = {
   id: string;
@@ -29,5 +30,5 @@ export type TemplateProps<T = any, M = any> = {
   canEditWiki?: boolean;
 };
 
-export type MountType = 'page' | 'footer' | 'header' | 'menu';
-export type LayoutMountType = Exclude<MountType, 'page'>;
+export type MountType = MOUNT_TYPE;
+export type LayoutMountType = Exclude<MountType, MOUNT_TYPE.PAGE>;
