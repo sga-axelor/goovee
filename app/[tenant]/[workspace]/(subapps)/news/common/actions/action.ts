@@ -1,5 +1,6 @@
 'use server';
 
+import {z} from 'zod';
 import {headers} from 'next/headers';
 
 // ---- CORE IMPORTS ---- //
@@ -26,8 +27,19 @@ import {NotificationTag} from '@/pwa/tags';
 // ---- LOCAL IMPORTS ---- //
 import {findNews} from '@/subapps/news/common/orm/news';
 import {DEFAULT_NEWS_ASIDE_LIMIT} from '@/subapps/news/common/constants';
+import {
+  FindRecommendedNewsSchema,
+  FindSearchNewsSchema,
+  type FindRecommendedNewsInput,
+  type FindSearchNewsInput,
+} from '@/subapps/news/common/validators';
 
-export async function findSearchNews({workspaceURL}: {workspaceURL: string}) {
+export async function findSearchNews({workspaceURL}: FindSearchNewsInput) {
+  const parsed = FindSearchNewsSchema.safeParse({workspaceURL});
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+
   const session = await getSession();
   const user = session?.user;
 
@@ -80,23 +92,14 @@ export async function findRecommendedNews({
   workspaceURL,
   tenantId,
   categoryIds,
-}: {
-  workspaceURL: string;
-  tenantId: string;
-  categoryIds: string[];
-}) {
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
-  }
-
-  if (!tenantId) {
-    return {
-      error: true,
-      message: await t('Bad request'),
-    };
+}: FindRecommendedNewsInput) {
+  const parsed = FindRecommendedNewsSchema.safeParse({
+    workspaceURL,
+    tenantId,
+    categoryIds,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
 
   const session = await getSession();
