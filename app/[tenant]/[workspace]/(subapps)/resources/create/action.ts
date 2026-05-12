@@ -6,13 +6,14 @@ import {pipeline} from 'stream';
 import {promisify} from 'util';
 import {headers} from 'next/headers';
 import {revalidatePath} from 'next/cache';
+import {z} from 'zod';
 
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
 import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {SUBAPP_CODES} from '@/constants';
-import {findWorkspace, findSubappAccess} from '@/orm/workspace';
+import {findSubappAccess, findWorkspace} from '@/orm/workspace';
 import {TENANT_HEADER} from '@/proxy';
 import {getFileSizeText} from '@/utils/files';
 import {getStoragePath} from '@/storage/index';
@@ -20,6 +21,7 @@ import {getStoragePath} from '@/storage/index';
 // ---- LOCAL IMPORTS ---- //
 import {fetchFile} from '@/subapps/resources/common/orm/dms';
 import {ACTION} from '@/subapps/resources/common/constants';
+import {UploadSchema} from '../common/utils/validators';
 
 const pump = promisify(pipeline);
 
@@ -54,12 +56,14 @@ function extractFileValues(formData: FormData) {
 }
 
 export async function upload(formData: FormData, workspaceURL: string) {
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Workspace not provided.'),
-    };
+  const parsed = UploadSchema.safeParse({
+    workspaceURL,
+    parent: formData.get('parent'),
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
+  const {parent: parentId} = parsed.data;
 
   const tenantId = (await headers()).get(TENANT_HEADER);
 
@@ -73,15 +77,6 @@ export async function upload(formData: FormData, workspaceURL: string) {
   const tenant = await manager.getTenant(tenantId);
   if (!tenant) return {error: true, message: await t('Invalid tenant')};
   const {client} = tenant;
-
-  const parentId = formData.get('parent');
-
-  if (!parentId) {
-    return {
-      error: true,
-      message: await t('Parent is required'),
-    };
-  }
 
   const session = await getSession();
 
@@ -122,8 +117,8 @@ export async function upload(formData: FormData, workspaceURL: string) {
   }
 
   const parent = await fetchFile({
-    id: parentId as string,
-    workspace,
+    id: parentId,
+    workspaceURL,
     user,
     client,
   });
@@ -192,7 +187,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
         createdOn: timestamp,
         updatedOn: timestamp,
         workspaceSet: {
-          select: [{id: workspace.id}],
+          select: [{url: workspaceURL}],
         },
         isPrivate,
         permissionSelect,

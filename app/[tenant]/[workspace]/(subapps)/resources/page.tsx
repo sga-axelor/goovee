@@ -1,5 +1,4 @@
 import {Suspense} from 'react';
-import type {Cloned} from '@/types/util';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -9,7 +8,6 @@ import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
 import {i18n} from '@/locale';
 import type {User} from '@/types';
-import type {PortalWorkspace} from '@/orm/workspace';
 import {manager} from '@/lib/core/tenant';
 import type {Client} from '@/goovee/.generated/client';
 
@@ -27,16 +25,16 @@ import Categories from './categories';
 import Hero from './hero';
 
 async function LatestCategories({
-  workspace,
+  workspaceURL,
   client,
   user,
 }: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   client: Client;
   user?: User;
 }) {
   const folders = await fetchLatestFolders({
-    workspace,
+    workspaceURL,
     client,
     user,
   }).then(clone);
@@ -45,16 +43,16 @@ async function LatestCategories({
 }
 
 async function LatestResources({
-  workspace,
+  workspaceURL,
   client,
   user,
 }: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   client: Client;
   user?: User;
 }) {
   const files = await fetchLatestFiles({
-    workspace,
+    workspaceURL,
     client,
     user,
   }).then(clone);
@@ -91,11 +89,19 @@ export default async function Page(props: {
       <Hero workspace={workspace} workspaceURI={workspaceURI} />
       <main className="container p-4 mx-auto space-y-6">
         <Suspense fallback={<CategoriesSkeleton />}>
-          <LatestCategories workspace={workspace} client={client} user={user} />
+          <LatestCategories
+            workspaceURL={workspaceURL}
+            client={client}
+            user={user}
+          />
         </Suspense>
         <h2 className="font-semibold text-xl">{i18n.t('New Resources')}</h2>
         <Suspense fallback={<ResourceListSkeleton />}>
-          <LatestResources workspace={workspace} client={client} user={user} />
+          <LatestResources
+            workspaceURL={workspaceURL}
+            client={client}
+            user={user}
+          />
         </Suspense>
       </main>
     </>

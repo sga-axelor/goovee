@@ -1,24 +1,26 @@
 'use server';
 
 import {headers} from 'next/headers';
-import type {Cloned} from '@/types/util';
 
 // ---- CORE IMPORTS ---- //
 import {manager} from '@/tenant';
 import {clone} from '@/utils';
-import type {PortalWorkspace} from '@/orm/workspace';
 import {TENANT_HEADER} from '@/proxy';
 import {getSession} from '@/auth';
 import {filterPrivate} from '@/orm/filter';
 
+// ---- LOCAL IMPORTS ---- //
+import {FindDmsFilesSchema} from '@/subapps/resources/common/utils/validators';
+
 export async function findDmsFiles({
   search = '',
-  workspace,
+  workspaceURL,
 }: {
   search: string;
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
 }) {
-  if (!workspace) return [];
+  const parsed = FindDmsFilesSchema.safeParse({search, workspaceURL});
+  if (!parsed.success) return [];
 
   const tenantId = (await headers()).get(TENANT_HEADER);
 
@@ -42,7 +44,7 @@ export async function findDmsFiles({
             }
           : {}),
         workspaceSet: {
-          id: workspace.id,
+          url: workspaceURL,
         },
         ...(await filterPrivate({
           user,

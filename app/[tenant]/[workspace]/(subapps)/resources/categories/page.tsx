@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
-import type {Cloned} from '@/types/util';
 import {notFound} from 'next/navigation';
 import {MdAdd} from 'react-icons/md';
 import {Suspense} from 'react';
@@ -14,7 +13,6 @@ import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import type {User} from '@/types';
-import type {PortalWorkspace} from '@/orm/workspace';
 import {manager} from '@/lib/core/tenant';
 import type {Client} from '@/goovee/.generated/client';
 
@@ -34,16 +32,16 @@ import {
 import {ACTION} from '../common/constants';
 
 async function Categories({
-  workspace,
+  workspaceURL,
   client,
   user,
 }: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   client: Client;
   user?: User;
 }) {
   const categories = await fetchExplorerCategories({
-    workspace,
+    workspaceURL,
     user,
     client,
   }).then(clone);
@@ -52,12 +50,12 @@ async function Categories({
 }
 
 async function Resources({
-  workspace,
+  workspaceURL,
   client,
   user,
   category,
 }: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   client: Client;
   user?: User;
   category?: string;
@@ -67,13 +65,12 @@ async function Resources({
   if (category) {
     files = await fetchFiles({
       id: category,
-      workspace,
       user,
       client,
     }).then(clone);
   } else {
     files = await fetchLatestFiles({
-      workspace,
+      workspaceURL,
       user,
       client,
     }).then(clone);
@@ -116,7 +113,7 @@ export default async function Page(props: {
   if (id) {
     file = await fetchFile({
       id,
-      workspace,
+      workspaceURL,
       user,
       client,
     });
@@ -159,14 +156,18 @@ export default async function Page(props: {
       <div className="grid sm:grid-cols-4 gap-5">
         <div className="bg-white rounded-lg py-6 px-2">
           <Suspense fallback={<ExplorerSkeleton />}>
-            <Categories workspace={workspace} client={client} user={user} />
+            <Categories
+              workspaceURL={workspaceURL}
+              client={client}
+              user={user}
+            />
           </Suspense>
         </div>
         <div className="sm:hidden">{/* <SortBy /> */}</div>
         <div className="sm:col-span-3 overflow-auto">
           <Suspense fallback={<ResourceListSkeleton />}>
             <Resources
-              workspace={workspace}
+              workspaceURL={workspaceURL}
               client={client}
               user={user}
               category={id}

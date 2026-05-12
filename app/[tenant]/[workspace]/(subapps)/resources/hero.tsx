@@ -23,7 +23,7 @@ export const Hero = ({
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   workspaceURI: string;
 }) => {
-  const renderSearch = () => <Search workspace={workspace} />;
+  const renderSearch = () => <Search workspaceURL={workspace.url} />;
 
   const imageURL = workspace?.config?.resourcesHeroBgImage?.id
     ? `${workspaceURI}/${SUBAPP_CODES.resources}/api/hero/background`

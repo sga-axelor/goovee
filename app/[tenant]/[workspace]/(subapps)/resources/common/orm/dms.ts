@@ -1,8 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {clone} from '@/utils';
-import type {Cloned} from '@/types/util';
 import type {User} from '@/types';
-import type {PortalWorkspace} from '@/orm/workspace';
 import {filterPrivate} from '@/orm/filter';
 import type {Client} from '@/goovee/.generated/client';
 
@@ -10,7 +8,7 @@ import type {Client} from '@/goovee/.generated/client';
 import {COLORS, ICONS} from '@/subapps/resources/common/constants';
 
 export async function fetchFolders({
-  workspace,
+  workspaceURL,
   client,
   params,
   user,
@@ -18,17 +16,17 @@ export async function fetchFolders({
 }: {
   params?: any;
   client: Client;
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   user?: User;
   archived?: boolean;
 }) {
-  if (!workspace) return [];
+  if (!workspaceURL) return [];
 
   const folders = await client.aOSDMSFile.find({
     where: {
       isDirectory: true,
       workspaceSet: {
-        id: workspace?.id,
+        url: workspaceURL,
       },
       ...(params?.where || {}),
       AND: [
@@ -57,16 +55,16 @@ export async function fetchFolders({
 }
 
 export async function fetchLatestFolders({
-  workspace,
+  workspaceURL,
   client,
   user,
 }: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   client: Client;
   user?: User;
 }) {
   return fetchFolders({
-    workspace,
+    workspaceURL,
     client,
     user,
     params: {
@@ -78,21 +76,15 @@ export async function fetchLatestFolders({
 
 export async function fetchFiles({
   id,
-  workspace,
   user,
   client,
   archived,
 }: {
   id: string;
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   user?: User;
   client: Client;
   archived?: boolean;
 }) {
-  if (!workspace) {
-    return [];
-  }
-
   const files = await client.aOSDMSFile.find({
     where: {
       isDirectory: {
@@ -129,19 +121,19 @@ export async function fetchFiles({
 }
 
 export async function fetchLatestFiles({
-  workspace,
+  workspaceURL,
   client,
   user,
   archived,
   take = 10,
 }: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   client: Client;
   user?: User;
   archived?: boolean;
   take?: number;
 }) {
-  if (!workspace) return [];
+  if (!workspaceURL) return [];
 
   const files = await client.aOSDMSFile.find({
     where: {
@@ -149,7 +141,7 @@ export async function fetchLatestFiles({
         ne: true,
       },
       workspaceSet: {
-        id: workspace?.id,
+        url: workspaceURL,
       },
       AND: [
         await filterPrivate({client, user}),
@@ -187,13 +179,13 @@ export async function fetchLatestFiles({
 
 export async function fetchFile({
   id,
-  workspace,
+  workspaceURL,
   user,
   client,
   archived,
 }: {
   id: string;
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   user?: User;
   client: Client;
   archived?: boolean;
@@ -202,7 +194,7 @@ export async function fetchFile({
     where: {
       id,
       workspaceSet: {
-        id: workspace?.id,
+        url: workspaceURL,
       },
       AND: [
         await filterPrivate({client, user}),
@@ -248,24 +240,24 @@ export async function fetchIcons() {
 }
 
 export async function fetchExplorerCategories({
-  workspace,
+  workspaceURL,
   user,
   client,
   archived,
 }: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspaceURL: string;
   user?: User;
   client: Client;
   archived?: boolean;
 }) {
-  if (!workspace) return [];
+  if (!workspaceURL) return [];
 
   const categories = await client.aOSDMSFile
     .find({
       where: {
         isDirectory: true,
         workspaceSet: {
-          id: workspace.id,
+          url: workspaceURL,
         },
         AND: [
           await filterPrivate({client, user}),

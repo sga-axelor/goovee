@@ -78,6 +78,7 @@ export default function ResourceForm({parent}: any) {
     if (result.success) {
       toast({
         title: i18n.t('Resource created successfully.'),
+        variant: 'success',
       });
       router.refresh();
       router.push(`${workspaceURI}/resources/categories?id=${parent?.id}`);

@@ -52,7 +52,7 @@ export async function GET(
   const file = await fetchFile({
     id: fileId,
     client,
-    workspace,
+    workspaceURL,
     user: session?.user,
   });
 

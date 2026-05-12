@@ -55,7 +55,7 @@ export default async function Page(props: {
   const file = await fetchFile({
     id,
     client,
-    workspace,
+    workspaceURL,
     user,
   }).then(clone);
 

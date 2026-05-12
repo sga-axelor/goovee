@@ -1,13 +1,11 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
-import type {Cloned} from '@/types/util';
 import React, {useEffect, useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
-import type {PortalWorkspace} from '@/orm/workspace';
 import {
   Command,
   CommandEmpty,
@@ -23,11 +21,7 @@ import {formatDate} from '@/locale/formatters';
 import {FileIcon} from '@/ui/components/file-icon';
 import {findDmsFiles} from './action';
 
-export function Search({
-  workspace,
-}: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-}) {
+export function Search({workspaceURL}: {workspaceURL: string}) {
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [files, setFiles] = useState<any[]>([]);
@@ -35,9 +29,9 @@ export function Search({
   useEffect(() => {
     setOpen(search ? true : false);
     if (search) {
-      findDmsFiles({search, workspace}).then(setFiles);
+      findDmsFiles({search, workspaceURL}).then(setFiles);
     }
-  }, [search, workspace]);
+  }, [search, workspaceURL]);
 
   return (
     <div className="w-full relative">
