@@ -12,6 +12,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
+    taint: true,
     serverActions: {
       bodySizeLimit: '5mb',
     },

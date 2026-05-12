@@ -1,3 +1,4 @@
+import {experimental_taintUniqueValue} from 'react';
 import {DEFAULT_CURRENCY_CODE} from '@/constants';
 import {encodeFilter as encode} from '@/utils/url';
 import {formatAmountForPaybox, hasKeys, join} from './utils';
@@ -47,7 +48,17 @@ export function getPaymentURL({
     PBX_TIME: new Date().toISOString(),
   };
 
-  const hmac = createHMAC(join(payload, false), process.env.PBX_SECRET!);
+  const secret = process.env.PBX_SECRET!;
+
+  if (secret) {
+    experimental_taintUniqueValue(
+      'Paybox secret key is a server secret. Do not pass to Client Components.',
+      process,
+      secret,
+    );
+  }
+
+  const hmac = createHMAC(join(payload, false), secret);
 
   if (!hmac) {
     throw new Error('Error processing request');

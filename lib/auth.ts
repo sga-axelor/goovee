@@ -1,3 +1,4 @@
+import {experimental_taintUniqueValue} from 'react';
 import {z} from 'zod';
 import {findGooveeUserByEmail} from '@/orm/partner';
 import {manager} from '@/tenant';
@@ -221,6 +222,16 @@ const options = {
   plugins: [credentials, ...(showKeycloakOauth && keycloak ? [keycloak] : [])],
   socialProviders: {google},
 } satisfies BetterAuthOptions;
+
+const betterAuthSecret = process.env.BETTER_AUTH_SECRET;
+
+if (betterAuthSecret) {
+  experimental_taintUniqueValue(
+    'Better Auth Secret is an authentication secret. Do not pass to Client Components.',
+    process,
+    betterAuthSecret,
+  );
+}
 
 export const auth = betterAuth({
   ...options,

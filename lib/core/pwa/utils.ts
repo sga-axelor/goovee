@@ -1,3 +1,4 @@
+import {experimental_taintUniqueValue} from 'react';
 import type {ActionResponse} from '@/types/action';
 import webpush, {WebPushError} from 'web-push';
 import type {Client} from '@/goovee/.generated/client';
@@ -14,6 +15,12 @@ async function sendNotification(
   if (!publicKey || !privateKey || !subject) {
     return {error: true, message: 'Missing VAPID keys'};
   }
+
+  experimental_taintUniqueValue(
+    'VAPID private key is a web push secret. Do not pass to Client Components.',
+    process,
+    privateKey,
+  );
 
   if (!subject.startsWith('mailto:') && !subject.startsWith('https://')) {
     return {

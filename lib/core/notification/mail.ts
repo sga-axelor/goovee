@@ -1,3 +1,4 @@
+import {experimental_taintUniqueValue} from 'react';
 import nodemailer, {type Transporter} from 'nodemailer';
 import type SMTPPool from 'nodemailer/lib/smtp-pool';
 import type Mail from 'nodemailer/lib/mailer';
@@ -25,14 +26,25 @@ export class MailNotificationService implements NotificationService {
       return null;
     }
 
+    const mailUser = process.env.MAIL_USER;
+    const mailPassword = process.env.MAIL_PASSWORD;
+
+    if (mailPassword) {
+      experimental_taintUniqueValue(
+        'Mail password is a server secret. Do not pass to Client Components.',
+        process,
+        mailPassword,
+      );
+    }
+
     const config = {
       pool: true,
       host: process.env.MAIL_HOST,
       port: Number(process.env.MAIL_PORT),
       secure: process.env.MAIL_SECURE === 'true',
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASSWORD,
+        user: mailUser,
+        pass: mailPassword,
       },
     } satisfies SMTPPool.Options;
 

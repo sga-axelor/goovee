@@ -1,3 +1,4 @@
+import {experimental_taintUniqueValue} from 'react';
 import crypto from 'crypto';
 import fs from 'fs';
 import https from 'https';
@@ -89,6 +90,12 @@ export async function getPispAccessToken(): Promise<string> {
     });
     throw new Error('HUB PISP credentials are not configured');
   }
+
+  experimental_taintUniqueValue(
+    'Hub PISP client secret is a server secret. Do not pass to Client Components.',
+    process,
+    clientSecret,
+  );
 
   const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString(
     'base64',

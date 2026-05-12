@@ -1,3 +1,4 @@
+import {experimental_taintUniqueValue} from 'react';
 import {getEnv} from '@/environment';
 import {type TenantConfig} from '@/tenant';
 
@@ -13,7 +14,18 @@ export function getHost(): string {
 }
 
 export function getAdminToken(): string {
-  return getEnv()?.MATTERMOST_TOKEN || process.env.MATTERMOST_TOKEN || '';
+  const token =
+    getEnv()?.MATTERMOST_TOKEN || process.env.MATTERMOST_TOKEN || '';
+
+  if (token) {
+    experimental_taintUniqueValue(
+      'Mattermost token is a server secret. Do not pass to Client Components.',
+      process,
+      token,
+    );
+  }
+
+  return token;
 }
 
 export function isCreateMattermostUsersEnabled(): boolean {

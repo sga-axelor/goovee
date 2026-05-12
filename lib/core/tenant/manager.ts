@@ -1,5 +1,6 @@
 'server only';
 
+import {experimental_taintUniqueValue} from 'react';
 import {DEFAULT_TENANT} from '@/constants';
 import {createClient} from '@/goovee/.generated/client';
 import {LRUCache} from './lru';
@@ -16,6 +17,22 @@ function getAOSAuth() {
   if (!apiKey && (!username || !password)) {
     throw new Error(
       'AOS auth not configured: set AOS_API_KEY or BASIC_AUTH_USERNAME/BASIC_AUTH_PASSWORD',
+    );
+  }
+
+  if (apiKey) {
+    experimental_taintUniqueValue(
+      'AOS API key is a server secret. Do not pass to Client Components.',
+      process,
+      apiKey,
+    );
+  }
+
+  if (password) {
+    experimental_taintUniqueValue(
+      'AOS password is a server secret. Do not pass to Client Components.',
+      process,
+      password,
     );
   }
 
@@ -64,20 +81,41 @@ export class SingleTenantManager implements TenantManager {
       return this.tenant;
     }
 
+    const dbUrl = process.env.DATABASE_URL;
+    const aosUrl = process.env.AOS_URL;
+    const webhookSecret = process.env.NOTIFICATION_WEBHOOK_SECRET;
+    const auth = getAOSAuth();
+
     const config: Tenant['config'] = {
       db: {
-        url: process.env.DATABASE_URL!,
+        url: dbUrl!,
       },
       aos: {
-        url: process.env.AOS_URL!,
+        url: aosUrl!,
         storage: getStoragePath(),
-        auth: getAOSAuth(),
-        webhookSecret: process.env.NOTIFICATION_WEBHOOK_SECRET,
+        auth,
+        webhookSecret,
       },
     };
 
+    if (dbUrl) {
+      experimental_taintUniqueValue(
+        'Database URL is a server secret. Do not pass to Client Components.',
+        process,
+        dbUrl,
+      );
+    }
+
+    if (webhookSecret) {
+      experimental_taintUniqueValue(
+        'Webhook secret is a server secret. Do not pass to Client Components.',
+        process,
+        webhookSecret,
+      );
+    }
+
     const client = createClient({
-      url: process.env.DATABASE_URL!,
+      url: dbUrl!,
       features: {
         normalization: {
           lowerCase: true,
@@ -143,6 +181,22 @@ export class MultiTenantManager implements TenantManager {
       if (!config) {
         throw new Error('Error getting tenant');
       } else {
+        if (config.db.url) {
+          experimental_taintUniqueValue(
+            'Database URL is a server secret. Do not pass to Client Components.',
+            process,
+            config.db.url,
+          );
+        }
+
+        if (config.aos.webhookSecret) {
+          experimental_taintUniqueValue(
+            'Webhook secret is a server secret. Do not pass to Client Components.',
+            process,
+            config.aos.webhookSecret,
+          );
+        }
+
         const client = createClient({
           url: config?.db?.url,
           features: {
