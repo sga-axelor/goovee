@@ -21,6 +21,7 @@ import type {
 import {PaymentOption} from '@/types';
 import type {HubPispLocalInstrument} from '@/lib/core/payment/hubpisp/constants';
 import {manager} from '@/tenant';
+import {HubPispApiError} from '@/lib/core/payment/hubpisp/utils';
 
 export async function POST(
   _request: Request,
@@ -29,9 +30,20 @@ export async function POST(
   const {resourceId} = await params;
 
   let linkData: PaymentLinkStatusResult;
+
   try {
     linkData = await fetchPaymentLinkStatus(resourceId);
   } catch (err) {
+    if (err instanceof HubPispApiError && err.status === 400) {
+      console.warn('[HUBPISP][WEBHOOK] Payment link not yet available', {
+        resourceId,
+        body: err.body,
+      });
+
+      // Do NOT fail webhook
+      return new NextResponse('OK', {status: 200});
+    }
+
     console.error('[HUBPISP][WEBHOOK] Failed to fetch payment link', {
       resourceId,
       error: (err as Error).message,
@@ -133,6 +145,30 @@ export async function POST(
   try {
     paymentRequest = await fetchPaymentRequestStatus(paymentRequestResourceId);
   } catch (err) {
+    if (err instanceof HubPispApiError && err.status === 400) {
+      /**
+       * HubPisp can temporarily return 400 before the payment request
+       * becomes available. Start background polling to retry later,
+       * and return 200 so the webhook is acknowledged successfully.
+       */
+      console.warn(
+        '[HUBPISP][WEBHOOK] Payment request not yet available, starting poll',
+        {
+          paymentRequestResourceId,
+          body: err.body,
+        },
+      );
+
+      pollPaymentRequestStatus({
+        paymentRequestResourceId,
+        contextId: paymentContext.id,
+        tenantId,
+        localInstrument,
+      });
+
+      return new NextResponse('OK', {status: 200});
+    }
+
     console.error('[HUBPISP][WEBHOOK] Failed to fetch payment request status', {
       paymentRequestResourceId,
       error: (err as Error).message,

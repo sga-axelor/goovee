@@ -4,7 +4,12 @@ import {
   buildPispHeaders,
   pispFetch,
 } from './crypto';
-import {generateRequestId, getDateHeader, buildRequestTarget} from './utils';
+import {
+  generateRequestId,
+  getDateHeader,
+  buildRequestTarget,
+  HubPispApiError,
+} from './utils';
 import {PAYMENT_REQUEST_PATH} from './constants';
 import type {PaymentRequestStatusResult} from './types';
 
@@ -55,8 +60,11 @@ export async function fetchPaymentRequestStatus(
       status: response.status,
       body: errorBody,
     });
-    throw new Error(
-      `HUB PISP fetch payment request status failed (${response.status}): ${errorBody}`,
+
+    throw new HubPispApiError(
+      'HUB PISP fetch payment request status failed',
+      response.status,
+      errorBody,
     );
   }
 
