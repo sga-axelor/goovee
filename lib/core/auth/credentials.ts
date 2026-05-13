@@ -606,17 +606,6 @@ const credentials = {
         }
         const {client, config} = tenant;
 
-        const user = await findGooveeUserByEmail(email, client);
-        if (!user) {
-          throw new APIError('NOT_FOUND', {
-            ...ERROR_CODES.USER_NOT_FOUND,
-            message: await getTranslation(
-              {tenant: tenantId},
-              'You are not registered',
-            ),
-          });
-        }
-
         const result = await findOne({
           scope: Scope.ResetPassword,
           entity: email,
@@ -635,6 +624,17 @@ const credentials = {
           throw new APIError('UNAUTHORIZED', {
             ...ERROR_CODES.INVALID_OTP,
             message: await getTranslation({tenant: tenantId}, 'Invalid OTP'),
+          });
+        }
+
+        const user = await findGooveeUserByEmail(email, client);
+        if (!user) {
+          throw new APIError('NOT_FOUND', {
+            ...ERROR_CODES.USER_NOT_FOUND,
+            message: await getTranslation(
+              {tenant: tenantId},
+              'You are not registered',
+            ),
           });
         }
 
