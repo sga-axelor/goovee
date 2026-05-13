@@ -1,6 +1,0 @@
-{
-  "title": "Handle transient 400 errors on HUB PISP webhook to prevent false failures",
-  "type": "fix",
-  "description": "The HUB PISP webhook now returns 200 OK on transient 400 responses from BPCE PS instead of failing.",
-  "scope": ["core"]
-}
