@@ -1,5 +1,6 @@
 'use server';
 
+import {z} from 'zod';
 import fs from 'fs';
 import {headers} from 'next/headers';
 import path from 'path';
@@ -45,6 +46,20 @@ import {ContentType} from '@/subapps/forum/common/types/forum';
 import {getArchivedFilter} from '@/subapps/forum/common/utils';
 import {notifyUser} from '@/pwa/utils';
 import {NotificationTag} from '@/pwa/tags';
+import {
+  PinGroupSchema,
+  ExitGroupSchema,
+  JoinGroupSchema,
+  AddGroupNotificationSchema,
+  GetSubscribersByGroupSchema,
+  FindMediaSchema,
+  type PinGroupInput,
+  type ExitGroupInput,
+  type JoinGroupInput,
+  type AddGroupNotificationInput,
+  type GetSubscribersByGroupInput,
+  type FindMediaInput,
+} from '@/subapps/forum/common/validators';
 
 interface FileMeta {
   fileName: string;
@@ -94,13 +109,18 @@ export async function pinGroup({
   groupID,
   workspaceURL,
   workspaceURI,
-}: {
-  isPin: boolean;
-  id: string;
-  groupID: string;
-  workspaceURL: string;
-  workspaceURI: string;
-}) {
+}: PinGroupInput) {
+  const parsed = PinGroupSchema.safeParse({
+    isPin,
+    id,
+    groupID,
+    workspaceURL,
+    workspaceURI,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -189,12 +209,17 @@ export async function exitGroup({
   groupID,
   workspaceURL,
   workspaceURI,
-}: {
-  id: string;
-  groupID: string;
-  workspaceURL: string;
-  workspaceURI: string;
-}) {
+}: ExitGroupInput) {
+  const parsed = ExitGroupSchema.safeParse({
+    id,
+    groupID,
+    workspaceURL,
+    workspaceURI,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -274,12 +299,17 @@ export async function joinGroup({
   userId,
   workspaceURL,
   workspaceURI,
-}: {
-  groupID: any;
-  userId: string;
-  workspaceURL: string;
-  workspaceURI: string;
-}) {
+}: JoinGroupInput) {
+  const parsed = JoinGroupSchema.safeParse({
+    groupID,
+    userId,
+    workspaceURL,
+    workspaceURI,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -370,13 +400,18 @@ export async function addGroupNotification({
   notificationType,
   workspaceURL,
   workspaceURI,
-}: {
-  id: string;
-  groupID: string;
-  notificationType: string;
-  workspaceURL: string;
-  workspaceURI: string;
-}) {
+}: AddGroupNotificationInput) {
+  const parsed = AddGroupNotificationSchema.safeParse({
+    id,
+    groupID,
+    notificationType,
+    workspaceURL,
+    workspaceURI,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -642,11 +677,11 @@ export async function findMedia({
   id,
   workspaceURL,
   archived = false,
-}: {
-  id: ID;
-  workspaceURL: string;
-  archived?: boolean;
-}) {
+}: FindMediaInput) {
+  const parsed = FindMediaSchema.safeParse({id, workspaceURL, archived});
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -1170,16 +1205,10 @@ export const fetchComments: FetchComments = async props => {
 export const getSubscribersByGroup = async ({
   groupID,
   workspaceURL,
-}: {
-  groupID: string;
-  workspaceURL: string;
-}) => {
-  if (!groupID) {
-    return {error: true, message: await t('Group id is missing')};
-  }
-
-  if (!workspaceURL) {
-    return {error: true, message: await t('Workspace not provided!')};
+}: GetSubscribersByGroupInput) => {
+  const parsed = GetSubscribersByGroupSchema.safeParse({groupID, workspaceURL});
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
 
   const tenantId = (await headers()).get(TENANT_HEADER);
