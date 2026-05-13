@@ -9,6 +9,7 @@ import {
   getDateHeader,
   buildRequestTarget,
   buildParisISOString,
+  HubPispApiError,
 } from './utils';
 import {
   HUBPISP_DEFAULT_EXPIRE_IN,
@@ -180,8 +181,10 @@ export async function fetchPaymentLinkStatus(
       status: response.status,
       body: errorBody,
     });
-    throw new Error(
-      `HUB PISP fetch payment link status failed (${response.status}): ${errorBody}`,
+    throw new HubPispApiError(
+      `HUB PISP fetch payment link status failed`,
+      response.status,
+      errorBody,
     );
   }
 

@@ -83,3 +83,16 @@ export function buildRequestTarget(
 ): string {
   return `${method} ${path}`;
 }
+
+export class HubPispApiError extends Error {
+  status: number;
+  body?: string;
+
+  constructor(message: string, status: number, body?: string) {
+    super(message);
+
+    this.name = 'HubPispApiError';
+    this.status = status;
+    this.body = body;
+  }
+}

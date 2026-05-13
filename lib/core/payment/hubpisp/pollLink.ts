@@ -15,6 +15,9 @@ import {manager} from '@/tenant';
 
 const POLL_LINK_INTERVAL = 30_000; // 30s
 
+// Tracks active payment link polls to prevent duplicate sessions.
+const activePolls = new Set<string>();
+
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -42,6 +45,16 @@ export async function pollPaymentLinkStatus({
   localInstrument?: HubPispLocalInstrument;
   expireIn: number;
 }): Promise<void> {
+  if (activePolls.has(resourceId)) {
+    console.log('[HUBPISP][POLL_LINK] Poll already active, skipping', {
+      resourceId,
+      contextId,
+    });
+    return;
+  }
+
+  activePolls.add(resourceId);
+
   const deadline = Date.now() + expireIn * 1000;
 
   console.log('[HUBPISP][POLL_LINK] Starting fallback payment link poll', {
@@ -50,17 +63,122 @@ export async function pollPaymentLinkStatus({
     expireIn,
   });
 
-  while (Date.now() < deadline) {
-    await sleep(POLL_LINK_INTERVAL);
+  try {
+    while (Date.now() < deadline) {
+      await sleep(POLL_LINK_INTERVAL);
 
-    const tenant = await manager.getTenant(tenantId);
-    if (!tenant) {
-      console.error('[HUBPISP][POLL_LINK] Tenant not found, stopping poll', {
-        tenantId,
-        contextId,
+      const tenant = await manager.getTenant(tenantId);
+      if (!tenant) {
+        console.error('[HUBPISP][POLL_LINK] Tenant not found, stopping poll', {
+          tenantId,
+          contextId,
+        });
+        return;
+      }
+      const {client} = tenant;
+
+      const paymentContext = await findPaymentContext({
+        id: contextId,
+        client,
+        mode: PaymentOption.hubpisp,
+        ignoreExpiration: true,
       });
+
+      if (!paymentContext) {
+        console.warn(
+          '[HUBPISP][POLL_LINK] Payment context not found, stopping poll',
+          {contextId},
+        );
+        return;
+      }
+
+      // Webhook already handled it — nothing left to do
+      if (paymentContext.status !== CONTEXT_STATUS.pending) {
+        console.log(
+          '[HUBPISP][POLL_LINK] Context no longer pending, stopping poll',
+          {contextId, status: paymentContext.status},
+        );
+        return;
+      }
+
+      // Webhook stored paymentRequestResourceId — payment request poll is running
+      if (paymentContext.data?.paymentRequestResourceId) {
+        console.log(
+          '[HUBPISP][POLL_LINK] paymentRequestResourceId already set, stopping link poll',
+          {contextId},
+        );
+        return;
+      }
+
+      let linkStatusResult: Awaited<ReturnType<typeof getPaymentLinkStatus>>;
+      try {
+        linkStatusResult = await getPaymentLinkStatus(resourceId);
+      } catch (err) {
+        console.error(
+          '[HUBPISP][POLL_LINK] Failed to fetch payment link status',
+          {resourceId, error: (err as Error).message},
+        );
+        continue;
+      }
+
+      if (linkStatusResult.consentStatus === HUBPISP_CONSENT_STATUS.EXPIRED) {
+        console.warn('[HUBPISP][POLL_LINK] Payment link expired', {resourceId});
+        await markPaymentAsExpired({
+          contextId: paymentContext.id,
+          version: paymentContext.version,
+          client,
+        });
+        return;
+      }
+
+      if (linkStatusResult.consentStatus !== HUBPISP_CONSENT_STATUS.PROCESSED) {
+        console.log('[HUBPISP][POLL_LINK] Link not yet processed, continuing', {
+          contextId,
+          consentStatus: linkStatusResult.consentStatus,
+        });
+        continue;
+      }
+
+      const paymentRequestResourceId =
+        linkStatusResult.data.paymentRequestResourceId;
+
+      if (!paymentRequestResourceId) {
+        console.warn(
+          '[HUBPISP][POLL_LINK] Link PROCESSED but missing paymentRequestResourceId',
+          {contextId},
+        );
+        continue;
+      }
+
+      console.log(
+        '[HUBPISP][POLL_LINK] Link PROCESSED, handing off to payment request poll',
+        {contextId, paymentRequestResourceId},
+      );
+
+      await updatePaymentContextData({
+        id: paymentContext.id,
+        version: paymentContext.version,
+        client,
+        context: {...paymentContext.data, paymentRequestResourceId},
+      });
+
+      pollPaymentRequestStatus({
+        paymentRequestResourceId,
+        contextId: paymentContext.id,
+        tenantId,
+        localInstrument,
+      });
+
       return;
     }
+
+    console.warn(
+      '[HUBPISP][POLL_LINK] Deadline reached without PROCESSED state, marking expired',
+      {contextId, resourceId},
+    );
+
+    const tenant = await manager.getTenant(tenantId);
+    if (!tenant) return;
     const {client} = tenant;
 
     const paymentContext = await findPaymentContext({
@@ -69,115 +187,14 @@ export async function pollPaymentLinkStatus({
       mode: PaymentOption.hubpisp,
       ignoreExpiration: true,
     });
-
-    if (!paymentContext) {
-      console.warn(
-        '[HUBPISP][POLL_LINK] Payment context not found, stopping poll',
-        {contextId},
-      );
-      return;
-    }
-
-    // Webhook already handled it — nothing left to do
-    if (paymentContext.status !== CONTEXT_STATUS.pending) {
-      console.log(
-        '[HUBPISP][POLL_LINK] Context no longer pending, stopping poll',
-        {contextId, status: paymentContext.status},
-      );
-      return;
-    }
-
-    // Webhook stored paymentRequestResourceId — payment request poll is running
-    if (paymentContext.data?.paymentRequestResourceId) {
-      console.log(
-        '[HUBPISP][POLL_LINK] paymentRequestResourceId already set, stopping link poll',
-        {contextId},
-      );
-      return;
-    }
-
-    let linkStatusResult: Awaited<ReturnType<typeof getPaymentLinkStatus>>;
-    try {
-      linkStatusResult = await getPaymentLinkStatus(resourceId);
-    } catch (err) {
-      console.error(
-        '[HUBPISP][POLL_LINK] Failed to fetch payment link status',
-        {resourceId, error: (err as Error).message},
-      );
-      continue;
-    }
-
-    if (linkStatusResult.consentStatus === HUBPISP_CONSENT_STATUS.EXPIRED) {
-      console.warn('[HUBPISP][POLL_LINK] Payment link expired', {resourceId});
+    if (paymentContext?.status === CONTEXT_STATUS.pending) {
       await markPaymentAsExpired({
         contextId: paymentContext.id,
         version: paymentContext.version,
         client,
       });
-      return;
     }
-
-    if (linkStatusResult.consentStatus !== HUBPISP_CONSENT_STATUS.PROCESSED) {
-      console.log('[HUBPISP][POLL_LINK] Link not yet processed, continuing', {
-        contextId,
-        consentStatus: linkStatusResult.consentStatus,
-      });
-      continue;
-    }
-
-    const paymentRequestResourceId =
-      linkStatusResult.data.paymentRequestResourceId;
-
-    if (!paymentRequestResourceId) {
-      console.warn(
-        '[HUBPISP][POLL_LINK] Link PROCESSED but missing paymentRequestResourceId',
-        {contextId},
-      );
-      continue;
-    }
-
-    console.log(
-      '[HUBPISP][POLL_LINK] Link PROCESSED, handing off to payment request poll',
-      {contextId, paymentRequestResourceId},
-    );
-
-    await updatePaymentContextData({
-      id: paymentContext.id,
-      version: paymentContext.version,
-      client,
-      context: {...paymentContext.data, paymentRequestResourceId},
-    });
-
-    pollPaymentRequestStatus({
-      paymentRequestResourceId,
-      contextId: paymentContext.id,
-      tenantId,
-      localInstrument,
-    });
-
-    return;
-  }
-
-  console.warn(
-    '[HUBPISP][POLL_LINK] Deadline reached without PROCESSED state, marking expired',
-    {contextId, resourceId},
-  );
-
-  const tenant = await manager.getTenant(tenantId);
-  if (!tenant) return;
-  const {client} = tenant;
-
-  const paymentContext = await findPaymentContext({
-    id: contextId,
-    client,
-    mode: PaymentOption.hubpisp,
-    ignoreExpiration: true,
-  });
-  if (paymentContext?.status === CONTEXT_STATUS.pending) {
-    await markPaymentAsExpired({
-      contextId: paymentContext.id,
-      version: paymentContext.version,
-      client,
-    });
+  } finally {
+    activePolls.delete(resourceId);
   }
 }
