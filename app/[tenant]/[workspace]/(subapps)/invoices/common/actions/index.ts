@@ -1,5 +1,6 @@
 'use server';
 
+import {z} from 'zod';
 import {headers} from 'next/headers';
 import {revalidatePath} from 'next/cache';
 
@@ -42,7 +43,6 @@ import {
   HUBPISP_LOCAL_INSTRUMENT,
   HUBPISP_REDIRECT_STATUS,
   HUBPISP_TRANSFER_TYPE,
-  HubPispLocalInstrument,
 } from '@/lib/core/payment/hubpisp/constants';
 import {
   BANK_TRANSFER_STATUS,
@@ -52,15 +52,28 @@ import {scale} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
 import {
+  InvoicePaymentSchema,
+  InvoicePaymentWithUriSchema,
+  InitiatePispPaymentSchema,
+  PaypalCaptureOrderSchema,
+  ValidateStripePaymentSchema,
+  CancelStripeBankTransferSchema,
+  ValidatePayboxPaymentSchema,
+  type InvoicePaymentInput,
+  type InvoicePaymentWithUriInput,
+  type InitiatePispPaymentInput,
+  type PaypalCaptureOrderInput,
+  type ValidateStripePaymentInput,
+  type CancelStripeBankTransferInput,
+  type ValidatePayboxPaymentInput,
+} from '@/subapps/invoices/common/validators';
+import {
   INVOICE,
   INVOICE_PAYMENT_OPTIONS,
 } from '@/subapps/invoices/common/constants/invoices';
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 import {validatePaymentData} from '@/subapps/invoices/common/utils/validations';
 import {updateInvoice} from '@/subapps/invoices/common/service';
-import {type ActionResponse} from '@/types/action';
-import {type Invoice} from '@/subapps/invoices/common/types/invoices';
-import {type BankTransferIntentResult} from '@/ui/components/payment/types';
 
 const normalizeAmount = (
   value: string | number,
@@ -72,14 +85,16 @@ export async function paypalCreateOrder({
   amount,
   workspaceURL,
   token,
-}: {
-  invoice: {
-    id: string;
-  };
-  amount: string;
-  workspaceURL: string;
-  token?: string;
-}) {
+}: InvoicePaymentInput) {
+  const parsed = InvoicePaymentSchema.safeParse({
+    invoice,
+    amount,
+    workspaceURL,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Tenant is missing')};
@@ -148,20 +163,14 @@ export async function paypalCaptureOrder({
   orderID,
   workspaceURL,
   token,
-}: {
-  orderID: string;
-  workspaceURL: string;
-  token?: string;
-}): ActionResponse<Invoice> {
-  if (!orderID) {
-    return {error: true, message: await t('Order ID is missing')};
-  }
-
-  if (!workspaceURL) {
-    return {
-      error: true,
-      message: await t('Workspace not provided'),
-    };
+}: PaypalCaptureOrderInput) {
+  const parsed = PaypalCaptureOrderSchema.safeParse({
+    orderID,
+    workspaceURL,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
 
   const tenantId = (await headers()).get(TENANT_HEADER);
@@ -346,12 +355,17 @@ export async function createStripeCheckoutSession({
   amount,
   workspaceURL,
   token,
-}: {
-  invoice: any;
-  amount: string;
-  workspaceURL: string;
-  token?: string;
-}) {
+}: InvoicePaymentInput) {
+  const parsed = InvoicePaymentSchema.safeParse({
+    invoice,
+    amount,
+    workspaceURL,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+
   const tenantId = (await headers()).get(TENANT_HEADER);
   if (!tenantId) {
     return {error: true, message: await t('Tenant is missing')};
@@ -441,18 +455,15 @@ export async function validateStripePayment({
   workspaceURL,
   workspaceURI,
   token,
-}: {
-  stripeSessionId: string;
-  workspaceURL: string;
-  workspaceURI: string;
-  token?: string;
-}): ActionResponse<Invoice> {
-  if (!stripeSessionId) {
-    return {error: true, message: await t('Missing stripe session id!')};
-  }
-
-  if (!workspaceURL) {
-    return {error: true, message: await t('Workspace not provided!')};
+}: ValidateStripePaymentInput) {
+  const parsed = ValidateStripePaymentSchema.safeParse({
+    stripeSessionId,
+    workspaceURL,
+    workspaceURI,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
 
   const tenantId = (await headers()).get(TENANT_HEADER);
@@ -663,12 +674,17 @@ export async function createStripeBankTransferIntent({
   amount,
   workspaceURL,
   token,
-}: {
-  invoice: any;
-  amount: string;
-  workspaceURL: string;
-  token?: string;
-}): ActionResponse<BankTransferIntentResult> {
+}: InvoicePaymentInput) {
+  const parsed = InvoicePaymentSchema.safeParse({
+    invoice,
+    amount,
+    workspaceURL,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
+  }
+
   const $headers = await headers();
 
   const tenantId = $headers.get(TENANT_HEADER);
@@ -773,24 +789,18 @@ export async function cancelStripeBankTransferPaymentIntent({
   workspaceURL,
   workspaceURI,
   token,
-}: {
-  id: string;
-  contextId: string;
-  workspaceURL: string;
-  workspaceURI: string;
-  token?: string;
-}): ActionResponse<null> {
-  if (!id) {
-    return {error: true, message: await t('Missing stripe payment id!')};
+}: CancelStripeBankTransferInput) {
+  const parsed = CancelStripeBankTransferSchema.safeParse({
+    id,
+    contextId,
+    workspaceURL,
+    workspaceURI,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
 
-  if (!contextId) {
-    return {error: true, message: await t('Missing payment context id!')};
-  }
-
-  if (!workspaceURL) {
-    return {error: true, message: await t('Workspace not provided!')};
-  }
   const $headers = await headers();
   const tenantId = $headers.get(TENANT_HEADER);
 
@@ -936,18 +946,16 @@ export async function payboxCreateOrder({
   workspaceURL,
   uri,
   token,
-}: {
-  invoice: any;
-  amount: string;
-  workspaceURL: string;
-  uri: string;
-  token?: string;
-}) {
-  if (!uri) {
-    return {
-      error: true,
-      message: await t('Payment gateway URI is missing'),
-    };
+}: InvoicePaymentWithUriInput) {
+  const parsed = InvoicePaymentWithUriSchema.safeParse({
+    invoice,
+    amount,
+    workspaceURL,
+    uri,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
 
   const tenantId = (await headers()).get(TENANT_HEADER);
@@ -1025,18 +1033,15 @@ export async function validatePayboxPayment({
   workspaceURL,
   workspaceURI,
   token,
-}: {
-  params: any;
-  workspaceURL: string;
-  workspaceURI: string;
-  token?: string;
-}): ActionResponse<Invoice> {
-  if (!params) {
-    return {error: true, message: await t('Bad request')};
-  }
-
-  if (!workspaceURL) {
-    return {error: true, message: await t('Workspace not provided!')};
+}: ValidatePayboxPaymentInput) {
+  const parsed = ValidatePayboxPaymentSchema.safeParse({
+    params,
+    workspaceURL,
+    workspaceURI,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
 
   const tenantId = (await headers()).get(TENANT_HEADER);
@@ -1213,19 +1218,18 @@ export async function up2payCreateOrder({
   workspaceURL,
   uri,
   token,
-}: {
-  invoice: any;
-  amount: string;
-  workspaceURL: string;
-  uri: string;
-  token?: string;
-}) {
-  if (!uri) {
-    return {
-      error: true,
-      message: await t('Payment gateway URI is missing'),
-    };
+}: InvoicePaymentWithUriInput) {
+  const parsed = InvoicePaymentWithUriSchema.safeParse({
+    invoice,
+    amount,
+    workspaceURL,
+    uri,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
+
   const $headers = await headers();
 
   const tenantId = $headers.get(TENANT_HEADER);
@@ -1331,33 +1335,17 @@ export async function initiatePispPayment({
   uri,
   localInstrument,
   token,
-}: {
-  invoice: any;
-  amount: string;
-  workspaceURL: string;
-  uri: string;
-  localInstrument?: HubPispLocalInstrument;
-  token?: string;
-}) {
-  if (!uri) {
-    return {
-      error: true,
-      message: await t('Payment gateway URI is missing'),
-    };
-  }
-
-  if (!invoice?.id) {
-    return {
-      error: true,
-      message: await t('Invoice is missing'),
-    };
-  }
-
-  if (!amount) {
-    return {
-      error: true,
-      message: await t('Amount is missing'),
-    };
+}: InitiatePispPaymentInput) {
+  const parsed = InitiatePispPaymentSchema.safeParse({
+    invoice,
+    amount,
+    workspaceURL,
+    uri,
+    localInstrument,
+    token,
+  });
+  if (!parsed.success) {
+    return {error: true, message: z.prettifyError(parsed.error)};
   }
 
   const $headers = await headers();

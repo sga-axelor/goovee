@@ -11,6 +11,7 @@ import type {ActionResponse} from '@/types/action';
 import type {Client} from '@/goovee/.generated/client';
 
 // ---- LOCAL IMPORTS ---- //
+import type {InvoicePaymentInput} from '@/subapps/invoices/common/validators';
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 import {
   INVOICE,
@@ -24,13 +25,7 @@ export async function validatePaymentData({
   amount,
   client,
   token,
-}: {
-  workspaceURL: string;
-  invoice: {id: string};
-  amount: string;
-  client: Client;
-  token?: string;
-}): Promise<
+}: InvoicePaymentInput & {client: Client}): Promise<
   ActionResponse<{
     workspace: PortalWorkspace | Cloned<PortalWorkspace>;
     user: User | undefined;
@@ -39,18 +34,6 @@ export async function validatePaymentData({
     isPartialPayment: boolean;
   }>
 > {
-  if (!workspaceURL) {
-    return {error: true, message: await t('Workspace not provided')};
-  }
-
-  if (!token && !invoice?.id) {
-    return {error: true, message: await t('Invoice is missing')};
-  }
-
-  if (!amount) {
-    return {error: true, message: await t('Amount is missing')};
-  }
-
   let user: User | undefined;
   if (!token) {
     const session = await getSession();
