@@ -405,7 +405,7 @@ async function ResourcesCard({
 }) {
   const files = await fetchLatestFiles({
     take: 5,
-    workspace,
+    workspaceURL: workspace.url,
     client,
     user,
   });
