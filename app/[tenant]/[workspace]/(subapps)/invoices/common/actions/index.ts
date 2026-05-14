@@ -74,6 +74,8 @@ import {
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 import {validatePaymentData} from '@/subapps/invoices/common/utils/validations';
 import {updateInvoice} from '@/subapps/invoices/common/service';
+import {ActionResponse} from '@/types/action';
+import {Invoice} from '../types/invoices';
 
 const normalizeAmount = (
   value: string | number,
@@ -163,7 +165,7 @@ export async function paypalCaptureOrder({
   orderID,
   workspaceURL,
   token,
-}: PaypalCaptureOrderInput) {
+}: PaypalCaptureOrderInput): ActionResponse<Invoice> {
   const parsed = PaypalCaptureOrderSchema.safeParse({
     orderID,
     workspaceURL,
