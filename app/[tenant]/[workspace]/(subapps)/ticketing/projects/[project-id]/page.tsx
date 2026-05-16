@@ -50,7 +50,7 @@ import {
   getResolvedTicketCount,
 } from '../../common/orm/tickets';
 import type {SearchParams} from '../../common/types/search-param';
-import {Swipe} from '../../common/ui/components/swipe';
+import {Swipe} from '@/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import {ensureAuth} from '../../common/utils/auth-helper';
 import {getOrderBy, getSkip} from '../../common/utils/search-param';
@@ -180,7 +180,7 @@ export default async function Page(props0: {
         projectId={projectId}
         inputClassName="h-[39px] placeholder:!text-sm text-sm"
       />
-      <Swipe items={items} />
+      <Swipe items={items} className="!w-[220px] !h-[120px] cursor-pointer" />
       <div className="flex items-center justify-between !mt-0">
         <h2 className="font-semibold text-xl">{await t('Latest tickets')}</h2>
         <Button variant="success" className="flex items-center" asChild>
