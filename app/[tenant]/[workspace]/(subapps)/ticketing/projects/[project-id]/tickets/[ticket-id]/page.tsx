@@ -55,7 +55,7 @@ import {
   RelatedTicketList,
 } from '../../../../common/ui/components/ticket-list';
 import {ensureAuth} from '../../../../common/utils/auth-helper';
-import {EncodedFilter} from '../../../../common/utils/validators';
+import type {EncodedTicketFilter} from '../../../../common/utils/validators';
 import {
   ChildTicketsHeader,
   ParentTicketsHeader,
@@ -105,7 +105,7 @@ export default async function Page(props: {
 
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
-  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}&title=${encodeURIComponent(ALL_TICKETS_TITLE)}`;
+  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedTicketFilter>({status})}&title=${encodeURIComponent(ALL_TICKETS_TITLE)}`;
 
   return (
     <div className="container mt-5 mb-20">

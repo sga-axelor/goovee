@@ -36,7 +36,12 @@ import {FaChevronRight} from 'react-icons/fa';
 import {MdAdd} from 'react-icons/md';
 
 // ---- LOCAL IMPORTS ---- //
-import {DEFAULT_SORT, FIELDS, sortKeyPathMap} from '../../../common/constants';
+import {
+  DEFAULT_SORT,
+  FIELDS,
+  FILTER_FIELDS,
+  sortKeyPathMap,
+} from '../../../common/constants';
 import {
   findClientPartner,
   findCompany,
@@ -48,8 +53,8 @@ import {
 } from '../../../common/orm/projects';
 import {findTickets} from '../../../common/orm/tickets';
 import type {SearchParams} from '../../../common/types/search-param';
-import {Filter} from '../../../common/ui/components/filter';
 import {TicketList} from '../../../common/ui/components/ticket-list';
+import {ClientFilter} from './client-filter';
 import {getPages} from '../../../common/utils';
 import {ensureAuth} from '../../../common/utils/auth-helper';
 import {
@@ -112,14 +117,7 @@ export default async function Page(props: {
     workspace.config.ticketingFieldSet?.map(f => f.name),
   );
 
-  const hasFilter = [
-    FIELDS.PRIORITY,
-    FIELDS.STATUS,
-    FIELDS.UPDATED_ON,
-    FIELDS.CREATED_BY,
-    FIELDS.MANAGED_BY,
-    FIELDS.ASSIGNMENT,
-  ].some(field => allowedFields.has(field));
+  const hasFilter = FILTER_FIELDS.some(field => allowedFields.has(field));
 
   const url = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const pages = getPages(tickets, limit);
@@ -297,7 +295,7 @@ async function AsyncFilter({
     ]).then(clone);
 
   return (
-    <Filter
+    <ClientFilter
       contacts={contacts}
       priorities={priorities}
       statuses={statuses}

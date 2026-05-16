@@ -54,7 +54,7 @@ import {Swipe} from '@/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import {ensureAuth} from '../../common/utils/auth-helper';
 import {getOrderBy, getSkip} from '../../common/utils/search-param';
-import {EncodedFilter} from '../../common/utils/validators';
+import type {EncodedTicketFilter} from '../../common/utils/validators';
 import Search from './search';
 
 export default async function Page(props0: {
@@ -104,7 +104,7 @@ export default async function Page(props0: {
   const ticketsURL = `${workspaceURI}/ticketing/projects/${projectId}/tickets`;
   const status = statuses.filter(s => !s.isCompleted).map(s => s.id);
   const statusCompleted = statuses.filter(s => s.isCompleted).map(s => s.id);
-  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status})}&title=${encodeURIComponent(ALL_TICKETS_TITLE)}`;
+  const allTicketsURL = `${ticketsURL}?filter=${encodeFilter<EncodedTicketFilter>({status})}&title=${encodeURIComponent(ALL_TICKETS_TITLE)}`;
 
   const items = [
     workspace.config.isShowAllTickets && {
@@ -117,7 +117,7 @@ export default async function Page(props0: {
     workspace.config.isShowMyTickets && {
       label: await t(MY_TICKETS_TITLE),
       count: getMyTicketCount({projectId, client, user, subapp}),
-      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, myTickets: true})}&title=${encodeURIComponent(MY_TICKETS_TITLE)}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedTicketFilter>({status, myTickets: true})}&title=${encodeURIComponent(MY_TICKETS_TITLE)}`,
       icon: MdAllInbox,
       iconClassName: 'bg-palette-blue text-palette-blue-dark',
     },
@@ -125,21 +125,21 @@ export default async function Page(props0: {
       label: await t(MANAGED_TICKETS_TITLE),
       count: getManagedTicketCount({projectId, client, user, subapp}),
       icon: MdListAlt,
-      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, managedBy: [user.id.toString()]})}&title=${encodeURIComponent(MANAGED_TICKETS_TITLE)}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedTicketFilter>({status, managedBy: [user.id.toString()]})}&title=${encodeURIComponent(MANAGED_TICKETS_TITLE)}`,
       iconClassName: 'bg-palette-purple text-palette-purple-dark',
     },
     workspace.config.isShowCreatedTicket && {
       label: await t(CREATED_TICKETS_TITLE),
       count: getCreatedTicketCount({projectId, client, user, subapp}),
       icon: MdPending,
-      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status, createdBy: [user.id.toString()]})}&title=${encodeURIComponent(CREATED_TICKETS_TITLE)}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedTicketFilter>({status, createdBy: [user.id.toString()]})}&title=${encodeURIComponent(CREATED_TICKETS_TITLE)}`,
       iconClassName: 'bg-palette-yellow text-palette-yellow-dark',
     },
     workspace.config.isShowResolvedTicket && {
       label: await t(RESOLVED_TICKETS_TITLE),
       count: getResolvedTicketCount({projectId, client, user, subapp}),
       icon: MdCheckCircleOutline,
-      href: `${ticketsURL}?filter=${encodeFilter<EncodedFilter>({status: statusCompleted})}&title=${encodeURIComponent(RESOLVED_TICKETS_TITLE)}`,
+      href: `${ticketsURL}?filter=${encodeFilter<EncodedTicketFilter>({status: statusCompleted})}&title=${encodeURIComponent(RESOLVED_TICKETS_TITLE)}`,
       iconClassName: 'text-success bg-success-light',
     },
   ]

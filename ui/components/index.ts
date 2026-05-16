@@ -128,6 +128,11 @@ export {
   navigationMenuTriggerStyle,
 } from './navigation-menu';
 export {Popover, PopoverContent, PopoverTrigger} from './popover';
+export {
+  PopoverResponsive,
+  PopoverTriggerResponsive,
+  PopoverContentResponsive,
+} from './popover-responsive';
 export {RadioGroup, RadioGroupItem} from './radio-group';
 export {
   Select,

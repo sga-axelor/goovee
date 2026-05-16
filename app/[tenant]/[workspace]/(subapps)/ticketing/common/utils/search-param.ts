@@ -5,7 +5,8 @@ import type {Entity, IdFilter, WhereArg, WhereOptions} from '@goovee/orm';
 import type {ID} from '@/types';
 import {set} from 'lodash-es';
 import {COMPANY} from '../constants';
-import {EncodedFilterSchema} from '../utils/validators';
+import {EncodedTicketFilterSchema} from '../utils/validators';
+import {getDateFilter} from '@/utils/orm';
 
 export function getOrderBy(
   sort: Maybe<string>,
@@ -33,7 +34,7 @@ export function getWhere(
   userId: ID,
 ): WhereOptions<AOSProjectTask> | null {
   if (!filter) return null;
-  const {success, data} = EncodedFilterSchema.safeParse(filter);
+  const {success, data} = EncodedTicketFilterSchema.safeParse(filter);
   if (!success || !data) return null;
   const {
     createdBy,
@@ -50,7 +51,7 @@ export function getWhere(
     ...(status && {status: {id: {in: status}}}),
     ...(priority && {priority: {id: {in: priority}}}),
     ...(category && {projectTaskCategory: {id: {in: category}}}),
-    ...(updatedOn && {updatedOn: {between: updatedOn}}),
+    ...(updatedOn && {updatedOn: getDateFilter(updatedOn)}),
     ...(assignment && {assignment}),
   };
 
