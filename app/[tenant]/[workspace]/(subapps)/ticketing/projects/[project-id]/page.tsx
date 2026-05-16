@@ -53,7 +53,8 @@ import type {SearchParams} from '../../common/types/search-param';
 import {Swipe} from '@/ui/components/swipe';
 import {TicketList} from '../../common/ui/components/ticket-list';
 import {ensureAuth} from '../../common/utils/auth-helper';
-import {getOrderBy, getSkip} from '../../common/utils/search-param';
+import {getSkip} from '@/utils/pagination';
+import {getOrderBy} from '../../common/utils/search-param';
 import type {EncodedTicketFilter} from '../../common/utils/validators';
 import Search from './search';
 

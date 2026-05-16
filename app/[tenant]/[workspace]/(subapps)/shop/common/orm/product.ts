@@ -4,6 +4,7 @@ import type {Cloned} from '@/types/util';
 // ---- CORE IMPORTS ---- //
 import {getAOSAuthHeaders} from '@/tenant/auth';
 import {clone, scale} from '@/utils';
+import {getSkip} from '@/utils/pagination';
 import {
   DEFAULT_CURRENCY_SCALE,
   DEFAULT_CURRENCY_SYMBOL,
@@ -230,7 +231,7 @@ export async function findProducts({
   if (!(workspace && workspace.config && client)) return [];
 
   const orderBy = getSortOrder(sort);
-  const skip = Number(limit) * Math.max(Number(page) - 1, 0);
+  const skip = limit ? getSkip(limit, page) : undefined;
 
   const {
     priceAfterLogin,

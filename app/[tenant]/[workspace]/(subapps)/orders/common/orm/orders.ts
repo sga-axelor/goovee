@@ -6,12 +6,13 @@ import {
   DEFAULT_PAGE,
   ORDER_BY,
 } from '@/constants';
-import {clone, getPageInfo, getSkipInfo} from '@/utils';
+import {clone, getPageInfo} from '@/utils';
+import {getSkip} from '@/utils/pagination';
+import {and} from '@/utils/orm';
 import {formatNumber} from '@/locale/server/formatters';
 import type {Partner} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 import type {ID} from '@/types';
-import {and} from '@/utils/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -65,7 +66,7 @@ export const findOrders = async ({
         },
   ]);
 
-  const skip = getSkipInfo(limit, page);
+  const skip = limit ? getSkip(limit, page) : undefined;
 
   const $orders = await client.aOSOrder
     .find({

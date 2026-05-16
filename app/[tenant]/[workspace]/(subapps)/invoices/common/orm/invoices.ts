@@ -7,7 +7,8 @@ import {
   DEFAULT_PAGE,
   ORDER_BY,
 } from '@/constants';
-import {clone, getPageInfo, getSkipInfo} from '@/utils';
+import {clone, getPageInfo} from '@/utils';
+import {getSkip} from '@/utils/pagination';
 import {formatNumber} from '@/locale/server/formatters';
 import type {Partner} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
@@ -50,7 +51,7 @@ export const findInvoices = async ({
 
   const whereClause = buildWhereClause({params, workspaceURL, type});
 
-  const skip = getSkipInfo(limit, page);
+  const skip = limit ? getSkip(limit, page) : undefined;
 
   const $invoices = await client.aOSInvoice
     .find({

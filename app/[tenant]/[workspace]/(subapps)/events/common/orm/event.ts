@@ -24,6 +24,7 @@ import type {TenantConfig} from '@/tenant';
 import type {ID, PageInfo, User} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 import {getPageInfo} from '@/utils';
+import {getSkip} from '@/utils/pagination';
 import {formatDateToISOString, formatToTwoDigits} from '@/utils/date';
 import {and} from '@/utils/orm';
 
@@ -511,7 +512,7 @@ export async function findEvents({
         },
   ]);
 
-  const skip = Number(limit) * Math.max(Number(page) - 1, 0);
+  const skip = limit ? getSkip(limit, page) : undefined;
 
   orderBy = orderBy || {eventStartDateTime: ORDER_BY.DESC};
 

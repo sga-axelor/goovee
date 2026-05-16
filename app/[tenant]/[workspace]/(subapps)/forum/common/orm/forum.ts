@@ -4,7 +4,8 @@ import type {Cloned} from '@/types/util';
 import {SORT_TYPE} from '@/comments';
 import type {Client} from '@/goovee/.generated/client';
 import {ID, User} from '@/types';
-import {clone, getPageInfo, getSkipInfo} from '@/utils';
+import {clone, getPageInfo} from '@/utils';
+import {getSkip} from '@/utils/pagination';
 import {PortalWorkspace} from '@/orm/workspace';
 import {filterPrivate} from '@/orm/filter';
 import {t} from '@/locale/server';
@@ -195,7 +196,7 @@ export async function findPosts({
       orderBy = {postDateT: ORDER_BY.DESC};
   }
 
-  const skip = getSkipInfo(limit, page);
+  const skip = limit ? getSkip(limit, page) : undefined;
 
   const archivedFilter = getArchivedFilter({archived});
   const whereClauseWithArchivedFilter = addProperties({

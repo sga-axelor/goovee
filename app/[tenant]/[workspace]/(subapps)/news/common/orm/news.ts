@@ -1,7 +1,8 @@
 // ---- CORE IMPORTS ---- //
 import type {Client} from '@/goovee/.generated/client';
 import type {Cloned} from '@/types/util';
-import {clone, getPageInfo, getSkipInfo} from '@/utils';
+import {clone, getPageInfo} from '@/utils';
+import {getSkip} from '@/utils/pagination';
 import type {User} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 import {ORDER_BY} from '@/constants';
@@ -159,7 +160,7 @@ export async function findNews({
       .filter((id: any) => nonarchivedcategoryids.includes(id));
   }
 
-  const $skip = skip ? skip : getSkipInfo(limit, page);
+  const $skip = skip ? skip : limit ? getSkip(limit, page) : undefined;
 
   const whereClause = {
     ...(id

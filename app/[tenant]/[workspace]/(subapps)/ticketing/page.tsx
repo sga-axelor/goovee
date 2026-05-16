@@ -18,14 +18,13 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
 import Link from 'next/link';
 import {notFound, redirect} from 'next/navigation';
 import {getLoginURL} from '@/utils/url';
+import {getPages, getSkip} from '@/utils/pagination';
 
 // ---- LOCAL IMPORTS ---- //
 import {formatNumber} from '@/locale/server/formatters';
 import {findProjectsWithTaskCount} from './common/orm/projects';
-import {getPages} from './common/utils';
 import {getPaginationButtons} from '@/utils/pagination';
 import {ensureAuth} from './common/utils/auth-helper';
-import {getSkip} from './common/utils/search-param';
 
 export default async function Page(props: {
   params: Promise<{tenant: string; workspace: string}>;

@@ -16,7 +16,7 @@ import {
   PaginationPrevious,
 } from '@/ui/components/pagination';
 import {clone} from '@/utils';
-import {getPaginationButtons} from '@/utils/pagination';
+import {getPaginationButtons, getPages, getSkip} from '@/utils/pagination';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -26,7 +26,7 @@ import {Card} from './common/ui/components/card';
 import {Filter} from './common/ui/components/filter';
 import {Map} from './common/ui/components/map';
 import {MapSkeleton} from './common/ui/components/map/map-skeleton';
-import {getOrderBy, getPages, getSkip} from './common/utils';
+import {getOrderBy} from './common/utils';
 import {ensureAuth} from './common/utils/auth-helper';
 import Hero from './hero';
 import {Client} from '@/goovee/.generated/client';

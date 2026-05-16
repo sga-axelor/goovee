@@ -3,7 +3,9 @@ import {findGooveeUserByEmail} from '@/orm/partner';
 import type {Client} from '@/goovee/.generated/client';
 import {User} from '@/types';
 import {PortalWorkspace} from '@/orm/workspace';
-import {getPageInfo, getSkipInfo} from '@/utils';
+import {getPageInfo} from '@/utils';
+import {getSkip} from '@/utils/pagination';
+import {DEFAULT_PAGE} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {Post} from '@/subapps/forum/common/types/forum';
@@ -96,8 +98,7 @@ export async function getPopularQuery({
       message: await t('Invalid workspace'),
     };
   }
-
-  const skip = getSkipInfo(limit, page);
+  const skip = limit ? getSkip(limit, page ?? DEFAULT_PAGE) : undefined;
 
   const params: any[] = [];
   let idx = 1;

@@ -55,13 +55,9 @@ import {findTickets} from '../../../common/orm/tickets';
 import type {SearchParams} from '../../../common/types/search-param';
 import {TicketList} from '../../../common/ui/components/ticket-list';
 import {ClientFilter} from './client-filter';
-import {getPages} from '../../../common/utils';
+import {getPages, getSkip} from '@/utils/pagination';
 import {ensureAuth} from '../../../common/utils/auth-helper';
-import {
-  getOrderBy,
-  getSkip,
-  getWhere,
-} from '../../../common/utils/search-param';
+import {getOrderBy, getWhere} from '../../../common/utils/search-param';
 import Search from '../search';
 
 const TICKETS_PER_PAGE = 10;

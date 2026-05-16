@@ -91,14 +91,6 @@ export function getWhere(
   return where;
 }
 
-export const getSkip = (
-  limit: string | number,
-  page: string | number,
-): number => {
-  page = +page || 1;
-  return (page - 1) * +limit;
-};
-
 const SEPARATOR = ' ';
 
 export function decodeSortValue(

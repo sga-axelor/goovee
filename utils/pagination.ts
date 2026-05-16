@@ -1,5 +1,6 @@
 const ELLIPSIS = '...' as const;
 type Ellipsis = typeof ELLIPSIS;
+
 export function getPaginationButtons({
   currentPage,
   totalPages,
@@ -48,4 +49,24 @@ export function getPaginationButtons({
     buttons.push(ELLIPSIS, totalPages);
   }
   return buttons;
+}
+
+export function getSkip(limit: string | number, page: string | number): number {
+  page = +page || 1;
+  return (page - 1) * +limit;
+}
+
+export function getTotal(records: {_count?: string | null}[]): number {
+  return parseInt(records[0]?._count ?? '0');
+}
+
+export function getPages(
+  records: {_count?: string | null}[],
+  limit: string | number,
+): number {
+  const take = +limit;
+  if (take === 0) return 1;
+  const total = getTotal(records);
+  const pages = Math.ceil(total / take);
+  return pages || 1;
 }

@@ -6,11 +6,12 @@ import {
   DEFAULT_PAGE,
   ORDER_BY,
 } from '@/constants';
-import {getPageInfo, getSkipInfo} from '@/utils';
+import {getPageInfo} from '@/utils';
+import {getSkip} from '@/utils/pagination';
+import {and} from '@/utils/orm';
 import type {ID} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 import {formatNumber} from '@/locale/server/formatters';
-import {and} from '@/utils/orm';
 
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
@@ -38,7 +39,7 @@ export const fetchQuotations = async ({
 
   if (!(clientPartnerId && client && workspaceURL))
     return {quotations: [], pageInfo: {}};
-  const skip = getSkipInfo(limit, page);
+  const skip = limit ? getSkip(limit, page) : undefined;
 
   const whereClause: any = and<any>([
     where,

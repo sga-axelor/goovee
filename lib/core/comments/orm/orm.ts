@@ -27,6 +27,7 @@ import type {
 } from '../types';
 import {CommentSchema, CommentsSchema} from '../utils';
 import {and} from '@/utils/orm';
+import {getTotal} from '@/utils/pagination';
 
 const pump = promisify(pipeline);
 
@@ -282,7 +283,7 @@ async function getPopularCommentsBySorting({
 
   return {
     comments: CommentsSchema.parse(comments || []),
-    total: Number(comments?.[0]?._count), // only parent comments counts
+    total: getTotal(comments || []), // only parent comments counts
     totalCommentThreadCount: Number(comments?.[0]?._threadCount), // total count of comments ( parent + child comments )
   };
 }
