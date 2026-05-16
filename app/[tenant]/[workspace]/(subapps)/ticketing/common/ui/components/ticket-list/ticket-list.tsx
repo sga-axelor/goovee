@@ -54,10 +54,10 @@ export function TicketList(props: TicketListProps) {
 
   const handleRowClick = useCallback(
     (record: Cloned<TicketListTicket>) => {
-      record.project?.id &&
-        router.push(
-          `${workspaceURI}/ticketing/projects/${record.project.id}/tickets/${record.id}`,
-        );
+      if (!record.project?.id || !record.id) return;
+      router.push(
+        `${workspaceURI}/ticketing/projects/${record.project.id}/tickets/${record.id}`,
+      );
     },
     [router, workspaceURI],
   );
@@ -108,10 +108,10 @@ export function ParentTicketList(props: {
 
   const handleRowClick = useCallback(
     (record: Cloned<ParentTicket>) => {
-      record.project?.id &&
-        router.push(
-          `${workspaceURI}/ticketing/projects/${record.project.id}/tickets/${record.id}`,
-        );
+      if (!record.project?.id || !record.id) return;
+      router.push(
+        `${workspaceURI}/ticketing/projects/${record.project.id}/tickets/${record.id}`,
+      );
     },
     [router, workspaceURI],
   );
@@ -130,7 +130,7 @@ export function ParentTicketList(props: {
           records={tickets}
           columns={columns}
           onRowClick={handleRowClick}
-          deleteCellRenderer={ticket => (
+          actionCellRenderer={ticket => (
             <RemoveParentButton
               ticketId={ticketId}
               relatedTicketId={ticket.id}
@@ -159,10 +159,10 @@ export function ChildTicketList(props: {
 
   const handleRowClick = useCallback(
     (record: Cloned<ChildTicket>) => {
-      record.project?.id &&
-        router.push(
-          `${workspaceURI}/ticketing/projects/${record.project.id}/tickets/${record.id}`,
-        );
+      if (!record.project?.id || !record.id) return;
+      router.push(
+        `${workspaceURI}/ticketing/projects/${record.project.id}/tickets/${record.id}`,
+      );
     },
     [router, workspaceURI],
   );
@@ -181,7 +181,7 @@ export function ChildTicketList(props: {
           records={tickets ?? []}
           columns={columns}
           onRowClick={handleRowClick}
-          deleteCellRenderer={ticket => (
+          actionCellRenderer={ticket => (
             <RemoveChildButton
               ticketId={ticketId}
               relatedTicketId={ticket.id}
@@ -210,10 +210,10 @@ export function RelatedTicketList(props: {
 
   const handleRowClick = useCallback(
     (record: Cloned<TicketLink>) => {
-      record.relatedTask?.project?.id &&
-        router.push(
-          `${workspaceURI}/ticketing/projects/${record.relatedTask.project.id}/tickets/${record.relatedTask.id}`,
-        );
+      if (!record.relatedTask?.project?.id || !record.relatedTask?.id) return;
+      router.push(
+        `${workspaceURI}/ticketing/projects/${record.relatedTask.project.id}/tickets/${record.relatedTask.id}`,
+      );
     },
     [router, workspaceURI],
   );
@@ -232,7 +232,7 @@ export function RelatedTicketList(props: {
           records={links ?? []}
           columns={columns}
           onRowClick={handleRowClick}
-          deleteCellRenderer={link =>
+          actionCellRenderer={link =>
             link.relatedTask && (
               <RemoveLinkButton
                 ticketId={ticketId}
