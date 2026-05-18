@@ -147,7 +147,6 @@ export function TicketDetails(props: Props) {
                         <FormControl>
                           <SelectTrigger className="w-fit">
                             <SelectValue
-                              asChild
                               placeholder={i18n.t('Select your category')}>
                               <Category
                                 name={
@@ -188,7 +187,6 @@ export function TicketDetails(props: Props) {
                         <FormControl>
                           <SelectTrigger className="w-fit">
                             <SelectValue
-                              asChild
                               placeholder={i18n.t('Select your priority')}>
                               <Priority
                                 name={
