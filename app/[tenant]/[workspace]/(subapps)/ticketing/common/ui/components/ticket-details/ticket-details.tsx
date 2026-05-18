@@ -143,7 +143,7 @@ export function TicketDetails(props: Props) {
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value?.toString()}>
+                        value={field.value?.toString() ?? ''}>
                         <FormControl>
                           <SelectTrigger className="w-fit">
                             <SelectValue
@@ -183,7 +183,7 @@ export function TicketDetails(props: Props) {
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value?.toString()}>
+                        value={field.value?.toString() ?? ''}>
                         <FormControl>
                           <SelectTrigger className="w-fit">
                             <SelectValue
@@ -287,7 +287,7 @@ export function TicketDetails(props: Props) {
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          value={field.value?.toString()}>
+                          value={field.value?.toString() ?? ''}>
                           <FormControl>
                             <SelectTrigger className="w-fit">
                               <SelectValue
