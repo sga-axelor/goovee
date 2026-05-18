@@ -86,6 +86,14 @@ const defaultValues = {
   assignment: null,
 };
 
+const getDefaultValues = (filter: unknown) => {
+  const {success, data} = EncodedTicketFilterSchema.safeParse(filter);
+  if (!success || !data) {
+    return defaultValues;
+  } else {
+    return {...defaultValues, ...data};
+  }
+};
 export function TicketFilterForm(props: TicketFilterFormProps) {
   const {
     contacts,
@@ -127,7 +135,7 @@ export function TicketFilterForm(props: TicketFilterFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<z.infer<typeof TicketFilterSchema>>({
     resolver: zodResolver(TicketFilterSchema),
-    defaultValues,
+    defaultValues: getDefaultValues(filter),
   });
 
   const onSubmit = (value: z.infer<typeof TicketFilterSchema>) => {
@@ -145,15 +153,6 @@ export function TicketFilterForm(props: TicketFilterFormProps) {
     router.replace(route);
     close();
   };
-
-  useEffect(() => {
-    const {success, data} = EncodedTicketFilterSchema.safeParse(filter);
-    if (!success || !data) {
-      form.reset(defaultValues);
-    } else {
-      form.reset({...defaultValues, ...data});
-    }
-  }, [filter, form]);
 
   return (
     <Form {...form}>
