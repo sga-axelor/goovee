@@ -6,6 +6,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -72,8 +73,11 @@ export function TicketLinkHeader({
               <DialogContent className="max-h-full container overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{dialogTitle}</DialogTitle>
-                  {dialogContentRenderer({closeDialog})}
+                  <DialogDescription className="sr-only">
+                    {dialogTitle}
+                  </DialogDescription>
                 </DialogHeader>
+                {dialogContentRenderer({closeDialog})}
               </DialogContent>
             </Dialog>
           )}

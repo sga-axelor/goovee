@@ -95,7 +95,7 @@ export function ChildTicketsHeader(props: {
           userId={userId}
           parentId={ticketId.toString()}
           formFields={formFields}
-          className="mt-10 text-left"
+          className="text-left"
           submitFormWithAction={submitFormWithAction}
           onSuccess={() => {
             toast({
