@@ -25,7 +25,7 @@ import {
   ProductsList,
 } from '@/subapps/quotations/common/ui/components';
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
-import type {Quotation} from '@/subapps/quotations/common/types/quotations';
+import type {QuotationDetail} from '@/subapps/quotations/common/types/quotations';
 import {
   fetchComments,
   createComment,
@@ -35,7 +35,7 @@ const Content = ({
   quotation,
   workspace,
 }: {
-  quotation: Quotation;
+  quotation: QuotationDetail;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   orderSubapp?: boolean;
 }) => {
@@ -60,7 +60,7 @@ const Content = ({
   });
 
   const hideDiscount = saleOrderLineList?.every(
-    (item: any) => parseFloat(item.discountAmount) === 0,
+    item => parseFloat(String(item.discountAmount)) === 0,
   );
 
   const handleAddressSelection = () => {

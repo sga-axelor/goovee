@@ -1,4 +1,5 @@
 import {notFound} from 'next/navigation';
+import {Suspense} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {workspacePathname} from '@/utils/workspace';
@@ -13,8 +14,8 @@ import {manager} from '@/lib/core/tenant';
 
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
+import type {Quotation} from '@/subapps/quotations/common/types/quotations';
 import {fetchQuotations} from '@/subapps/quotations/common/orm/quotations';
-import {Suspense} from 'react';
 
 async function Quotations({
   params,
@@ -77,7 +78,7 @@ async function Quotations({
     limit: limit ? Number(limit) : DEFAULT_LIMIT,
   };
 
-  const result: any = await fetchQuotations({
+  const result = await fetchQuotations({
     params: queryParams,
     client,
     workspaceURL,
@@ -89,7 +90,7 @@ async function Quotations({
 
   const {quotations, pageInfo} = result;
 
-  return <Content quotations={clone(quotations)} pageInfo={pageInfo} />;
+  return <Content quotations={clone(quotations) as Quotation[]} pageInfo={pageInfo} />;
 }
 
 export default async function Page(props: {

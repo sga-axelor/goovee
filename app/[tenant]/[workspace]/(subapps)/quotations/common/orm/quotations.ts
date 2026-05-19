@@ -6,12 +6,14 @@ import {
   DEFAULT_PAGE,
   ORDER_BY,
 } from '@/constants';
-import {getPageInfo} from '@/utils';
 import {getSkip} from '@/utils/pagination';
-import {and} from '@/utils/orm';
-import type {ID} from '@/types';
+import {getPageInfo} from '@/utils';
+import type {ID, Partner} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 import {formatNumber} from '@/locale/server/formatters';
+import {and} from '@/utils/orm';
+import type {WhereOptions} from '@goovee/orm';
+import type {AOSOrder} from '@/goovee/.generated/models/AOSOrder';
 
 // ---- LOCAL IMPORTS ---- //
 import {QUOTATION_STATUS} from '@/subapps/quotations/common/constants/quotations';
@@ -23,9 +25,9 @@ export const fetchQuotations = async ({
 }: {
   archived?: boolean;
   params?: {
-    where?: object & {
+    where?: WhereOptions<AOSOrder> & {
       clientPartner?: {
-        id: ID;
+        id: Partner['id'];
       };
     };
     limit?: string | number;
@@ -38,10 +40,10 @@ export const fetchQuotations = async ({
   const {id: clientPartnerId} = where.clientPartner || {};
 
   if (!(clientPartnerId && client && workspaceURL))
-    return {quotations: [], pageInfo: {}};
+    return {quotations: [], pageInfo: getPageInfo({})};
   const skip = limit ? getSkip(limit, page) : undefined;
 
-  const whereClause: any = and<any>([
+  const whereClause = and<AOSOrder>([
     where,
     {
       template: false,
@@ -61,9 +63,9 @@ export const fetchQuotations = async ({
   const quotations = await client.aOSOrder
     .find({
       where: whereClause,
-      take: limit as any,
+      take: limit ? Number(limit) : undefined,
       ...(skip ? {skip} : {}),
-      orderBy: {createdOn: ORDER_BY.DESC} as any,
+      orderBy: {createdOn: ORDER_BY.DESC},
       select: {
         saleOrderSeq: true,
         statusSelect: true,
@@ -72,9 +74,7 @@ export const fetchQuotations = async ({
         externalReference: true,
       },
     })
-    .catch((err: any) => {
-      return [];
-    });
+    .catch(() => []);
 
   const pageInfo = getPageInfo({
     count: quotations?.[0]?._count,
@@ -82,17 +82,8 @@ export const fetchQuotations = async ({
     limit,
   });
 
-  const $quotations: any = [];
-
-  for (const quotation of quotations) {
-    const $quotation = {
-      ...quotation,
-    };
-    $quotations.push($quotation);
-  }
-
   return {
-    quotations: $quotations,
+    quotations,
     pageInfo,
   };
 };
@@ -103,14 +94,14 @@ export async function findQuotation({
   params,
   workspaceURL,
 }: {
-  id: any;
+  id: ID;
   client: Client;
-  params?: any;
+  params?: {where?: WhereOptions<AOSOrder>};
   workspaceURL: PortalWorkspace['url'];
 }) {
   if (!(client && workspaceURL)) return null;
 
-  const whereClause: any = and<any>([
+  const whereClause = and<AOSOrder>([
     params?.where,
     {
       id,
@@ -128,7 +119,7 @@ export async function findQuotation({
     },
   ]);
 
-  const quotation: any = await client.aOSOrder.findOne({
+  const quotation = await client.aOSOrder.findOne({
     where: whereClause,
     select: {
       saleOrderSeq: true,
@@ -170,6 +161,7 @@ export async function findQuotation({
       },
       saleOrderLineList: {
         select: {
+          id: true,
           productName: true,
           qty: true,
           unit: {
@@ -202,59 +194,58 @@ export async function findQuotation({
   }
 
   const {currency, saleOrderLineList, exTaxTotal, inTaxTotal} = quotation;
-  const currencySymbol = currency.symbol || DEFAULT_CURRENCY_SYMBOL;
-  const scale = currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
 
-  const totalDiscountAmount = saleOrderLineList.reduce(
-    (total: number, {exTaxTotal, discountAmount}: any) => {
-      const exTax = parseFloat(exTaxTotal);
-      const discountPercent = parseFloat(discountAmount);
+  const currencySymbol = currency!.symbol || DEFAULT_CURRENCY_SYMBOL;
+  const scale = Number(currency!.numberOfDecimals) || DEFAULT_CURRENCY_SCALE;
+
+  const totalDiscountAmount = (saleOrderLineList ?? []).reduce(
+    (total, {exTaxTotal, discountAmount}) => {
+      const exTax = parseFloat(String(exTaxTotal));
+      const discountPercent = parseFloat(String(discountAmount));
       const discountValue = (exTax * discountPercent) / 100;
       return total + discountValue;
     },
     0,
   );
 
-  const totalExTax = saleOrderLineList.reduce(
-    (total: number, {exTaxTotal}: any) => {
-      return total + parseFloat(exTaxTotal);
-    },
-    0,
-  );
+  const totalExTax = (saleOrderLineList ?? []).reduce((total, {exTaxTotal}) => {
+    return total + parseFloat(String(exTaxTotal));
+  }, 0);
 
   const totalDiscountPercent =
     totalExTax === 0
       ? 0
       : ((totalDiscountAmount / totalExTax) * 100).toFixed(scale);
-  const $saleOrderLineList: any = [];
+
+  const $saleOrderLineList = [];
 
   for (const list of saleOrderLineList || []) {
     const line = {
       ...list,
-      qty: await formatNumber(list.qty, {scale, type: 'DECIMAL'}),
-      priceDiscounted: await formatNumber(list.priceDiscounted, {
+      qty: await formatNumber(String(list.qty), {scale, type: 'DECIMAL'}),
+      priceDiscounted: await formatNumber(String(list.priceDiscounted), {
         scale,
         currency: currencySymbol,
         type: 'DECIMAL',
       }),
-      exTaxTotal: await formatNumber(list.exTaxTotal, {
+      exTaxTotal: await formatNumber(String(list.exTaxTotal), {
         scale,
         currency: currencySymbol,
         type: 'DECIMAL',
       }),
-      discountAmount: await formatNumber(list.discountAmount, {
+      discountAmount: await formatNumber(String(list.discountAmount), {
         scale,
         type: 'DECIMAL',
       }),
-      inTaxTotal: await formatNumber(list.inTaxTotal, {
+      inTaxTotal: await formatNumber(String(list.inTaxTotal), {
         scale,
         currency: currencySymbol,
         type: 'DECIMAL',
       }),
       taxLineSet: await Promise.all(
-        list.taxLineSet.map(async (taxLine: any) => ({
+        (list.taxLineSet ?? []).map(async taxLine => ({
           ...taxLine,
-          value: await formatNumber(taxLine.value, {
+          value: await formatNumber(String(taxLine.value), {
             scale,
             type: 'DECIMAL',
           }),
@@ -266,12 +257,12 @@ export async function findQuotation({
 
   return {
     ...quotation,
-    displayExTaxTotal: await formatNumber(exTaxTotal, {
+    displayExTaxTotal: await formatNumber(String(exTaxTotal), {
       scale,
       currency: currencySymbol,
       type: 'DECIMAL',
     }),
-    displayInTaxTotal: await formatNumber(inTaxTotal, {
+    displayInTaxTotal: await formatNumber(String(inTaxTotal), {
       scale,
       currency: currencySymbol,
       type: 'DECIMAL',

@@ -8,14 +8,15 @@ import {Container, TableList} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSortBy} from '@/ui/hooks';
 import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
+import type {PageInfo} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Quotations} from '@/subapps/quotations/common/types/quotations';
+import type {Quotation} from '@/subapps/quotations/common/types/quotations';
 import {Columns} from '@/subapps/quotations/common/ui/components';
 
 type Props = {
-  quotations: Quotations[];
-  pageInfo?: any;
+  quotations: Quotation[];
+  pageInfo?: PageInfo;
 };
 
 const Content = (props: Props) => {
@@ -25,7 +26,7 @@ const Content = (props: Props) => {
 
   const [sortedQuotations, sortOrder, toggleSortOrder] = useSortBy(quotations);
 
-  const handleClick = (quotation: any) =>
+  const handleClick = (quotation: Quotation) =>
     router.push(`${workspaceURI}/${SUBAPP_CODES.quotations}/${quotation.id}`);
 
   return (

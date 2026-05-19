@@ -1,15 +1,14 @@
 // ---- CORE IMPORTS ---- //
 import type {ID} from '@/types';
-import type {PortalWorkspace} from '@/orm/workspace';
 
-export type Quotations = {
+export type Quotation = {
   id: ID;
   archived?: boolean;
-  createdOn: string;
+  createdOn: string | null;
   deliverState?: string;
-  saleOrderSeq: string;
+  saleOrderSeq: string | null;
   statusSelect: number | string;
-  externalReference: string;
+  externalReference: string | null;
 };
 
 export type ColumnProps = {
@@ -18,12 +17,12 @@ export type ColumnProps = {
 };
 export type QuotationsTableProps = {
   columns: ColumnProps[];
-  quotations: Quotations[];
+  quotations: Quotation[];
   onClick: (id: string | number) => void;
 };
 
 export type CardViewProps = {
-  quotations: Quotations[];
+  quotations: Quotation[];
   onClick: (id: string | number) => void;
 };
 
@@ -36,14 +35,17 @@ export type Product = {
   priceDiscounted: string;
   inTaxTotal: string;
   unit: {
-    id: ID;
     name: string;
   };
-  taxLine: {
-    id: ID;
+  taxLineSet: Array<{
     name: string;
     value: string | number;
-  };
+  }>;
+  product?: {
+    picture?: {
+      id?: ID;
+    } | null;
+  } | null;
 };
 
 export type CommentsProps = {
@@ -51,14 +53,14 @@ export type CommentsProps = {
   createdOn: string;
   updatedOn: string;
   subject: string;
-  body: any;
+  body: string;
   type: string;
   author: {
     name: string | undefined;
   };
 };
 
-export type Quotation = {
+export type QuotationDetail = {
   clientPartner: {
     fullName: string;
     id: ID;
@@ -82,6 +84,11 @@ export type Quotation = {
       id: ID;
       name: string;
     };
+    fullName?: string;
+    formattedFullName?: string;
+    firstName?: string;
+    lastName?: string;
+    companyName?: string;
   };
   endOfValidityDate: string | null | undefined;
   exTaxTotal: string;
@@ -98,6 +105,11 @@ export type Quotation = {
       id: ID;
       name: string;
     };
+    fullName?: string;
+    formattedFullName?: string;
+    firstName?: string;
+    lastName?: string;
+    companyName?: string;
   };
   saleOrderLineList: Product[];
   saleOrderSeq: string | number;

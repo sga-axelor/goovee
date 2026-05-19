@@ -32,8 +32,3 @@ export const PRODUCT_CARD_COLUMNS = [
   {key: 'inTaxTotal', label: 'Total ATI'},
   {key: 'dropdown', label: ''},
 ];
-
-export const SECONDS = 'a few seconds';
-export const MINUTES = 'minutes';
-export const HOURS = 'hours';
-export const DAYS = 'days';
