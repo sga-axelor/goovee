@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -9,14 +8,16 @@ import {i18n} from '@/locale';
 import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
 import {useSortBy} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {PageInfo} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_TAB_ITEMS} from '@/subapps/orders/common/constants/orders';
 import {OrderColumns} from '@/subapps/orders/common/ui/components';
+import type {Order} from '@/subapps/orders/common/types/orders';
 
 type ContentProps = {
-  orders: [];
-  pageInfo?: any;
+  orders: Order[];
+  pageInfo?: PageInfo;
   orderType: string;
 };
 
@@ -27,11 +28,11 @@ const Content = ({orders, pageInfo, orderType}: ContentProps) => {
   const [sortedOrders, ordersSortOrder, toggleOrdersSortOrder] =
     useSortBy(orders);
 
-  const handleTabChange = (e: any) => {
+  const handleTabChange = (e: {href: string}) => {
     router.push(`${workspaceURI}/${SUBAPP_CODES.orders}/${e.href}`);
   };
 
-  const handleClick = (order: any) =>
+  const handleClick = (order: Order) =>
     router.push(
       `${workspaceURI}/${SUBAPP_CODES.orders}/${orderType}/${order.id}`,
     );

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -9,9 +8,11 @@ import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES} from '@/constants';
 import {formatDate} from '@/lib/core/locale/formatters';
+import {Variant} from '@/ui/components/tag';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER_TYPE} from '@/subapps/orders/common/constants/orders';
+import type {OrderType} from '@/subapps/orders/common/types/orders';
 
 export const Informations = ({
   createdOn,
@@ -21,7 +22,15 @@ export const Informations = ({
   orderId,
   orderReport,
   orderType,
-}: any) => {
+}: {
+  createdOn: Date | string;
+  shipmentMode?: {name?: string | null} | null;
+  status: string;
+  variant: Variant;
+  orderId: string;
+  orderReport?: {id: string} | null;
+  orderType: OrderType;
+}) => {
   const {workspaceURI} = useWorkspace();
   const showShippingLink = [ORDER_TYPE.SHIPPED, ORDER_TYPE.DELIVERED].includes(
     status,

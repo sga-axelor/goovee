@@ -16,6 +16,10 @@
       "type": "ManyToOne",
       "name": "portalWorkspace",
       "target": "AOSPortalWorkspace"
+    },
+    {
+      "type": "Boolean",
+      "name": "archived"
     }
   ]
 }
