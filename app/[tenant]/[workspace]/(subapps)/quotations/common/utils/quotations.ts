@@ -1,20 +1,16 @@
 // ---- LOCAL IMPORTS ---- //
 import {
-  DAYS,
-  HOURS,
-  MINUTES,
   QUOTATION_STATUS,
   QUOTATION_TYPE,
-  SECONDS,
 } from '@/subapps/quotations/common/constants/quotations';
 
 type Variant = 'blue' | 'yellow' | 'destructive' | 'default';
 
-export function getStatus(statusSelect: any): {
-  status: any;
+export function getStatus(statusSelect: number | string): {
+  status: string;
   variant: Variant;
 } {
-  let status: any;
+  let status: string;
   let variant: Variant;
 
   switch (statusSelect) {
@@ -37,22 +33,3 @@ export function getStatus(statusSelect: any): {
 
   return {status, variant};
 }
-
-export const updateDocument = (date1: any, date2: any) => {
-  let update;
-  const diffInDays = Math.round(date1.diff(date2, DAYS, true));
-  const diffInHours = date1.diff(date2, HOURS);
-  const diffInMins = Math.round(date1.diff(date2, MINUTES, true));
-
-  if (diffInDays === 0) {
-    if (diffInHours === 0) {
-      update = diffInMins === 0 ? SECONDS : `${diffInMins} ${MINUTES}`;
-    } else {
-      update = `${diffInHours} ${HOURS}`;
-    }
-  } else {
-    update = `${Math.round(diffInDays)} ${DAYS}`;
-  }
-
-  return update;
-};

@@ -24,7 +24,7 @@ import type {Product} from '@/subapps/quotations/common/types/quotations';
 
 type Props = {
   saleOrderLineList: Product[];
-  tenant: any;
+  tenant: string;
   hideDiscount: boolean;
 };
 
@@ -33,7 +33,7 @@ export const ProductsList = ({
   tenant,
   hideDiscount: hideDiscountColumn,
 }: Props) => {
-  const getProductImage = (product: any) => {
+  const getProductImage = (product: Product['product']) => {
     return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
 
@@ -59,7 +59,7 @@ export const ProductsList = ({
                 </TableCell>
               </TableRow>
             ) : (
-              saleOrderLineList?.map((saleOrder: any) => {
+              saleOrderLineList?.map(saleOrder => {
                 return (
                   <TableRow key={saleOrder.id} className="text-base">
                     <TableCell className="ps-6">
@@ -118,7 +118,7 @@ export const ProductsList = ({
                 </TableCell>
               </TableRow>
             ) : (
-              saleOrderLineList?.map((saleOrder: any) => (
+              saleOrderLineList?.map(saleOrder => (
                 <ProductCard
                   key={saleOrder.id}
                   saleOrder={saleOrder}

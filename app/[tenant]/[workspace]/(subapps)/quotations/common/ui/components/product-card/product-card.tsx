@@ -13,16 +13,19 @@ import {
 } from '@/ui/components';
 import {getProductImageURL} from '@/utils/files';
 
+// ---- LOCAL IMPORTS ---- //
+import type {Product} from '@/subapps/quotations/common/types/quotations';
+
 export const ProductCard = ({
   saleOrder,
   tenant,
 }: {
-  saleOrder: any;
-  tenant: any;
+  saleOrder: Product;
+  tenant: string;
 }) => {
   const [show, setShow] = React.useState(false);
 
-  const getProductImage = (product: any) => {
+  const getProductImage = (product: Product['product']) => {
     return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
 

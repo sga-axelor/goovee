@@ -14,10 +14,10 @@ import type {InfoProps} from '@/subapps/quotations/common/types/quotations';
 export const Informations = ({statusSelect, endOfValidityDate}: InfoProps) => {
   const {variant, status} = getStatus(statusSelect);
 
-  const DateInfoRow = (label: string, date: any) => (
+  const DateInfoRow = (label: string, date: string | null | undefined) => (
     <div className="flex items-center gap-2">
       <h5 className="text-sm font-medium mb-0">{i18n.t(label)}:</h5>
-      <p className="text-sm">{formatDate(date) || '--/--/----'}</p>
+      <p className="text-sm">{date ? formatDate(date) : '--/--/----'}</p>
     </div>
   );
 

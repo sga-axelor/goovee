@@ -288,10 +288,10 @@ export async function confirmAddresses(data: ConfirmAddresses) {
       subapp,
     });
 
-    if (response.error) {
+    if (!response) {
       return {
         error: true,
-        message: await t(response.message || 'Record not found.'),
+        message: await t('Record not found.'),
       };
     }
     modelRecord = response;
@@ -300,7 +300,7 @@ export async function confirmAddresses(data: ConfirmAddresses) {
   try {
     const reqBody = {
       id: record.id,
-      version: modelRecord?.version,
+      version: Number(modelRecord?.version),
       mainInvoicingAddressStr: record.mainInvoicingAddress.formattedFullName,
       mainInvoicingAddress: {
         select: {

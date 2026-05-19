@@ -7,6 +7,7 @@ import {Chip} from '@/ui/components';
 // ---- LOCAL IMPORTS ---- //
 import {getStatus} from '@/subapps/quotations/common/utils/quotations';
 import {formatDate} from '@/lib/core/locale/formatters';
+import type {Quotation} from '@/subapps/quotations/common/types/quotations';
 
 export const Columns = [
   {
@@ -14,8 +15,8 @@ export const Columns = [
     label: i18n.t('Quotation number'),
     sortable: true,
     mobile: true,
-    getter: (row: any) => row.saleOrderSeq,
-    content: (row: any) => (
+    getter: (row: Quotation) => row.saleOrderSeq,
+    content: (row: Quotation) => (
       <span className="font-medium">
         {i18n.t('Sale quotation')} {row.saleOrderSeq}
         {row.externalReference && ` ( ${row.externalReference} )`}
@@ -25,8 +26,8 @@ export const Columns = [
   {
     key: 'statusSelect',
     label: i18n.t('Status'),
-    getter: (row: any) => row.statusSelect,
-    content: (row: any) => {
+    getter: (row: Quotation) => row.statusSelect,
+    content: (row: Quotation) => {
       const {status, variant} = getStatus(row.statusSelect);
       return (
         <Chip
@@ -41,7 +42,7 @@ export const Columns = [
     key: 'createdOn',
     label: i18n.t('Created on'),
     sortable: true,
-    getter: (row: any) => row.createdOn,
-    content: (row: any) => formatDate(row.createdOn),
+    getter: (row: Quotation) => row.createdOn,
+    content: (row: Quotation) => formatDate(row.createdOn!),
   },
 ];

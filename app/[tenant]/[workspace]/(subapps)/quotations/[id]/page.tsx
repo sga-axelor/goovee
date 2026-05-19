@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import {Suspense} from 'react';
 import {notFound} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -15,10 +15,11 @@ import {manager} from '@/lib/core/tenant';
 import Content from './content';
 import {findQuotation} from '@/subapps/quotations/common/orm/quotations';
 import {QuotationSkeleton} from '@/subapps/quotations/common/ui/components';
+import type {QuotationDetail} from '@/subapps/quotations/common/types/quotations';
 
 type PageProps = {
   params: Promise<{
-    id: any;
+    id: string;
     tenant: string;
     workspace: string;
   }>;
@@ -90,7 +91,7 @@ async function Quotation({params: paramsProm}: PageProps) {
 
   return (
     <Content
-      quotation={clone(quotation)}
+      quotation={clone(quotation) as QuotationDetail}
       workspace={workspace}
       orderSubapp={Boolean(orderSubapp)}
     />
