@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 // ---- CORE IMPORTS ---- //
 import {Separator} from '@/ui/components';
 import {i18n} from '@/locale';
@@ -9,8 +7,8 @@ import {i18n} from '@/locale';
 export type TotalProps = {
   inTaxTotal: string;
   exTaxTotal: number | string;
-  totalDiscount: number;
-  hideDiscount: boolean;
+  totalDiscount: number | string;
+  hideDiscount?: boolean;
 };
 export const Total = ({
   exTaxTotal,

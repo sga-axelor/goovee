@@ -236,3 +236,9 @@ export type PageInfo = {
   hasNext: boolean;
   hasPrev: boolean;
 };
+
+export type EntityWhereClause = {
+  clientPartner?: {id: string};
+  partner?: {id: string};
+  contactPartner?: {id: string};
+};

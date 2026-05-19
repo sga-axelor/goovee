@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 // ---- CORE IMPORTS ---- //
 import {
   Separator,
@@ -20,13 +18,20 @@ import {
   PRODUCT_COLUMNS,
   PRODUCT_CARD_COLUMNS,
 } from '@/subapps/orders/common/constants/orders';
+import type {SaleOrder} from '@/subapps/orders/common/types/orders';
+
+type ProductsListProps = {
+  saleOrderLineList?: SaleOrder[] | null;
+  tenant: string;
+  hideDiscount?: boolean;
+};
 
 export const ProductsList = ({
   saleOrderLineList,
   tenant,
   hideDiscount: hideDiscountColumn,
-}: any) => {
-  const getProductImage = (product: any) => {
+}: ProductsListProps) => {
+  const getProductImage = (product: SaleOrder['product']) => {
     return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
 
@@ -51,7 +56,7 @@ export const ProductsList = ({
               </TableCell>
             </TableRow>
           ) : (
-            saleOrderLineList.map((saleOrder: any) => (
+            saleOrderLineList.map((saleOrder: SaleOrder) => (
               <TableRow key={saleOrder.id} className="text-base">
                 <TableCell className="ps-6">
                   <div className="flex items-center gap-2">
@@ -107,7 +112,7 @@ export const ProductsList = ({
               </TableCell>
             </TableRow>
           ) : (
-            saleOrderLineList.map((saleOrder: any) => (
+            saleOrderLineList.map((saleOrder: SaleOrder) => (
               <ProductCard
                 key={saleOrder.id}
                 saleOrder={saleOrder}

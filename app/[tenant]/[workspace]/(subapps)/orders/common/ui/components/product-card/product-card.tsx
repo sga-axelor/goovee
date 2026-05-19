@@ -13,16 +13,19 @@ import {
 } from '@/ui/components';
 import {getProductImageURL} from '@/utils/files';
 
+// ---- LOCAL IMPORTS ---- //
+import type {SaleOrder} from '@/subapps/orders/common/types/orders';
+
 export const ProductCard = ({
   saleOrder,
   tenant,
 }: {
-  saleOrder: any;
-  tenant: any;
+  saleOrder: SaleOrder;
+  tenant: string;
 }) => {
   const [show, setShow] = React.useState(false);
 
-  const getProductImage = (product: any) => {
+  const getProductImage = (product: SaleOrder['product']) => {
     return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
 
@@ -80,7 +83,7 @@ export const ProductCard = ({
                       {i18n.t('Tax')}
                     </p>
                     <p className="text-base mb-0">
-                      {saleOrder?.taxLineSet[0]?.value} %
+                      {saleOrder?.taxLineSet?.[0]?.value} %
                     </p>
                   </div>
                   <div className="flex justify-between px-4">

@@ -1,6 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {ROLE} from '@/constants';
-import {PartnerKey, User} from '@/types';
+import {EntityWhereClause, PartnerKey, User} from '@/types';
 
 export function getWhereClauseForEntity({
   user,
@@ -12,26 +12,22 @@ export function getWhereClauseForEntity({
   role: any;
   isContactAdmin?: boolean;
   partnerKey?: PartnerKey;
-}) {
+}): EntityWhereClause {
   if (!user) return {};
 
   const {id, mainPartnerId, isContact} = user;
+  const partnerId = isContact ? mainPartnerId : id;
 
-  const where: any = {
-    [partnerKey]: {
-      id: isContact ? mainPartnerId : id,
-    },
-  };
+  if (!partnerId) return {};
 
-  if (isContact) {
-    where.contactPartner = {
-      id,
-    };
-  }
+  const where: EntityWhereClause =
+    partnerKey === PartnerKey.CLIENT_PARTNER
+      ? {clientPartner: {id: partnerId}}
+      : {partner: {id: partnerId}};
 
-  if (isContactAdmin || role === ROLE.TOTAL) {
-    delete where.contactPartner;
-  }
+  if (isContact) where.contactPartner = {id};
+
+  if (isContactAdmin || role === ROLE.TOTAL) delete where.contactPartner;
 
   return where;
 }

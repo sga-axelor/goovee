@@ -1,13 +1,20 @@
 'use client';
 
-import React from 'react';
-
 // ---- CORE IMPORTS ---- //
 import {getCityName} from '@/utils';
 import {i18n} from '@/locale';
 import {Separator} from '@/ui/components';
 
-export const Contact = ({mainInvoicingAddress, deliveryAddress}: any) => {
+// ---- LOCAL IMPORTS ---- //
+import type {OrderAddress} from '@/subapps/orders/common/types/orders';
+
+export const Contact = ({
+  mainInvoicingAddress,
+  deliveryAddress,
+}: {
+  mainInvoicingAddress?: OrderAddress | null;
+  deliveryAddress?: OrderAddress | null;
+}) => {
   const billingAddressCity = getCityName(mainInvoicingAddress?.addressl6);
   const deliveryAddressCity = getCityName(deliveryAddress?.addressl6);
   return (

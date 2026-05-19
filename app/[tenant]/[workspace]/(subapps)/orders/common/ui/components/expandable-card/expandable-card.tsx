@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {
   MdOutlineKeyboardArrowDown,
   MdOutlineKeyboardArrowUp,
@@ -21,7 +21,7 @@ export function ExpandableCard({
   initialState,
 }: {
   title: string;
-  children: any;
+  children: React.ReactNode;
   initialState?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false || initialState);

@@ -25,9 +25,20 @@ import {
 } from '@/subapps/orders/common/ui/components';
 import {getStatus} from '@/subapps/orders/common/utils/orders';
 import {formatDate} from '@/lib/core/locale/formatters';
-import {OrderType} from '@/subapps/orders/common/types/orders';
+import type {
+  CustomerDelivery,
+  DetailOrder,
+  Invoice,
+  OrderType,
+} from '@/subapps/orders/common/types/orders';
 
-const Content = ({order, orderType}: {order: any; orderType: OrderType}) => {
+const Content = ({
+  order,
+  orderType,
+}: {
+  order: DetailOrder;
+  orderType: OrderType;
+}) => {
   const {
     saleOrderSeq,
     exTaxTotal,
@@ -50,13 +61,13 @@ const Content = ({order, orderType}: {order: any; orderType: OrderType}) => {
   const {workspaceURI, tenant} = useWorkspace();
 
   const hideDiscount = saleOrderLineList?.every(
-    (item: any) => parseFloat(item.discountAmount) === 0,
+    item => parseFloat(String(item.discountAmount)) === 0,
   );
 
   return (
     <Container title={`${i18n.t(ORDER_NUMBER)} ${saleOrderSeq}`}>
       <Informations
-        createdOn={createdOn}
+        createdOn={createdOn!}
         shipmentMode={shipmentMode}
         status={status}
         variant={variant}
@@ -91,12 +102,12 @@ const Content = ({order, orderType}: {order: any; orderType: OrderType}) => {
           {invoices?.length ? (
             <ExpandableCard title={i18n.t(INVOICE)} initialState={true}>
               <div className="flex flex-col divide-y divide-border">
-                {invoices.map((record: any) => (
+                {invoices.map((record: Invoice) => (
                   <div key={record.id} className="flex flex-col gap-2 py-2">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 truncate">{record.invoiceId}</div>
                       <div className="flex-1">
-                        {formatDate(record.createdOn)}
+                        {formatDate(record.createdOn!)}
                       </div>
                       <div className="flex justify-end">
                         <DownloadButton
@@ -117,14 +128,14 @@ const Content = ({order, orderType}: {order: any; orderType: OrderType}) => {
               title={i18n.t(CUSTOMER_DELIVERY)}
               initialState={true}>
               <div className="flex flex-col divide-y divide-border">
-                {customerDeliveries.map((record: any) => (
+                {customerDeliveries.map((record: CustomerDelivery) => (
                   <div key={record.id} className="flex flex-col gap-2 py-2">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 truncate">
                         {record.stockMoveSeq}
                       </div>
                       <div className="flex-1">
-                        {formatDate(record.createdOn)}
+                        {formatDate(record.createdOn!)}
                       </div>
                       <div className="flex justify-end">
                         <DownloadButton

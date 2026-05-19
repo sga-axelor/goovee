@@ -1,57 +1,67 @@
 // ---- CORE IMPORTS ---- //
-import type {Address, ID, Product, Unit} from '@/types';
+import type {ID} from '@/types';
+import type {BigDecimal} from '@goovee/orm';
+import {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {ORDER} from '@/subapps/orders/common/constants/orders';
+import {findOrder, findOrders} from '../orm/orders';
 
-export type Order = {
-  id: ID;
-  orderNumber: string;
-  saleOrderSeq: string;
-  StatusSelect: number;
-  creationDate: Date | string;
-  totalCostPrice: number;
-  taxTotal: number;
-  template: boolean;
-  createdOn: string;
-  archived: boolean;
-  shipmentMode?: {
-    name: string;
-  };
-  currency?: {
-    code: string;
-    name: string;
-    symbol: string;
-  };
-  deliveryAddress?: Address;
-  mainInvoicingAddress?: Address;
-  inTaxTotal: number;
-  exTaxTotal: number;
-  companyExTaxTotal: number;
-  statusSelect: 1 | 2 | 3 | 4 | 5;
-  invoicingState: 1 | 2 | 3;
-  deliveryState: 1 | 2 | 3;
-  saleOrderLineList: SaleOrder[];
+export type TaxLine = {
+  name: string | null;
+  value: string | number;
 };
 
-export type SaleOrder = {
-  id: ID;
-  productName: string;
-  price: number;
-  discountAmount: number;
-  priceDiscounted: number;
-  deliveredQty: string;
-  product?: Product;
-  qty: number;
-  unit: Unit;
-  exTaxTotal: number;
-  inTaxTotal: number;
-};
-
-export type Invoice = {
-  id: ID;
-  invoiceId: string;
-  invoiceDate: string;
+export type OrderAddress = {
+  id?: ID;
+  zip?: string | null;
+  addressl4?: string | null;
+  addressl6?: string | null;
+  country?: {name: string | null} | null;
+  fullName?: string | null;
+  formattedFullName?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  companyName?: string | null;
 };
 
 export type OrderType = (typeof ORDER)[keyof typeof ORDER];
+
+export type SaleOrderLineInput = {
+  id: string;
+  productName: string | null;
+  qty: BigDecimal | null;
+  unit?: {name: string | null} | null;
+  priceDiscounted: BigDecimal | null;
+  exTaxTotal: BigDecimal | null;
+  discountAmount: BigDecimal | null;
+  inTaxTotal: BigDecimal | null;
+  product?: {picture?: {id?: string} | null} | null;
+  taxLineSet?: {name: string | null; value: BigDecimal | null}[] | null;
+};
+
+export type InvoiceInput = {
+  id: string;
+  invoiceId: string | null;
+  createdOn: Date | string | null;
+};
+
+export type CustomerDeliveryInput = {
+  id: string;
+  stockMoveSeq: string | null;
+  createdOn: Date | string | null;
+};
+
+export type Order = Cloned<
+  NonNullable<Awaited<ReturnType<typeof findOrders>>>['orders'][number]
+>;
+
+export type DetailOrder = Cloned<
+  NonNullable<Awaited<ReturnType<typeof findOrder>>>
+>;
+
+export type SaleOrder = NonNullable<DetailOrder['saleOrderLineList']>[number];
+
+export type Invoice = DetailOrder['invoices'][number];
+
+export type CustomerDelivery = DetailOrder['customerDeliveries'][number];
