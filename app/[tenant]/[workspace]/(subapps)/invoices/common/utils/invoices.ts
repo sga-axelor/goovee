@@ -1,5 +1,7 @@
-// ---- LOCAL IMPORTS ---- //
+// ---- CORE IMPORTS ---- //
+import type {Partner} from '@/types';
 
+// ---- LOCAL IMPORTS ---- //
 import {
   INVOICE,
   INVOICE_CATEGORY,
@@ -21,34 +23,30 @@ export function buildWhereClause({
   workspaceURL,
   type,
 }: {
-  params: any;
+  params?: {where?: object & {partner?: {id: Partner['id']}}};
   workspaceURL: string;
   type?: string;
 }) {
-  const workspaceConditions: any = {
+  const workspaceConditions = {
     OR: [
       {portalWorkspace: {url: workspaceURL}},
       {saleOrder: {portalWorkspace: {url: workspaceURL}}},
     ],
   };
 
-  const whereClause: any = {
+  return {
     ...params?.where,
     statusSelect: {eq: INVOICE_STATUS.VENTILATED},
     operationTypeSelect: INVOICE_CATEGORY.SALE_INVOICE,
     // ARCHIVED FILTER
     OR: [{archived: false}, {archived: null}],
+    AND: [
+      workspaceConditions,
+      type
+        ? type === INVOICE.PAID
+          ? {amountRemaining: {eq: 0}}
+          : {amountRemaining: {ne: 0}}
+        : false,
+    ].filter(Boolean),
   };
-
-  whereClause.AND = [
-    ...(whereClause.AND || []),
-    workspaceConditions,
-    type
-      ? type === INVOICE.PAID
-        ? {amountRemaining: {eq: 0}}
-        : {amountRemaining: {ne: 0}}
-      : false,
-  ].filter(Boolean);
-
-  return whereClause;
 }

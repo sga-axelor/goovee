@@ -48,6 +48,7 @@ import {
   BANK_TRANSFER_STATUS,
   STRIPE_CANCELLATION_REASONS,
 } from '@/lib/core/payment/stripe/constants';
+import type {CountryCode} from '@/lib/core/payment/stripe/types';
 import {scale} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
@@ -135,10 +136,17 @@ export async function paypalCreateOrder({
   const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.paypal);
 
   const payerEmail = token
-    ? $invoice?.partner?.emailAddress?.address
+    ? $invoice.partner?.emailAddress?.address
     : user!.email;
 
-  const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
+  if (!payerEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
+
+  const currencyCode = $invoice.currency?.code || DEFAULT_CURRENCY_CODE;
 
   try {
     const response = await createPaypalOrder({
@@ -156,7 +164,7 @@ export async function paypalCreateOrder({
     console.error('Error:', err);
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message: await t((err as Error)?.message),
     };
   }
 }
@@ -405,17 +413,23 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  let customer: {id: string; email: string};
-  if (token) {
-    customer = {
-      id: String($invoice?.partner?.id),
-      email: $invoice?.partner?.emailAddress?.address,
+  const stripeEmail = token
+    ? $invoice.partner?.emailAddress?.address
+    : user!.email;
+
+  if (!stripeEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
     };
-  } else {
-    customer = {id: String(user!.id), email: user!.email};
   }
 
-  const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
+  const customer = {
+    id: token ? String($invoice.partner?.id) : String(user!.id),
+    email: stripeEmail,
+  };
+
+  const currencyCode = $invoice.currency?.code || DEFAULT_CURRENCY_CODE;
 
   const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.stripe);
 
@@ -425,7 +439,7 @@ export async function createStripeCheckoutSession({
       client,
       customer,
       context: {
-        id: invoice.id,
+        id: $invoice.id,
         paymentType: PAYMENT_TYPE.CARD,
         source: PAYMENT_SOURCE.INVOICES,
         paymentModeId,
@@ -447,7 +461,7 @@ export async function createStripeCheckoutSession({
     console.error('Stripe checkout session error:', err);
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message: await t((err as Error)?.message),
     };
   }
 }
@@ -566,7 +580,7 @@ export async function validateStripePayment({
     } catch (err) {
       return {
         error: true,
-        message: await t((err as any)?.message),
+        message: await t((err as Error)?.message),
       };
     }
 
@@ -725,21 +739,27 @@ export async function createStripeBankTransferIntent({
     };
   }
 
-  let customer: {id: string; email: string};
-  if (token) {
-    customer = {
-      id: String($invoice?.partner?.id),
-      email: $invoice?.partner?.emailAddress?.address,
+  const stripeEmail = token
+    ? $invoice.partner?.emailAddress?.address
+    : user!.email;
+
+  if (!stripeEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
     };
-  } else {
-    customer = {id: String(user!.id), email: user!.email};
   }
 
-  const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
-  const currencySymbol = $invoice?.currency?.symbol || DEFAULT_CURRENCY_SYMBOL;
-  const scale = $invoice?.currency.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+  const customer = {
+    id: token ? String($invoice.partner?.id) : String(user!.id),
+    email: stripeEmail,
+  };
 
-  const country = $invoice.company.address.country;
+  const currencyCode = $invoice.currency?.code || DEFAULT_CURRENCY_CODE;
+  const currencySymbol = $invoice.currency?.symbol || DEFAULT_CURRENCY_SYMBOL;
+  const scale = $invoice.currency?.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
+
+  const country = $invoice.company?.address?.country;
 
   const formattedAmount = await formatNumber($amount, {
     scale,
@@ -762,7 +782,7 @@ export async function createStripeBankTransferIntent({
       },
       amount: Number($amount),
       currency: currencyCode,
-      countryCode: country.alpha2Code,
+      countryCode: country?.alpha2Code as CountryCode,
     });
 
     if (result.status === BANK_TRANSFER_STATUS.PAID) {
@@ -774,8 +794,8 @@ export async function createStripeBankTransferIntent({
     console.error('Error creating stripe bank transfer payment intent:', error);
 
     const message =
-      (error as any)?.raw?.message ||
-      (error as any)?.message ||
+      (error as Error & {raw?: {message?: string}})?.raw?.message ||
+      (error as Error)?.message ||
       'Failed to create bank transfer';
 
     return {
@@ -894,7 +914,7 @@ export async function cancelStripeBankTransferPaymentIntent({
     } catch (err) {
       return {
         error: true,
-        message: await t((err as any)?.message),
+        message: await t((err as Error)?.message),
       };
     }
     const paymentContext = await findPaymentContext({
@@ -998,10 +1018,17 @@ export async function payboxCreateOrder({
   }
 
   const payerEmail = token
-    ? $invoice?.partner?.emailAddress?.address
+    ? $invoice.partner?.emailAddress?.address
     : user!.email;
 
-  const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
+  if (!payerEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
+
+  const currencyCode = $invoice.currency?.code || DEFAULT_CURRENCY_CODE;
 
   const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.paybox);
 
@@ -1025,7 +1052,7 @@ export async function payboxCreateOrder({
   } catch (err) {
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message: await t((err as Error)?.message),
     };
   }
 }
@@ -1143,7 +1170,7 @@ export async function validatePayboxPayment({
       console.error('Error:', err);
       return {
         error: true,
-        message: await t((err as any)?.message),
+        message: await t((err as Error)?.message),
       };
     }
 
@@ -1272,7 +1299,7 @@ export async function up2payCreateOrder({
     };
   }
 
-  const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
+  const currencyCode = $invoice.currency?.code || DEFAULT_CURRENCY_CODE;
   if (!CURRENCY_CODE[currencyCode]) {
     return {
       error: true,
@@ -1282,13 +1309,24 @@ export async function up2payCreateOrder({
     };
   }
 
+  const up2payEmail = token
+    ? $invoice.partner?.emailAddress?.address
+    : user!.email;
+
+  if (!up2payEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
+
   const billingInfo = {
-    firstName: $invoice?.partner?.firstName || '',
-    lastName: $invoice?.partner?.name || '',
-    addressLine1: $invoice?.address?.addressl4 || '',
-    zipCode: $invoice?.address?.zip || '',
-    city: $invoice?.address?.city?.name || '',
-    countryCode: $invoice?.address?.country?.alpha2Code || '',
+    firstName: $invoice.partner?.firstName || '',
+    lastName: $invoice.partner?.name || '',
+    addressLine1: $invoice.address?.addressl4 || '',
+    zipCode: $invoice.address?.zip || '',
+    city: $invoice.address?.city?.name || '',
+    countryCode: $invoice.address?.country?.alpha2Code || '',
   };
 
   const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.up2pay);
@@ -1299,9 +1337,9 @@ export async function up2payCreateOrder({
       client,
       amount: $amount,
       currency: currencyCode,
-      email: token ? $invoice?.partner?.emailAddress?.address : user!.email,
-      name: $invoice?.partner?.name || '',
-      reference: $invoice?.invoiceId,
+      email: up2payEmail,
+      name: $invoice.partner?.name || '',
+      reference: $invoice.invoiceId!,
       context: {
         id: invoice.id,
         source: PAYMENT_SOURCE.INVOICES,
@@ -1325,7 +1363,7 @@ export async function up2payCreateOrder({
     console.error('[UP2PAY][CREATE ORDER] ', error);
     return {
       error: true,
-      message: await t((error as any)?.message),
+      message: await t((error as Error)?.message),
     };
   }
 }
@@ -1425,8 +1463,15 @@ export async function initiatePispPayment({
   };
 
   const pispEmail = token
-    ? $invoice?.partner?.emailAddress?.address
+    ? $invoice.partner?.emailAddress?.address
     : user?.email;
+
+  if (!pispEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
 
   const paymentModeId = getPaymentModeId(paymentOptions, PaymentOption.hubpisp);
 
@@ -1437,7 +1482,7 @@ export async function initiatePispPayment({
         .join(' '),
       email: pispEmail,
     };
-    const currencyCode = $invoice?.currency?.code || DEFAULT_CURRENCY_CODE;
+    const currencyCode = $invoice.currency?.code || DEFAULT_CURRENCY_CODE;
     const response = await createHubPispPaymentLink({
       amount: Number($amount),
       tenantId,
@@ -1471,7 +1516,7 @@ export async function initiatePispPayment({
     console.error('[HUBPISP][CREATE ORDER] ', error);
     return {
       error: true,
-      message: await t((error as any)?.message),
+      message: await t((error as Error)?.message),
     };
   }
 }

@@ -108,7 +108,7 @@ export default function Content({
             invoice={invoice}
             invoiceType={invoiceType}
             isUnpaid={isUnpaid}
-            workspace={workspace}
+            workspace={workspace as PortalWorkspace}
             workspaceURI={workspaceURI}
             token={token}
             onPaymentUpdate={handlePaymentUpdate}
