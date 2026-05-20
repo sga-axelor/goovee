@@ -90,7 +90,12 @@ async function Quotations({
 
   const {quotations, pageInfo} = result;
 
-  return <Content quotations={clone(quotations) as Quotation[]} pageInfo={pageInfo} />;
+  return (
+    <Content
+      quotations={clone(quotations) as Quotation[]}
+      pageInfo={pageInfo}
+    />
+  );
 }
 
 export default async function Page(props: {
