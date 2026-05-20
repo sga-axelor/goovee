@@ -25,6 +25,8 @@ export const ProductCard = ({
 }) => {
   const [show, setShow] = React.useState(false);
 
+  const taxValue = saleOrder?.taxLineSet?.[0]?.value;
+
   const getProductImage = (product: Product['product']) => {
     return getProductImageURL(product?.picture?.id, tenant, {noimage: true});
   };
@@ -83,7 +85,7 @@ export const ProductCard = ({
                       {i18n.t('Tax')}
                     </p>
                     <p className="text-base mb-0">
-                      {saleOrder?.taxLineSet[0]?.value}%
+                      {taxValue != null ? `${taxValue}%` : ''}
                     </p>
                   </div>
                   <div className="flex justify-between px-4">

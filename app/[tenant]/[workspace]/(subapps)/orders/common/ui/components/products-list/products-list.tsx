@@ -56,45 +56,50 @@ export const ProductsList = ({
               </TableCell>
             </TableRow>
           ) : (
-            saleOrderLineList.map((saleOrder: SaleOrder) => (
-              <TableRow key={saleOrder.id} className="text-base">
-                <TableCell className="ps-6">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="rounded-sm h-6 w-6">
-                      <AvatarImage
-                        src={getProductImage(saleOrder.product)}
-                        alt={saleOrder.productName}
-                        size={24}
-                      />
-                    </Avatar>
-                    <p className="font-medium mb-0">{saleOrder.productName}</p>
-                  </div>
-                </TableCell>
-                <TableCell className="whitespace-nowrap" align="right">
-                  {saleOrder.qty}
-                </TableCell>
-                <TableCell>{saleOrder?.unit?.name}</TableCell>
-                <TableCell className="whitespace-nowrap" align="right">
-                  {saleOrder.priceDiscounted}
-                </TableCell>
-                <TableCell className="whitespace-nowrap" align="right">
-                  {saleOrder.exTaxTotal}
-                </TableCell>
-                <TableCell className="whitespace-nowrap" align="right">
-                  {saleOrder?.taxLineSet?.[0]?.value}%
-                </TableCell>
-                {!hideDiscountColumn && (
-                  <TableCell className="whitespace-nowrap" align="right">
-                    {saleOrder.discountAmount}%
+            saleOrderLineList.map((saleOrder: SaleOrder) => {
+              const taxValue = saleOrder?.taxLineSet?.[0]?.value;
+              return (
+                <TableRow key={saleOrder.id} className="text-base">
+                  <TableCell className="ps-6">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="rounded-sm h-6 w-6">
+                        <AvatarImage
+                          src={getProductImage(saleOrder.product)}
+                          alt={saleOrder.productName}
+                          size={24}
+                        />
+                      </Avatar>
+                      <p className="font-medium mb-0">
+                        {saleOrder.productName}
+                      </p>
+                    </div>
                   </TableCell>
-                )}
-                <TableCell
-                  className="font-semibold whitespace-nowrap"
-                  align="right">
-                  {saleOrder.inTaxTotal}
-                </TableCell>
-              </TableRow>
-            ))
+                  <TableCell className="whitespace-nowrap" align="right">
+                    {saleOrder.qty}
+                  </TableCell>
+                  <TableCell>{saleOrder?.unit?.name}</TableCell>
+                  <TableCell className="whitespace-nowrap" align="right">
+                    {saleOrder.priceDiscounted}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap" align="right">
+                    {saleOrder.exTaxTotal}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap" align="right">
+                    {taxValue != null ? `${taxValue}%` : ''}
+                  </TableCell>
+                  {!hideDiscountColumn && (
+                    <TableCell className="whitespace-nowrap" align="right">
+                      {saleOrder.discountAmount}%
+                    </TableCell>
+                  )}
+                  <TableCell
+                    className="font-semibold whitespace-nowrap"
+                    align="right">
+                    {saleOrder.inTaxTotal}
+                  </TableCell>
+                </TableRow>
+              );
+            })
           )}
         </StyledTable>
       </div>

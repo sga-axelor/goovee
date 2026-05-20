@@ -60,6 +60,7 @@ export const ProductsList = ({
               </TableRow>
             ) : (
               saleOrderLineList?.map(saleOrder => {
+                const taxValue = saleOrder?.taxLineSet?.[0]?.value;
                 return (
                   <TableRow key={saleOrder.id} className="text-base">
                     <TableCell className="ps-6">
@@ -87,7 +88,7 @@ export const ProductsList = ({
                       {saleOrder.exTaxTotal}
                     </TableCell>
                     <TableCell className="whitespace-nowrap" align="right">
-                      {saleOrder?.taxLineSet[0]?.value}%
+                      {taxValue != null ? `${taxValue}%` : ''}
                     </TableCell>
                     {!hideDiscountColumn && (
                       <TableCell className="whitespace-nowrap" align="right">
