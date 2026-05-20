@@ -94,11 +94,18 @@ export async function createStripeCheckoutSession(props: {
   let payerId;
   if (user) {
     const payer = await findGooveeUserByEmail(user.email, client);
-    emailAddress = payer?.emailAddress?.address!;
+    emailAddress = payer?.emailAddress?.address;
     payerId = payer?.id!;
   } else {
     emailAddress = values.emailAddress;
     payerId = values.emailAddress;
+  }
+
+  if (!emailAddress) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
   }
 
   try {
@@ -200,10 +207,18 @@ export async function paypalCreateOrder(props: {
   let emailAddress;
   if (user) {
     const payer = await findGooveeUserByEmail(user.email, client);
-    emailAddress = payer?.emailAddress?.address!;
+    emailAddress = payer?.emailAddress?.address;
   } else {
     emailAddress = values.emailAddress;
   }
+
+  if (!emailAddress) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
+
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
   try {
     const response = await createPaypalOrder({
@@ -289,10 +304,18 @@ export async function payboxCreateOrder(props: {
   let emailAddress;
   if (user) {
     const payer = await findGooveeUserByEmail(user.email, client);
-    emailAddress = payer?.emailAddress?.address!;
+    emailAddress = payer?.emailAddress?.address;
   } else {
     emailAddress = values.emailAddress;
   }
+
+  if (!emailAddress) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
+
   try {
     const response = await createPayboxOrder({
       amount: expectedAmount,
