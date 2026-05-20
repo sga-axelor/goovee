@@ -1,6 +1,17 @@
 'server only';
 
 import {experimental_taintUniqueValue} from 'react';
+
+/* The taint API only exists in React's `react-server` build that Next.js
+ * loads in Server Components / Route Handlers. CLI scripts (seeders,
+ * one-shot tasks) resolve the regular `react` build where it's `undefined`,
+ * so calling it would crash. There's no Client Component leak surface in
+ * a script anyway — skip when the function isn't there. */
+function taint(message: string, value: string) {
+  if (typeof experimental_taintUniqueValue === 'function') {
+    experimental_taintUniqueValue(message, process, value);
+  }
+}
 import {DEFAULT_TENANT} from '@/constants';
 import {createClient} from '@/goovee/.generated/client';
 import {LRUCache} from './lru';
@@ -21,17 +32,15 @@ function getAOSAuth() {
   }
 
   if (apiKey) {
-    experimental_taintUniqueValue(
+    taint(
       'AOS API key is a server secret. Do not pass to Client Components.',
-      process,
       apiKey,
     );
   }
 
   if (password) {
-    experimental_taintUniqueValue(
+    taint(
       'AOS password is a server secret. Do not pass to Client Components.',
-      process,
       password,
     );
   }
@@ -99,17 +108,15 @@ export class SingleTenantManager implements TenantManager {
     };
 
     if (dbUrl) {
-      experimental_taintUniqueValue(
+      taint(
         'Database URL is a server secret. Do not pass to Client Components.',
-        process,
         dbUrl,
       );
     }
 
     if (webhookSecret) {
-      experimental_taintUniqueValue(
+      taint(
         'Webhook secret is a server secret. Do not pass to Client Components.',
-        process,
         webhookSecret,
       );
     }
@@ -182,17 +189,15 @@ export class MultiTenantManager implements TenantManager {
         throw new Error('Error getting tenant');
       } else {
         if (config.db.url) {
-          experimental_taintUniqueValue(
+          taint(
             'Database URL is a server secret. Do not pass to Client Components.',
-            process,
             config.db.url,
           );
         }
 
         if (config.aos.webhookSecret) {
-          experimental_taintUniqueValue(
+          taint(
             'Webhook secret is a server secret. Do not pass to Client Components.',
-            process,
             config.aos.webhookSecret,
           );
         }
