@@ -10,6 +10,7 @@ import {useToast} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {ErrorResponse, SuccessResponse} from '@/types/action';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import type {PortalWorkspace} from '@/orm/workspace';
 import {PAYMENT_SOURCE} from '@/lib/core/payment/common/type';
 import {PaymentUpdateStatus} from '@/lib/core/payment/sse';
 
@@ -40,7 +41,7 @@ export function InvoicePayments({
   token,
   onPaymentUpdate,
 }: {
-  workspace: any;
+  workspace: PortalWorkspace;
   invoice: Cloned<Invoice>;
   amount: string;
   paymentType: INVOICE_PAYMENT_OPTIONS | null;
@@ -56,7 +57,7 @@ export function InvoicePayments({
   const {toast} = useToast();
 
   const redirectToInvoice = useCallback(
-    async (result: any) => {
+    async (result: SuccessResponse<unknown>) => {
       if (result) {
         if (paymentType === INVOICE_PAYMENT_OPTIONS.PARTIAL) {
           resetPaymentType();
@@ -95,14 +96,16 @@ export function InvoicePayments({
     stripeSessionId: string;
   }): Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>> => {
     try {
-      const response: any = await validateStripePayment({
+      const response = await validateStripePayment({
         stripeSessionId,
         workspaceURL,
         workspaceURI,
         token,
       });
 
-      return response;
+      return response as
+        | ErrorResponse
+        | SuccessResponse<{id: ID; version: number}>;
     } catch (error) {
       return {
         error: true,
@@ -114,16 +117,18 @@ export function InvoicePayments({
   const handlePayboxValidations = async ({
     params,
   }: {
-    params: any;
+    params: Record<string, string>;
   }): Promise<ErrorResponse | SuccessResponse<{id: ID; version: number}>> => {
     try {
-      const response: any = await validatePayboxPayment({
+      const response = await validatePayboxPayment({
         params,
         workspaceURL,
         workspaceURI,
         token,
       });
-      return response;
+      return response as
+        | ErrorResponse
+        | SuccessResponse<{id: ID; version: number}>;
     } catch (error) {
       return {
         error: true,

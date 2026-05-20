@@ -5,6 +5,17 @@ import type {PaymentUpdateStatus} from '@/lib/core/payment/sse';
 import {BankAccountType} from '@/lib/core/payment/stripe/types';
 import {HubPispLocalInstrument} from '@/lib/core/payment/hubpisp/constants';
 
+export type InvoiceListItem = {
+  id: string;
+  invoiceId: string | null;
+  invoiceDate: string | null;
+  dueDate: string;
+  exTaxTotal: string;
+  inTaxTotal: string;
+  amountRemaining: string | null;
+  isUnpaid: boolean;
+};
+
 export type PaymentListItem = {
   id: string;
   version: number;
@@ -106,6 +117,7 @@ export type Invoice = {
     id: string;
     version: number;
     name: string | null;
+    firstName: string | null;
     simpleFullName: string | null;
     emailAddress: {
       id: string;
@@ -175,7 +187,7 @@ export type InvoiceProps = {
 export type TotalProps = {
   invoice: Cloned<Invoice>;
   isUnpaid?: boolean;
-  workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
+  workspace: PortalWorkspace;
   invoiceType: string;
   workspaceURI: string;
   token?: string;

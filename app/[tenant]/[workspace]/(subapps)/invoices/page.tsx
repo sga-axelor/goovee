@@ -15,6 +15,7 @@ import {manager} from '@/lib/core/tenant';
 // ---- LOCAL IMPORTS ---- //
 import Content from './content';
 import {findInvoices} from '@/subapps/invoices/common/orm/invoices';
+import type {InvoiceListItem} from '@/subapps/invoices/common/types/invoices';
 import {INVOICE} from '@/subapps/invoices/common/constants/invoices';
 
 async function Invoices({
@@ -78,7 +79,7 @@ async function Invoices({
     partnerKey: PartnerKey.PARTNER,
   });
 
-  const result: any = await findInvoices({
+  const result = await findInvoices({
     params: {
       where: invoicesWhereClause,
       page,
@@ -98,7 +99,7 @@ async function Invoices({
   return (
     <Content
       invoiceType={invoiceType}
-      invoices={invoices}
+      invoices={clone(invoices) as InvoiceListItem[]}
       workspace={workspace}
       pageInfo={pageInfo}
     />

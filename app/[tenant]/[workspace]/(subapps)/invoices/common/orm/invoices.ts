@@ -23,7 +23,6 @@ import type {
 } from '@/subapps/invoices/common/types/invoices';
 import {INVOICE} from '@/subapps/invoices/common/constants/invoices';
 import {buildWhereClause} from '@/subapps/invoices/common/utils/invoices';
-import {ExpandRecursively} from '@/types/util';
 
 export const findInvoices = async ({
   params = {},
@@ -53,29 +52,27 @@ export const findInvoices = async ({
 
   const skip = limit ? getSkip(limit, page) : undefined;
 
-  const $invoices = await client.aOSInvoice
-    .find({
-      where: whereClause,
-      take: limit as any,
-      ...(skip ? {skip: skip as any} : {}),
-      orderBy: {createdOn: ORDER_BY.DESC} as any,
-      select: {
-        invoiceId: true,
-        dueDate: true,
-        invoiceDate: true,
-        exTaxTotal: true,
-        inTaxTotal: true,
-        amountRemaining: true,
-        currency: {
-          code: true,
-          numberOfDecimals: true,
-          symbol: true,
-        },
+  const $invoices = await client.aOSInvoice.find({
+    where: whereClause,
+    take: limit ? Number(limit) : undefined,
+    ...(skip ? {skip} : {}),
+    orderBy: {createdOn: ORDER_BY.DESC},
+    select: {
+      invoiceId: true,
+      dueDate: true,
+      invoiceDate: true,
+      exTaxTotal: true,
+      inTaxTotal: true,
+      amountRemaining: true,
+      currency: {
+        code: true,
+        numberOfDecimals: true,
+        symbol: true,
       },
-    })
-    .then(clone);
+    },
+  });
 
-  const invoices: any = [];
+  const invoices = [];
 
   for (const invoice of $invoices) {
     const {currency, exTaxTotal, inTaxTotal, amountRemaining} = invoice;
@@ -83,26 +80,24 @@ export const findInvoices = async ({
     const scale = currency?.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
     const isUnpaid = Number(amountRemaining) !== 0;
 
-    const $invoice = {
+    invoices.push({
       ...invoice,
       isUnpaid,
-      exTaxTotal: await formatNumber(exTaxTotal, {
+      exTaxTotal: await formatNumber(String(exTaxTotal), {
         scale,
         currency: currencySymbol,
         type: 'DECIMAL',
       }),
-      inTaxTotal: await formatNumber(inTaxTotal, {
+      inTaxTotal: await formatNumber(String(inTaxTotal), {
         scale,
         currency: currencySymbol,
         type: 'DECIMAL',
       }),
-    };
-
-    invoices.push($invoice);
+    });
   }
 
   const pageInfo = getPageInfo({
-    count: invoices?.[0]?._count,
+    count: $invoices?.[0]?._count,
     page,
     limit,
   });
@@ -178,6 +173,7 @@ export const findInvoice = async ({
         partner: {
           simpleFullName: true,
           fixedPhone: true,
+          firstName: true,
           emailAddress: {
             address: true,
           },
@@ -201,7 +197,7 @@ export const findInvoice = async ({
           symbol: true,
         },
         invoicePaymentList: {
-          orderBy: {paymentDate: 'ASC'},
+          orderBy: {paymentDate: ORDER_BY.ASC},
           select: {
             paymentDate: true,
             amount: true,

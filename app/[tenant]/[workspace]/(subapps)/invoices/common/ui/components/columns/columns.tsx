@@ -10,6 +10,7 @@ import {formatDate} from '@/lib/core/locale/formatters';
 
 // ---- LOCAL IMPORTS ---- //
 import {INVOICE_TYPE} from '@/subapps/invoices/common/constants/invoices';
+import type {InvoiceListItem} from '@/subapps/invoices/common/types/invoices';
 
 export const Columns = [
   {
@@ -17,16 +18,16 @@ export const Columns = [
     label: i18n.t('Invoice number'),
     sortable: true,
     mobile: true,
-    getter: (row: any) => row.invoiceId,
-    content: (row: any) => (
+    getter: (row: InvoiceListItem) => row.invoiceId,
+    content: (row: InvoiceListItem) => (
       <span className="font-medium ">{row.invoiceId}</span>
     ),
   },
   {
     key: 'amountRemaining',
     label: i18n.t('Status'),
-    getter: (row: any) => row.amountRemaining,
-    content: (row: any) => {
+    getter: (row: InvoiceListItem) => row.amountRemaining,
+    content: (row: InvoiceListItem) => {
       const status = row.isUnpaid ? INVOICE_TYPE.UNPAID : INVOICE_TYPE.PAID;
       const variant = row.isUnpaid ? 'destructive' : 'success';
       return (
@@ -42,21 +43,21 @@ export const Columns = [
     key: 'dueDate',
     label: i18n.t('Due on'),
     sortable: true,
-    getter: (row: any) => row.dueDate,
-    content: (row: any) => formatDate(row.dueDate),
+    getter: (row: InvoiceListItem) => row.dueDate,
+    content: (row: InvoiceListItem) => formatDate(row.dueDate),
   },
   {
     key: 'exTaxTotal',
     label: i18n.t('Total WT'),
-    getter: (row: any) => row.exTaxTotal,
-    content: (row: any) => row.exTaxTotal,
+    getter: (row: InvoiceListItem) => row.exTaxTotal,
+    content: (row: InvoiceListItem) => row.exTaxTotal,
   },
   {
     key: 'inTaxTotal',
     label: i18n.t('Total ATI'),
-    getter: (row: any) => row.inTaxTotal,
+    getter: (row: InvoiceListItem) => row.inTaxTotal,
     mobile: true,
-    content: (row: any) => (
+    content: (row: InvoiceListItem) => (
       <span className="font-medium">{row.inTaxTotal}</span>
     ),
   },

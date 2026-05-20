@@ -235,6 +235,7 @@
   "Email and tenant is required.": "L’email et le locataire sont requis.",
   "Email and workspace is required": "L’email et l’espace de travail sont requis",
   "Email is required": "L'email est requis",
+  "Email is required for payment": "Une adresse e-mail est requise pour le paiement.",
   "Email not verified": "Email non vérifié",
   "Email, Scope and Tenant is required": "L’email, la portée et le locataire sont requis",
   "Email, password and otp is required": "L'email, le mot de passe et l'OTP sont requis",

@@ -12,6 +12,7 @@ import type {Client} from '@/goovee/.generated/client';
 
 // ---- LOCAL IMPORTS ---- //
 import type {InvoicePaymentInput} from '@/subapps/invoices/common/validators';
+import type {Invoice} from '@/subapps/invoices/common/types/invoices';
 import {findInvoice} from '@/subapps/invoices/common/orm/invoices';
 import {
   INVOICE,
@@ -30,7 +31,7 @@ export async function validatePaymentData({
     workspace: PortalWorkspace | Cloned<PortalWorkspace>;
     user: User | undefined;
     $amount: string | number;
-    $invoice?: any;
+    $invoice: Invoice;
     isPartialPayment: boolean;
   }>
 > {

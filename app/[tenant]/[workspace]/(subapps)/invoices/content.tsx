@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useMemo} from 'react';
+import {useMemo} from 'react';
 import type {Cloned} from '@/types/util';
 import {useRouter} from 'next/navigation';
 
@@ -11,6 +11,7 @@ import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSortBy} from '@/ui/hooks';
 import {SUBAPP_CODES, URL_PARAMS} from '@/constants';
+import type {PageInfo} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -20,6 +21,7 @@ import {
   INVOICE_PAYMENT_OPTIONS,
 } from '@/subapps/invoices/common/constants/invoices';
 import {Columns, UnpaidColumns} from '@/subapps/invoices/common/ui/components';
+import type {InvoiceListItem} from '@/subapps/invoices/common/types/invoices';
 
 export default function Content({
   invoices = [],
@@ -27,8 +29,8 @@ export default function Content({
   workspace,
   invoiceType,
 }: {
-  invoices: [];
-  pageInfo?: any;
+  invoices: InvoiceListItem[];
+  pageInfo?: PageInfo;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   invoiceType: string;
 }) {
@@ -37,18 +39,15 @@ export default function Content({
 
   const [sortedInvoices, sortOrder, toggleSortOrder] = useSortBy(invoices);
 
-  const handleTabChange = (e: any) => {
+  const handleTabChange = (e: {href?: string}) => {
     router.push(`${workspaceURI}/${SUBAPP_CODES.invoices}?type=${e.href}`);
   };
 
-  const handleClick = (invoice: any) =>
+  const handleClick = (invoice: InvoiceListItem) =>
     router.push(`${workspaceURI}/${SUBAPP_CODES.invoices}/${invoice.id}`);
 
   const hasUpcomingInvoices = useMemo(() => {
-    return invoices?.some(
-      ({amountRemaining}: {amountRemaining: any}) =>
-        parseInt(amountRemaining.value) !== 0,
-    );
+    return invoices?.some(({isUnpaid}) => isUnpaid);
   }, [invoices]);
 
   const config = workspace?.config;
@@ -70,7 +69,7 @@ export default function Content({
 
   const invoiceColumns = useMemo(
     () =>
-      new Map<string, any>([
+      new Map([
         [INVOICE.UNPAID, unpaidColumns],
         [INVOICE.PAID, Columns],
       ]),
@@ -93,7 +92,7 @@ export default function Content({
         onTabChange={handleTabChange}>
         <div className="flex flex-col gap-4">
           <TableList
-            columns={invoiceColumns.get(invoiceType)}
+            columns={invoiceColumns.get(invoiceType) ?? []}
             rows={sortedInvoices}
             sort={sortOrder}
             onSort={toggleSortOrder}
