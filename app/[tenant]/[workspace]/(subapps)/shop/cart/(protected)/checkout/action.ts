@@ -301,6 +301,14 @@ export async function paypalCreateOrder({cart, workspaceURL}: CartOrderInput) {
   const expectedAmount = computeExpectedAmount({total, workspace});
 
   const payer = await findGooveeUserByEmail(user?.email, client);
+  const payerEmail = payer?.emailAddress?.address;
+
+  if (!payerEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
 
   try {
     const response = await createPaypalOrder({
@@ -308,7 +316,7 @@ export async function paypalCreateOrder({cart, workspaceURL}: CartOrderInput) {
       context: cart,
       amount: expectedAmount,
       currency: currency?.code,
-      email: payer?.emailAddress?.address!,
+      email: payerEmail,
     });
 
     return {success: true, order: response?.result};
@@ -427,6 +435,14 @@ export async function createStripeCheckoutSession({
   const expectedAmount = computeExpectedAmount({total, workspace});
 
   const payer = await findGooveeUserByEmail(user.email, client);
+  const payerEmail = payer?.emailAddress?.address;
+
+  if (!payerEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
 
   const currencyCode = currency?.code || DEFAULT_CURRENCY_CODE;
 
@@ -436,7 +452,7 @@ export async function createStripeCheckoutSession({
       client,
       customer: {
         id: payer?.id!,
-        email: payer?.emailAddress?.address!,
+        email: payerEmail,
       },
       name: 'Cart Checkout',
       amount: Number(expectedAmount),
@@ -736,13 +752,21 @@ export async function payboxCreateOrder({
   const expectedAmount = computeExpectedAmount({total, workspace});
 
   const payer = await findGooveeUserByEmail(user?.email, client);
+  const payerEmail = payer?.emailAddress?.address;
+
+  if (!payerEmail) {
+    return {
+      error: true,
+      message: await t('Email is required for payment'),
+    };
+  }
 
   try {
     const response = await createPayboxOrder({
       client,
       amount: expectedAmount,
       currency: currency?.code,
-      email: payer?.emailAddress?.address!,
+      email: payerEmail,
       context: cart,
       url: {
         success: `${process.env.GOOVEE_PUBLIC_HOST}/${uri}?paybox_response=true`,
