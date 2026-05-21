@@ -1,10 +1,22 @@
 import {dayjs} from '@/locale';
 
+// ---- CORE IMPORTS ---- //
+import type {Category} from '@/types';
+
+type OrmNewsCategory = {
+  id: string | number;
+  name: string;
+  slug: string;
+  parentCategory?: {id: string | number} | null;
+  url?: string;
+  items?: OrmNewsCategory[];
+};
+
 export function getFormatString({
   dateString,
   includeTime = true,
 }: {
-  dateString: any;
+  dateString: string;
   includeTime: boolean | undefined;
 }) {
   const date = dayjs(dateString);
@@ -21,12 +33,12 @@ export function getFormatString({
   return formatString;
 }
 
-export function transformCategories(categories: any[]): any[] {
-  const groupedCategories: any[] = [];
+export function transformCategories(categories: OrmNewsCategory[]): Category[] {
+  const groupedCategories: OrmNewsCategory[] = [];
 
-  const categoryMap = new Map<string, any>();
+  const categoryMap = new Map<string | number, OrmNewsCategory>();
 
-  categories.forEach((category: any) => {
+  categories.forEach(category => {
     category.items = [];
     category.url = category.slug;
     categoryMap.set(category.id, category);
@@ -48,7 +60,7 @@ export function transformCategories(categories: any[]): any[] {
     }
   });
 
-  return groupedCategories;
+  return groupedCategories as Category[];
 }
 export const getArchivedFilter = ({archived}: {archived: boolean}) => {
   return archived

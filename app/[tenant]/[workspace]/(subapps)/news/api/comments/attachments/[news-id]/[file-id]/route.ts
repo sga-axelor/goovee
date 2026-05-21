@@ -59,7 +59,7 @@ export async function GET(
     return new NextResponse('Unauthorized', {status: 401});
   }
 
-  const {news}: any = await findNews({
+  const {news} = await findNews({
     id: newsId,
     workspace,
     client,

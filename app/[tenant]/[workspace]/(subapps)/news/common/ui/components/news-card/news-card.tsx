@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -10,12 +9,15 @@ import {formatRelativeTime} from '@/locale/formatters';
 import {BadgeList, Skeleton} from '@/ui/components';
 import {NO_IMAGE_URL, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 
+// ---- LOCAL IMPORTS ---- //
+import type {NewsItem} from '@/subapps/news/common/types';
+
 export const NewsCard = ({
   news,
   id,
   navigatingPathFrom,
 }: {
-  news: any;
+  news: NewsItem;
   id: string;
   navigatingPathFrom: string;
 }) => {

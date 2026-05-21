@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -12,13 +11,16 @@ import {NO_IMAGE_URL, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {i18n} from '@/lib/core/locale';
 import {BigNewsCard} from '@/ui/components/big-news-card';
 
+// ---- LOCAL IMPORTS ---- //
+import type {NewsItem} from '@/subapps/news/common/types';
+
 export const LeadStories = ({
   title,
   news,
   navigatingPathFrom,
 }: {
   title?: string;
-  news?: any[];
+  news?: NewsItem[];
   navigatingPathFrom: string;
 }) => {
   const {workspaceURI} = useWorkspace();

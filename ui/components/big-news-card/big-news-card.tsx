@@ -1,4 +1,5 @@
 'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -7,6 +8,21 @@ import React from 'react';
 import {NO_IMAGE_URL, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {formatRelativeTime} from '@/locale/formatters';
 import {BadgeList} from '@/ui/components';
+
+type NewsCategory = {
+  id: string;
+  name: string;
+  color?: string | null;
+  parentCategory?: {
+    id: string;
+    name: string;
+    color?: string | null;
+    parentCategory?: {
+      name: string;
+      color?: string | null;
+    } | null;
+  } | null;
+};
 
 export function BigNewsCard({
   navigatingPathFrom,
@@ -20,14 +36,14 @@ export function BigNewsCard({
 }: {
   navigatingPathFrom: string;
   slug: string;
-  image: {
+  image?: {
     id: string;
-    fileName?: string;
+    fileName?: string | null;
   } | null;
   workspaceURI: string;
-  categorySet: any;
+  categorySet?: NewsCategory[];
   title: string;
-  description: string;
+  description?: string;
   publicationDateTime: string;
 }): React.JSX.Element {
   return (

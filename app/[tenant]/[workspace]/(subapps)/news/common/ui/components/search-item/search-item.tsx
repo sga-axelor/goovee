@@ -3,7 +3,16 @@
 // ---- CORE IMPORTS ---- //
 import {BadgeList} from '@/ui/components';
 
-export function SearchItem({result, onClick}: {result: any; onClick: any}) {
+// ---- LOCAL IMPORTS ---- //
+import type {NewsItem} from '@/subapps/news/common/types';
+
+export function SearchItem({
+  result,
+  onClick,
+}: {
+  result: NewsItem;
+  onClick: (slug: string) => void;
+}) {
   const {id, slug, title, categorySet, description} = result;
   return (
     <div
