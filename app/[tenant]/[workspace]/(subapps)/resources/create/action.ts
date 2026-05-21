@@ -25,14 +25,20 @@ import {UploadSchema} from '../common/utils/validators';
 
 const pump = promisify(pipeline);
 
-function extractFileValues(formData: FormData) {
-  const values: any = [];
+type FileFormValue = {
+  title: string;
+  description: string;
+  file: File;
+};
+
+function extractFileValues(formData: FormData): FileFormValue[] {
+  const values: Partial<FileFormValue>[] = [];
 
   for (const pair of (formData as any).entries()) {
-    const key = pair[0];
+    const key = pair[0] as string;
     const value = pair[1];
 
-    const index: any = Number(key.match(/\[(\d+)\]/)?.[1]);
+    const index = Number(key.match(/\[(\d+)\]/)?.[1]);
 
     if (Number.isNaN(index)) {
       continue;
@@ -45,14 +51,14 @@ function extractFileValues(formData: FormData) {
     const field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
 
     if (field === 'title' || field === 'description') {
-      values[index][field] = value;
+      values[index][field] = value as string;
     } else if (field === 'file') {
-      values[index][field] =
+      values[index].file =
         value instanceof File ? value : new File([value], 'filename');
     }
   }
 
-  return values;
+  return values as FileFormValue[];
 }
 
 export async function upload(formData: FormData, workspaceURL: string) {
@@ -139,8 +145,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
   } = parent;
 
   const canModify =
-    permissionSelect &&
-    [ACTION.WRITE, ACTION.UPLOAD].includes(permissionSelect);
+    permissionSelect === ACTION.WRITE || permissionSelect === ACTION.UPLOAD;
 
   if (!(isDirectory && canModify)) {
     return {
@@ -151,7 +156,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
 
   const values = extractFileValues(formData);
 
-  const getTimestampFilename = (name: any) => {
+  const getTimestampFilename = (name: string) => {
     return `${new Date().getTime()}-${name}`;
   };
 
@@ -164,7 +169,7 @@ export async function upload(formData: FormData, workspaceURL: string) {
 
   try {
     const fileEntries: FileEntry[] = await Promise.all(
-      values.map(async ({title, description, file}: any) => {
+      values.map(async ({title, description, file}) => {
         const titleWithExt = `${title}${path.extname(file.name)}`;
         const name = titleWithExt || file.name;
         const timestampFilename = getTimestampFilename(name);

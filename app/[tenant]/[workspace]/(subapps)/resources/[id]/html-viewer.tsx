@@ -1,5 +1,9 @@
+// ---- CORE IMPORTS ---- //
 import {InnerHTML} from '@/ui/components/inner-html';
 
-export default function HTMLViewer({record}: any) {
-  return <InnerHTML content={record.content} />;
+// ---- LOCAL IMPORTS ---- //
+import type {DmsFile} from '@/subapps/resources/common/types';
+
+export default function HTMLViewer({record}: {record: DmsFile}) {
+  return <InnerHTML content={record.content ?? undefined} />;
 }

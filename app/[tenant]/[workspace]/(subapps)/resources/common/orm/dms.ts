@@ -3,9 +3,18 @@ import {clone} from '@/utils';
 import type {User} from '@/types';
 import {filterPrivate} from '@/orm/filter';
 import type {Client} from '@/goovee/.generated/client';
+import {ORDER_BY} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {COLORS, ICONS} from '@/subapps/resources/common/constants';
+
+type FetchFoldersParams = {
+  where?: {
+    isHomepage?: boolean;
+    AND?: object[];
+  };
+  take?: number;
+};
 
 export async function fetchFolders({
   workspaceURL,
@@ -14,7 +23,7 @@ export async function fetchFolders({
   user,
   archived,
 }: {
-  params?: any;
+  params?: FetchFoldersParams;
   client: Client;
   workspaceURL: string;
   user?: User;
@@ -46,8 +55,8 @@ export async function fetchFolders({
       logoSelect: true,
     },
     orderBy: {
-      updatedOn: 'DESC',
-    } as any,
+      updatedOn: ORDER_BY.DESC,
+    },
     take: params?.take,
   });
 
@@ -277,26 +286,33 @@ export async function fetchExplorerCategories({
     })
     .then(clone);
 
-  const hiearchy = (categories: any) => {
-    const map: any = {};
-    categories.forEach((category: any) => {
-      category.children = [];
-      map[category.id] = category;
+  type CategoryFromDB = (typeof categories)[number];
+  type CategoryNode = CategoryFromDB & {
+    children: CategoryNode[];
+    _parent: string[];
+  };
+
+  const hiearchy = (categories: CategoryFromDB[]): CategoryNode[] => {
+    const map: Record<string, CategoryNode> = {};
+
+    categories.forEach(category => {
+      (category as CategoryNode).children = [];
+      map[category.id] = category as CategoryNode;
     });
 
-    categories.forEach((category: any) => {
+    categories.forEach(category => {
       const {parent} = category;
       if (parent?.id) {
-        map[parent.id]?.children.push(category);
+        map[parent.id]?.children.push(category as CategoryNode);
       }
     });
 
-    const _parent = (category: any, parents: any[] = []) => {
+    const _parent = (category: CategoryNode, parents: string[] = []) => {
       if (!category._parent) {
         category._parent = [...parents];
       }
 
-      category.children.forEach((child: any) => {
+      category.children.forEach(child => {
         _parent(child, [...parents, category.id]);
       });
     };

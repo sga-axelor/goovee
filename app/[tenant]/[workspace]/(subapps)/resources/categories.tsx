@@ -9,7 +9,10 @@ import {MdOutlineCategory} from 'react-icons/md';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {DynamicIcon} from '@/ui/components';
 
-export default function Categories({items}: any) {
+// ---- LOCAL IMPORTS ---- //
+import type {DmsFile} from '@/subapps/resources/common/types';
+
+export default function Categories({items}: {items: DmsFile[]}) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
@@ -30,13 +33,7 @@ export default function Categories({items}: any) {
         clickable: true,
       }}>
       {items.map(
-        ({
-          fileName,
-          description,
-          id,
-          colorSelect: color,
-          logoSelect: icon,
-        }: any) => (
+        ({fileName, description, id, colorSelect: color, logoSelect: icon}) => (
           <SwiperSlide
             key={id}
             className="!mr-0 !w-[281px] cursor-pointer"
@@ -44,9 +41,16 @@ export default function Categories({items}: any) {
             <div className="space-y-2">
               <div className="!h-[144px] bg-white rounded-lg flex justify-center items-center">
                 {icon ? (
-                  <DynamicIcon className="h-16 w-16" fill={color} icon={icon} />
+                  <DynamicIcon
+                    className="h-16 w-16"
+                    fill={color ?? undefined}
+                    icon={icon}
+                  />
                 ) : (
-                  <MdOutlineCategory className="h-16 w-16" fill={color} />
+                  <MdOutlineCategory
+                    className="h-16 w-16"
+                    fill={color ?? undefined}
+                  />
                 )}
               </div>
               <div className="space-y-2">
@@ -55,7 +59,7 @@ export default function Categories({items}: any) {
                 </h3>
                 <p
                   className="leading-4 text-[0.625rem] px-4 text-muted-foreground line-clamp-3"
-                  title={description}>
+                  title={description ?? undefined}>
                   {description}
                 </p>
               </div>

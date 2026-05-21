@@ -105,8 +105,7 @@ export async function create(formData: FormData, workspaceURL: string) {
     isDirectory,
   } = parent;
 
-  const canModify =
-    permissionSelect && [ACTION.WRITE].includes(permissionSelect);
+  const canModify = permissionSelect === ACTION.WRITE || false;
 
   if (!(isDirectory && canModify)) {
     return {
@@ -132,14 +131,14 @@ export async function create(formData: FormData, workspaceURL: string) {
           ...(partnerSet?.length
             ? {
                 partnerSet: {
-                  select: partnerSet.map(({id}: any) => ({id})),
+                  select: partnerSet.map(({id}) => ({id})),
                 },
               }
             : {}),
           ...(partnerCategorySet?.length
             ? {
                 partnerCategorySet: {
-                  select: partnerCategorySet.map(({id}: any) => ({id})),
+                  select: partnerCategorySet.map(({id}) => ({id})),
                 },
               }
             : {}),

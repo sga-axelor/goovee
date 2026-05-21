@@ -10,31 +10,38 @@ import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
 import {download} from '@/utils/files';
 import {formatDate} from '@/locale/formatters';
-
-import {SUBAPP_CODES} from '@/constants';
-// ---- LOCAL IMPORTS ---- //
 import {FileIcon} from '@/ui/components/file-icon';
+import {SUBAPP_CODES} from '@/constants';
 
-export function ResourceList({resources}: any) {
+// ---- LOCAL IMPORTS ---- //
+import type {DmsFile} from '@/subapps/resources/common/types';
+
+interface ResourceListProps {
+  resources: DmsFile[];
+}
+
+export function ResourceList({resources}: ResourceListProps) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const handleRedirection = (resource: any) => () => {
+  const handleRedirection = (resource: DmsFile) => () => {
     router.push(`${workspaceURI}/resources/${resource.id}`);
   };
 
-  const handleDownload = (record: any) => (event: React.MouseEvent) => {
+  const handleDownload = (record: DmsFile) => (event: React.MouseEvent) => {
     event.stopPropagation();
-    const href = `${workspaceURI}/${SUBAPP_CODES.resources}/api/file/${record?.id}`;
+    const href = `${workspaceURI}/${SUBAPP_CODES.resources}/api/file/${record.id}`;
     download(record, href);
   };
 
   return (
     <div className="rounded-lg bg-white py-2">
       {resources?.length ? (
-        resources?.map((resource: any, index: number) => {
+        resources?.map((resource, index) => {
           const author = resource.createdBy?.name || '--';
-          const date = formatDate(resource?.createdOn) || '--';
+          const date =
+            (resource?.createdOn ? formatDate(resource.createdOn) : null) ||
+            '--';
           const size = resource?.metaFile?.sizeText || '--';
           const parent = resource?.parent?.fileName || '--';
 

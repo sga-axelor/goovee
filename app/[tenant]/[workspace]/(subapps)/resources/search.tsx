@@ -15,16 +15,17 @@ import {
   CommandList,
 } from '@/ui/components/command';
 import {cn} from '@/utils/css';
-
-// ---- LOCAL IMPORTS ---- //
 import {formatDate} from '@/locale/formatters';
 import {FileIcon} from '@/ui/components/file-icon';
+
+// ---- LOCAL IMPORTS ---- //
 import {findDmsFiles} from './action';
+import type {DmsFile} from '@/subapps/resources/common/types';
 
 export function Search({workspaceURL}: {workspaceURL: string}) {
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
-  const [files, setFiles] = useState<any[]>([]);
+  const [files, setFiles] = useState<DmsFile[]>([]);
 
   useEffect(() => {
     setOpen(search ? true : false);
@@ -56,7 +57,7 @@ export function Search({workspaceURL}: {workspaceURL: string}) {
               ? files.map(file => (
                   <CommandItem
                     key={file.id}
-                    value={file.fileName}
+                    value={file.fileName ?? ''}
                     className="block py-2 sm:px-6">
                     <ResourceItem resource={file} />
                   </CommandItem>
@@ -69,12 +70,12 @@ export function Search({workspaceURL}: {workspaceURL: string}) {
   );
 }
 
-function ResourceItem({resource}: any) {
+function ResourceItem({resource}: {resource: DmsFile}) {
   const {isDirectory} = resource;
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const handleRedirection = (resource: any) => () => {
+  const handleRedirection = (resource: DmsFile) => () => {
     if (isDirectory) {
       router.push(`${workspaceURI}/resources/categories?id=${resource.id}`);
     } else {
@@ -83,7 +84,8 @@ function ResourceItem({resource}: any) {
   };
 
   const author = resource.createdBy?.name || '--';
-  const date = formatDate(resource?.createdOn) || '--';
+  const date =
+    (resource?.createdOn ? formatDate(resource.createdOn) : null) || '--';
   const size = resource?.metaFile?.sizeText || '--';
 
   return (

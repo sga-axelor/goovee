@@ -67,8 +67,7 @@ export default async function Page(props: {
 
   const {permissionSelect, isDirectory} = parent;
 
-  const canModify =
-    permissionSelect && [ACTION.WRITE].includes(permissionSelect);
+  const canModify = permissionSelect === ACTION.WRITE || false;
 
   if (!(isDirectory && canModify)) {
     return notFound();
