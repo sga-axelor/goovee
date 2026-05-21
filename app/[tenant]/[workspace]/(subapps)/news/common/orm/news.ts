@@ -8,6 +8,26 @@ import type {PortalWorkspace} from '@/orm/workspace';
 import {ORDER_BY} from '@/constants';
 import {filterPrivate} from '@/orm/filter';
 
+type OrderBy = Record<string, string>;
+
+type NewsQueryParams = {
+  where?: Record<string, unknown> & {AND?: unknown[]};
+  select?: Record<string, unknown>;
+};
+
+interface OrmCategoryEntry {
+  id: string | number;
+  name: string;
+  archived?: boolean | null;
+  parentCategory?: {id: string | number} | null;
+}
+
+interface CategoryNode extends OrmCategoryEntry {
+  children: CategoryNode[];
+  _parent?: Array<string | number>;
+  _parentArchived?: boolean;
+}
+
 // ---- LOCAL IMPORTS ---- //
 import {
   ASIDE_NEWS_LIMIT,
@@ -18,7 +38,11 @@ import {
   NEWS_FEED_LIMIT,
 } from '@/subapps/news/common/constants';
 import {getArchivedFilter} from '@/subapps/news/common/utils';
-import {NewsResponse} from '@/subapps/news/common/types';
+import type {
+  NewsItem,
+  NewsResponse,
+  RawNewsCategory,
+} from '@/subapps/news/common/types';
 
 const PAGE_LIMT = ASIDE_NEWS_LIMIT + FOOTER_NEWS_LIMIT + NEWS_FEED_LIMIT;
 
@@ -63,37 +87,38 @@ export async function findNonArchivedNewsCategories({
     })
     .then(clone);
 
-  const hiearchy = (categories: any) => {
-    const map: any = {};
-    categories?.forEach((category: any) => {
-      category.children = [];
-      map[category.id] = category;
+  const hiearchy = (categories: OrmCategoryEntry[]): CategoryNode[] => {
+    const map: Record<string | number, CategoryNode> = {};
+    categories?.forEach(category => {
+      (category as CategoryNode).children = [];
+      map[category.id] = category as CategoryNode;
     });
 
-    categories?.forEach((category: any) => {
+    categories?.forEach(category => {
       const {parentCategory} = category;
       if (parentCategory?.id) {
-        map[parentCategory.id]?.children.push(category);
+        map[parentCategory.id]?.children.push(map[category.id]);
       }
     });
 
-    const _parent = (category: any, parents: any[] = []) => {
+    const _parent = (
+      category: CategoryNode,
+      parents: Array<string | number> = [],
+    ) => {
       if (!category._parent) {
         category._parent = [...parents];
       }
 
-      category.children.forEach((child: any) => {
+      category.children.forEach(child => {
         _parent(child, [...parents, category.id]);
       });
     };
 
     Object.values(map).forEach(category => _parent(category));
 
-    Object.values(map).forEach((category: any) => {
+    Object.values(map).forEach(category => {
       if (category._parent?.length) {
-        category._parentArchived = category._parent.some(
-          (p: any) => map[p]?.archived,
-        );
+        category._parentArchived = category._parent.some(p => map[p]?.archived);
       }
     });
 
@@ -107,7 +132,9 @@ export async function findNonArchivedNewsCategories({
       .map(id => map[id]);
   };
 
-  const _categories: any = hiearchy(categories);
+  const _categories: CategoryNode[] = hiearchy(
+    categories as OrmCategoryEntry[],
+  );
 
   return _categories;
 }
@@ -128,19 +155,19 @@ export async function findNews({
   skip,
 }: {
   id?: string | number;
-  orderBy?: any;
+  orderBy?: OrderBy;
   isFeaturedNews?: boolean;
   page?: string | number;
   limit?: number;
   slug?: string | null;
-  workspace: any;
-  categoryIds?: any[];
+  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  categoryIds?: (string | number)[];
   client: Client;
   user?: User;
   archived?: boolean;
-  params?: any;
+  params?: NewsQueryParams;
   skip?: number;
-}) {
+}): Promise<NewsResponse> {
   if (!workspace) {
     return EMPTY_NEWS_RESPONSE;
   }
@@ -151,13 +178,13 @@ export async function findNews({
     user,
   });
 
-  const nonarchivedcategoryids = nonarchivedcategory?.map((c: any) => c.id);
+  const nonarchivedcategoryids = nonarchivedcategory?.map(c => c.id);
   let categoryIdsFilteredByArchive = nonarchivedcategoryids;
 
   if (categoryIds?.length) {
     categoryIdsFilteredByArchive = categoryIds
       .map(id => String(id))
-      .filter((id: any) => nonarchivedcategoryids.includes(id));
+      .filter(id => nonarchivedcategoryids?.includes(id));
   }
 
   const $skip = skip ? skip : limit ? getSkip(limit, page) : undefined;
@@ -236,7 +263,7 @@ export async function findNews({
     page,
     limit,
   });
-  return {news, pageInfo};
+  return {news: news as NewsItem[], pageInfo};
 }
 
 export async function findNewsImageBySlug({
@@ -338,14 +365,14 @@ export async function findCategories({
   user,
   archived = false,
 }: {
-  category?: any;
+  category?: string | null;
   showAllCategories?: boolean;
   slug?: string | null;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   client: Client;
   user?: User;
   archived?: boolean;
-}) {
+}): Promise<RawNewsCategory[]> {
   if (!workspace) return [];
 
   const archivedFilter = getArchivedFilter({archived});
@@ -389,7 +416,7 @@ export async function findCategories({
       workspace: {id: true, name: true, url: true},
     },
   });
-  return categories;
+  return categories as RawNewsCategory[];
 }
 
 export async function findCategoryTitleBySlugName({
@@ -399,16 +426,12 @@ export async function findCategoryTitleBySlugName({
   archived = false,
   user,
 }: {
-  slug: any;
+  slug: string;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   client: Client;
   archived?: boolean;
   user?: User;
 }) {
-  if (false) {
-    return null;
-  }
-
   const archivedFilter = getArchivedFilter({archived});
 
   const title = await client.aOSPortalNewsCategory.findOne({
@@ -439,7 +462,7 @@ export async function findNewsByCategory({
   params,
   skip,
 }: {
-  orderBy?: any;
+  orderBy?: OrderBy;
   isFeaturedNews?: boolean;
   page?: string | number;
   limit?: number;
@@ -447,11 +470,9 @@ export async function findNewsByCategory({
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   client: Client;
   user?: User;
-  params?: any;
+  params?: NewsQueryParams;
   skip?: number;
 }) {
-  // guard removed
-
   const categories = await findCategories({
     showAllCategories: true,
     workspace,
@@ -481,7 +502,7 @@ export async function findNewsByCategory({
     return ids;
   };
 
-  const categoryIds: any = gatherCategoryIds(topCategoryId);
+  const categoryIds: number[] = gatherCategoryIds(topCategoryId);
 
   return await findNews({
     orderBy,
@@ -810,7 +831,7 @@ export async function findNewsRelatedNews({
     user: user,
   });
 
-  const nonarchivedcategoryids = nonarchivedcategory?.map((c: any) => c.id);
+  const nonarchivedcategoryids = nonarchivedcategory?.map(c => c.id);
 
   const response = await findNews({
     workspace,

@@ -8,8 +8,10 @@ import type {Client} from '@/goovee/.generated/client';
 import type {PortalWorkspace} from '@/orm/workspace';
 import {t} from '@/locale/server';
 import {getSession} from '@/auth';
+import type {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
+import type {NewsItem} from '@/subapps/news/common/types';
 import {
   findCategories,
   findCategoryAsideNews,
@@ -64,9 +66,11 @@ import {
 } from '@/subapps/news/common/actions/action';
 import PaginationContent from '@/subapps/news/[[...segments]]/pagination-content';
 
-interface CategorySegment {
+type BreadcrumbItem = {
+  id: number;
+  title: string;
   slug: string;
-}
+};
 
 export async function CategorySliderWrapper({
   workspace,
@@ -74,7 +78,7 @@ export async function CategorySliderWrapper({
   user,
 }: {
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  user: any;
+  user?: User;
   client: Client;
 }) {
   const parentCategories = await findCategories({
@@ -102,7 +106,7 @@ export async function NavMenuWrapper({
 }: {
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   client: Client;
-  user: any;
+  user?: User;
 }) {
   const allCategories = await findCategories({
     showAllCategories: true,
@@ -217,11 +221,11 @@ export async function HomePageFooterNewsWrapper({
 
   if (!news.length) return null;
 
-  return news.map((news: any) => (
+  return news.map(item => (
     <NewsCard
-      key={news.id}
-      id={news.id}
-      news={news}
+      key={item.id}
+      id={item.id}
+      news={item}
       navigatingPathFrom={`${SUBAPP_CODES.news}`}
     />
   ));
@@ -235,7 +239,7 @@ export async function SubCategorySliderWrapper({
   title,
 }: {
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  user: any;
+  user?: User;
   client: Client;
   slug: string;
   title: string;
@@ -279,7 +283,7 @@ export async function CategoryPageHeaderNewsWrapper({
   const session = await getSession();
   const user = session?.user;
 
-  const response: any = await findCategoryPageHeaderNews({
+  const response = await findCategoryPageHeaderNews({
     workspace,
     client,
     user,
@@ -313,7 +317,7 @@ export async function CategoryNewsGridLayoutWrapper({
   client: Client;
   slug: string;
   navigatingPathFrom: string;
-  page: string | number;
+  page: number;
 }) {
   return (
     <>
@@ -409,7 +413,7 @@ export async function CategoryAsideNewsWrapper({
   client: Client;
   slug: string;
   navigatingPathFrom: string;
-  page: any;
+  page: number;
 }) {
   const session = await getSession();
   const user = session?.user;
@@ -451,7 +455,7 @@ export async function CategoryFooterNewsWrapper({
   client: Client;
   slug: string;
   navigatingPathFrom: string;
-  page: any;
+  page: number;
 }) {
   const session = await getSession();
   const user = session?.user;
@@ -493,7 +497,7 @@ export async function CategoryBottomFeedNewsWrapper({
   client: Client;
   slug: string;
   navigatingPathFrom: string;
-  page: any;
+  page: number;
 }) {
   const session = await getSession();
   const user = session?.user;
@@ -533,7 +537,7 @@ export async function PaginationWrapper({
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   client: Client;
   slug: string;
-  page: any;
+  page: number;
 }) {
   const session = await getSession();
   const user = session?.user;
@@ -567,30 +571,29 @@ export async function BreadcrumbsWrapper({
   client: Client;
   segments: string[];
   newsTitle: string;
-  user: any;
+  user?: User;
 }) {
-  async function getBreadcrumbs() {
+  async function getBreadcrumbs(): Promise<BreadcrumbItem[]> {
     const results = segments?.map(async (segment: string, index: number) => {
-      const categorySegment: CategorySegment = {slug: segment};
-
       try {
         const categoryTitle = await findCategoryTitleBySlugName({
-          slug: categorySegment,
+          slug: segment,
           workspace,
           client,
           user,
         });
         if (!categoryTitle) {
-          return '';
+          return null;
         }
         return {id: index + 1, title: categoryTitle, slug: segment};
       } catch (error) {
         console.error(error);
-        return '';
+        return null;
       }
     });
 
-    return await Promise.all(results);
+    const resolved = await Promise.all(results);
+    return resolved.filter((item): item is BreadcrumbItem => item !== null);
   }
 
   const breadcrumbs = await getBreadcrumbs();
@@ -602,7 +605,7 @@ export async function NewsInfoWrapper({
   news,
   workspace,
 }: {
-  news: any;
+  news: NewsItem;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
 }) {
   const {
@@ -614,7 +617,7 @@ export async function NewsInfoWrapper({
     content,
     author,
     slug,
-  } = news || {};
+  } = news;
 
   return (
     <NewsInfo
@@ -734,27 +737,27 @@ export async function RecommendedNewsWrapper({
   isRecommendationEnable: boolean;
   workspaceURL: string;
   tenantId: string;
-  categoryIds: any;
+  categoryIds: string[];
 }) {
   if (!isRecommendationEnable) {
     return;
   }
 
-  const news = await findRecommendedNews({
+  const newsResult = await findRecommendedNews({
     workspaceURL,
     tenantId,
     categoryIds,
   });
   const title = await t(RECOMMENDED_NEWS);
 
-  if (!news?.length) {
+  if (!Array.isArray(newsResult) || !newsResult.length) {
     return null;
   }
 
   return (
     <FeedList
       title={title}
-      items={news}
+      items={newsResult}
       width="w-full"
       navigatingPathFrom={navigatingPathFrom}
     />
@@ -768,8 +771,8 @@ export async function CommentsWrapper({
   workspaceURI,
 }: {
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  user: any;
-  news: any;
+  user?: User;
+  news: NewsItem;
   workspaceURI: string;
 }) {
   const title = await t(COMMENTS);

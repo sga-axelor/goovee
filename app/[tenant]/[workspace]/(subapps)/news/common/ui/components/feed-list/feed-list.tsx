@@ -12,6 +12,9 @@ import {formatRelativeTime} from '@/locale/formatters';
 import {NO_IMAGE_URL, SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {i18n} from '@/lib/core/locale';
 
+// ---- LOCAL IMPORTS ---- //
+import type {NewsItem} from '@/subapps/news/common/types';
+
 export const FeedList = ({
   title,
   items,
@@ -19,7 +22,7 @@ export const FeedList = ({
   navigatingPathFrom,
 }: {
   title: string;
-  items: any[];
+  items: NewsItem[];
   width?: string;
   navigatingPathFrom: string;
 }) => {

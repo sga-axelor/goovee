@@ -7,6 +7,7 @@ import {getSession} from '@/auth';
 import {PortalWorkspace} from '@/orm/workspace';
 import {SUBAPP_CODES} from '@/constants';
 import {t} from '@/locale/server';
+import type {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -38,7 +39,7 @@ async function HomePageNewsFeed({
   user,
 }: {
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  user: any;
+  user?: User;
   client: Client;
 }) {
   const newsCount = await findNewsCount({workspace, client, user});

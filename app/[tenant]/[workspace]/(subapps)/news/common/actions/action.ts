@@ -83,7 +83,7 @@ export async function findSearchNews({workspaceURL}: FindSearchNewsInput) {
     };
   }
 
-  const {news}: any = await findNews({workspace, client, user}).then(clone);
+  const {news} = await findNews({workspace, client, user}).then(clone);
 
   return news;
 }
@@ -136,7 +136,7 @@ export async function findRecommendedNews({
     };
   }
 
-  const {news}: any = await findNews({
+  const {news} = await findNews({
     workspace,
     client,
     limit: DEFAULT_NEWS_ASIDE_LIMIT,
@@ -199,7 +199,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Unauthorized Access')};
   }
 
-  const {news}: any = await findNews({
+  const {news} = await findNews({
     id: rest.recordId,
     workspace,
     client,
@@ -310,7 +310,7 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('Unauthorized Access')};
   }
 
-  const {news}: any = await findNews({
+  const {news} = await findNews({
     id: rest.recordId,
     workspace,
     client,

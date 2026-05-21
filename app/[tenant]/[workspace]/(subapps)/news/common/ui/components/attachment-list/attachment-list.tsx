@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {MdOutlineFileDownload} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
@@ -9,14 +8,9 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {download} from '@/utils/files';
 import {SUBAPP_CODES} from '@/constants';
 
-interface Attachment {
-  id: string;
-  title?: string;
-  metaFile?: {
-    id: string;
-    fileName?: string;
-  };
-}
+// ---- LOCAL IMPORTS ---- //
+import type {Attachment} from '@/subapps/news/common/types';
+
 export const AttachmentList = ({
   slug,
   title,
@@ -25,7 +19,7 @@ export const AttachmentList = ({
 }: {
   slug: string;
   title: string;
-  items: any[];
+  items: Attachment[];
   width?: string;
 }) => {
   const {workspaceURI} = useWorkspace();

@@ -1,5 +1,4 @@
 import {notFound} from 'next/navigation';
-import type {Cloned} from '@/types/util';
 import {Suspense} from 'react';
 
 // ---- CORE IMPORTS ----//
@@ -7,6 +6,8 @@ import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import type {Client} from '@/goovee/.generated/client';
 import type {PortalWorkspace} from '@/orm/workspace';
+import type {Cloned} from '@/types/util';
+import type {User} from '@/types';
 import {CommentsSkeleton} from '@/lib/core/comments';
 
 // ---- LOCAL IMPORTS ---- //
@@ -44,10 +45,10 @@ export async function ArticleNews({
   tenantId: string;
   workspaceURL: string;
   workspaceURI: string;
-  user: any;
+  user?: User;
   slug: string;
 }) {
-  const {news}: any = await findNews({
+  const {news} = await findNews({
     slug,
     workspace,
     client,
@@ -70,7 +71,7 @@ export async function ArticleNews({
   }
 
   const slicedSegments = segments.slice(0, -2);
-  const categoryIds = newsObject?.categorySet?.map((item: any) => item.id);
+  const categoryIds = newsObject?.categorySet?.map(item => item.id) ?? [];
 
   const segmentPath = slicedSegments?.length
     ? `/${slicedSegments.join('/')}`

@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import type {Cloned} from '@/types/util';
 import {useRouter} from 'next/navigation';
 
@@ -24,7 +23,7 @@ import {findSearchNews} from '@/subapps/news/common/actions/action';
 
 async function findNews({workspaceURL}: {workspaceURL: string}) {
   return findSearchNews({workspaceURL})
-    .then((result: any) => (result?.error ? [] : result))
+    .then(result => (Array.isArray(result) ? result : []))
     .catch(() => []);
 }
 

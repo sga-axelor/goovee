@@ -10,15 +10,16 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import type {Category} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
+import type {RawNewsCategory} from '@/subapps/news/common/types';
 import styles from './styles.module.scss';
-import {transformCategories} from '@/app/[tenant]/[workspace]/(subapps)/news/common/utils';
+import {transformCategories} from '@/subapps/news/common/utils';
 
 export function MobileCategories({
   categories = [],
   onClick,
 }: {
   categories?: Category[];
-  onClick?: any;
+  onClick?: ({url, category}: {url: string; category: Category}) => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -57,11 +58,15 @@ export function MobileCategories({
   );
 }
 
-export default function MobileMenuCategory({categories}: {categories: any}) {
+export default function MobileMenuCategory({
+  categories,
+}: {
+  categories: RawNewsCategory[];
+}) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const [container, setContainer] = useState<any>(null);
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
   const $categories: Category[] = transformCategories(categories);
 

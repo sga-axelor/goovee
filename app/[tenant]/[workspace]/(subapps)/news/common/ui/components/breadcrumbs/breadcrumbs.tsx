@@ -18,12 +18,24 @@ import {Skeleton} from '@/ui/components';
 // ---- LOCAL IMPORTS ---- //
 import {NEWS} from '@/subapps/news/common/constants';
 
-export const Breadcrumbs = ({items, title}: {items: any; title: string}) => {
+type BreadcrumbItem = {
+  id: number;
+  title: string;
+  slug: string;
+};
+
+export const Breadcrumbs = ({
+  items,
+  title,
+}: {
+  items: BreadcrumbItem[];
+  title: string;
+}) => {
   const {workspaceURI} = useWorkspace();
 
   const generateRoute = (index: number) => {
     return items
-      .map((item: any) => item.slug)
+      .map(item => item.slug)
       .slice(0, index + 1)
       .join('/');
   };
@@ -40,7 +52,7 @@ export const Breadcrumbs = ({items, title}: {items: any; title: string}) => {
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator className="text-black" />
-          {items?.map((item: any, i: number) => {
+          {items?.map((item, i) => {
             return (
               <React.Fragment key={item.id}>
                 <BreadcrumbItem>

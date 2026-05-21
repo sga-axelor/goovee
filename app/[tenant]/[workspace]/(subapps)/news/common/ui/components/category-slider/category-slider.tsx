@@ -15,6 +15,7 @@ import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 import {Skeleton} from '@/ui/components';
 
 //---- LOCAL IMPORTS ---- //
+import type {RawNewsCategory} from '@/subapps/news/common/types';
 import styles from '@/subapps/news/common/ui/styles/news.module.scss';
 import Image from 'next/image';
 
@@ -29,8 +30,8 @@ export const CategorySlider = ({
   title?: string;
   showButton?: boolean;
   buttonText?: string;
-  categories: any[];
-  buttonIcon?: any;
+  categories: RawNewsCategory[];
+  buttonIcon?: React.ComponentType<{className?: string}>;
   showTitle?: boolean;
 }) => {
   const pathname = usePathname();
@@ -43,7 +44,7 @@ export const CategorySlider = ({
     <div className="flex flex-col gap-6 mt-6">
       <div className="flex justify-between">
         <span className="font-semibold text-xl">{title}</span>
-        {showButton && (
+        {showButton && Icon && (
           <Button
             variant="success"
             className="flex gap-2 text-white px-3 py-[6px] rounded-md hover:bg-success-dark">
@@ -80,53 +81,41 @@ export const CategorySlider = ({
                 spaceBetween: 20,
               },
             }}>
-            {categories?.map(
-              ({
-                id,
-                image,
-                name,
-                slug,
-              }: {
-                id: string;
-                image: {id: string};
-                name: string;
-                slug: string;
-              }) => (
-                <SwiperSlide
-                  key={id}
-                  style={{
-                    width: '154px',
-                    marginRight: 20,
-                  }}>
-                  <Link
-                    className="relative flex w-full items-end justify-center cursor-pointer"
-                    href={`${pathname}/${slug}`}>
-                    <div className="h-[120px] w-full relative rounded-md flex items-end justify-center">
-                      <Image
-                        fill
-                        src={
-                          image?.id
-                            ? `${workspaceURI}/${SUBAPP_CODES.news}/api/category/${slug}/image`
-                            : NO_IMAGE_URL
-                        }
-                        alt={'Category image'}
-                        className="rounded-md object-cover"
-                        sizes="(min-width: 1024px) 130px, (min-width: 768px) 233px, (min-width: 320px) 190px, 100vw"
-                      />
-                      <div className="pb-4 text-center text-white font-semibold text-xs z-10">
-                        {name}
-                      </div>
+            {categories?.map(({id, image, name, slug}) => (
+              <SwiperSlide
+                key={id}
+                style={{
+                  width: '154px',
+                  marginRight: 20,
+                }}>
+                <Link
+                  className="relative flex w-full items-end justify-center cursor-pointer"
+                  href={`${pathname}/${slug}`}>
+                  <div className="h-[120px] w-full relative rounded-md flex items-end justify-center">
+                    <Image
+                      fill
+                      src={
+                        image?.id
+                          ? `${workspaceURI}/${SUBAPP_CODES.news}/api/category/${slug}/image`
+                          : NO_IMAGE_URL
+                      }
+                      alt={'Category image'}
+                      className="rounded-md object-cover"
+                      sizes="(min-width: 1024px) 130px, (min-width: 768px) 233px, (min-width: 320px) 190px, 100vw"
+                    />
+                    <div className="pb-4 text-center text-white font-semibold text-xs z-10">
+                      {name}
                     </div>
-                    <div
-                      className="absolute inset-0 rounded-md"
-                      style={{
-                        background:
-                          'linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%)',
-                      }}></div>
-                  </Link>
-                </SwiperSlide>
-              ),
-            )}
+                  </div>
+                  <div
+                    className="absolute inset-0 rounded-md"
+                    style={{
+                      background:
+                        'linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%)',
+                    }}></div>
+                </Link>
+              </SwiperSlide>
+            ))}
           </Swiper>
         </div>
       ) : (

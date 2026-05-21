@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
@@ -8,10 +7,10 @@ import {NavbarCategoryMenu, Skeleton} from '@/ui/components';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 
 // ---- LOCAL IMPORTS ---- //
-import type {Category} from '@/subapps/news/common/types';
+import type {Category, RawNewsCategory} from '@/subapps/news/common/types';
 import {transformCategories} from '@/subapps/news/common/utils';
 
-export const NavMenu = ({categories = []}: {categories: any[]}) => {
+export const NavMenu = ({categories = []}: {categories: RawNewsCategory[]}) => {
   const $categories = transformCategories(categories);
   const router = useRouter();
   const {workspaceURI} = useWorkspace();

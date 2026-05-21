@@ -1,16 +1,15 @@
 'use client';
 
-import React from 'react';
-
 // ---- CORE IMPORTS ---- //
 import {useSearchParams} from '@/ui/hooks';
 import {Pagination} from '@/ui/components';
 import {DEFAULT_PAGE, URL_PARAMS} from '@/constants';
+import type {PageInfo} from '@/types';
 
 export function PaginationContent({
-  pageInfo: {page, pages, hasPrev, hasNext} = {},
+  pageInfo: {page, pages, hasPrev, hasNext} = {} as PageInfo,
 }: {
-  pageInfo: any;
+  pageInfo: PageInfo;
 }) {
   const {update} = useSearchParams();
 

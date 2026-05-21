@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import type {Cloned} from '@/types/util';
 import Image from 'next/image';
 
@@ -17,6 +16,7 @@ import {PortalWorkspace} from '@/orm/workspace';
 import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
+import type {NewsCategory, NewsImage} from '@/subapps/news/common/types';
 import {getFormatString} from '@/subapps/news/common/utils';
 import {PUBLISHED_ON} from '@/subapps/news/common/constants';
 import styles from './style.module.css';
@@ -34,17 +34,15 @@ export const NewsInfo = ({
 }: {
   title: string;
   slug: string;
-  categorySet: any[];
-  image: {id: string; fileName?: string};
-  description: string;
+  categorySet?: NewsCategory[];
+  image?: NewsImage;
+  description?: string;
   publicationDateTime: string;
-  content: string;
-  author: {
-    id: string;
-    simpleFullName: string;
-    picture: {
-      id: string;
-    };
+  content?: string;
+  author?: {
+    id?: string;
+    simpleFullName?: string;
+    picture?: {id: string};
   };
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
 }) => {
