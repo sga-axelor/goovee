@@ -1,7 +1,9 @@
 export const ACTION = {
   WRITE: 'write',
   UPLOAD: 'upload',
-};
+} as const;
+
+export type ActionType = (typeof ACTION)[keyof typeof ACTION];
 
 export const COLORS = [
   {

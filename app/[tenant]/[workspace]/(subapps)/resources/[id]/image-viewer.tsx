@@ -6,7 +6,10 @@ import Image from 'next/image';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES} from '@/constants';
 
-export default function ImageViewer({record}: any) {
+// ---- LOCAL IMPORTS ---- //
+import type {DmsFile} from '@/subapps/resources/common/types';
+
+export default function ImageViewer({record}: {record: DmsFile}) {
   const {workspaceURI} = useWorkspace();
 
   return (

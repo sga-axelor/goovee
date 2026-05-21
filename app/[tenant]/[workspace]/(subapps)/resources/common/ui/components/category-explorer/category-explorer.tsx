@@ -16,9 +16,10 @@ import {cn} from '@/utils/css';
 import {useSearchParams} from '@/subapps/resources/common/ui/hooks/use-search-params';
 import styles from './category-explorer.module.scss';
 import {DynamicIcon} from '@/ui/components/dynamic-icon';
+import type {ExplorerCategory} from '@/subapps/resources/common/types';
 
 interface CategoryExplorerProps extends React.HTMLAttributes<HTMLDivElement> {
-  categories?: any[];
+  categories?: ExplorerCategory[];
   activeCategory?: string;
 }
 
@@ -33,7 +34,7 @@ export function CategoryExplorer({categories = []}: CategoryExplorerProps) {
     }
   }, [categories, current]);
 
-  const renderCategory = (category: any) => {
+  const renderCategory = (category: ExplorerCategory) => {
     const {
       id,
       fileName: label,
@@ -70,13 +71,13 @@ export function CategoryExplorer({categories = []}: CategoryExplorerProps) {
             {icon ? (
               <DynamicIcon
                 className="h-4 w-4 text-muted-foreground shrink-0"
-                fill={color}
+                fill={color ?? undefined}
                 icon={icon}
               />
             ) : (
               <MdFolderOpen
                 className="h-4 w-4 text-muted-foreground shrink-0"
-                fill={color}
+                fill={color ?? undefined}
               />
             )}
             <p className="leading-4 text-xs line-clamp-1 text-start">{label}</p>

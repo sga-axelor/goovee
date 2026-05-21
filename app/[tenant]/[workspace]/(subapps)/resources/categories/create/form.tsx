@@ -29,10 +29,12 @@ import {useToast} from '@/ui/hooks/use-toast';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {cn} from '@/utils/css';
 import {i18n} from '@/locale';
+import {DynamicIcon} from '@/ui/components/dynamic-icon';
 
 // ---- LOCAL IMPORTS ---- //
 import {create} from './action';
-import {DynamicIcon} from '@/ui/components/dynamic-icon';
+import type {DmsFile} from '@/subapps/resources/common/types';
+import type {COLORS, ICONS} from '@/subapps/resources/common/constants';
 
 const formSchema = z.object({
   title: z.string().min(1, {message: i18n.t('Title is required')}),
@@ -41,7 +43,15 @@ const formSchema = z.object({
   color: z.string(),
 });
 
-export default function ResourceForm({parent, colors, icons}: any) {
+export default function ResourceForm({
+  parent,
+  colors,
+  icons,
+}: {
+  parent: DmsFile;
+  colors: typeof COLORS;
+  icons: typeof ICONS;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
   const {toast} = useToast();
   const router = useRouter();
@@ -115,7 +125,7 @@ export default function ResourceForm({parent, colors, icons}: any) {
             <Input
               className="shadow-none h-11 text-black placeholder:text-muted-foreground"
               readOnly
-              value={parent?.fileName}
+              value={parent?.fileName ?? ''}
             />
           </FormControl>
           <FormMessage />
@@ -145,7 +155,7 @@ export default function ResourceForm({parent, colors, icons}: any) {
               <FormLabel>{i18n.t('Icon')}</FormLabel>
               <FormControl>
                 <div className="border rounded-lg p-6 flex gap-6 flex-wrap">
-                  {icons.map((icon: string, i: string) => {
+                  {icons.map((icon, i) => {
                     return (
                       <DynamicIcon
                         key={i}
@@ -179,7 +189,7 @@ export default function ResourceForm({parent, colors, icons}: any) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {colors.map((color: any) => (
+                  {colors.map(color => (
                     <SelectItem value={color.value} key={color.value}>
                       {color.label}
                     </SelectItem>

@@ -27,6 +27,7 @@ import {getFileSizeText} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {upload} from './action';
+import type {DmsFile} from '@/subapps/resources/common/types';
 
 const MAX_FILE_SIZE = 20000000;
 
@@ -48,7 +49,7 @@ const formSchema = z.object({
     .min(1, {message: i18n.t('Single file is required to create resource')}),
 });
 
-export default function ResourceForm({parent}: any) {
+export default function ResourceForm({parent}: {parent: DmsFile}) {
   const {toast} = useToast();
   const router = useRouter();
   const {workspaceURI, workspaceURL} = useWorkspace();
@@ -122,7 +123,7 @@ export default function ResourceForm({parent}: any) {
             <Input
               className="shadow-none h-11 text-black placeholder:text-muted-foreground"
               readOnly
-              value={parent?.fileName}
+              value={parent?.fileName ?? ''}
             />
           </FormControl>
           <FormMessage />
