@@ -37,7 +37,7 @@ interface ImageItem {
 }
 
 interface ImageUploaderProps {
-  initialValue?: any;
+  initialValue?: ImageItem[];
   open: boolean;
   handleClose: () => void;
   onUpload: (images: ImageItem[]) => void;
@@ -49,7 +49,7 @@ export const ImageUploader = ({
   handleClose,
   onUpload,
 }: ImageUploaderProps) => {
-  const [images, setImages] = useState<ImageItem[]>(initialValue);
+  const [images, setImages] = useState<ImageItem[]>(initialValue ?? []);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
@@ -105,8 +105,8 @@ export const ImageUploader = ({
   };
 
   useEffect(() => {
-    if (initialValue.length) {
-      setImages(initialValue);
+    if (initialValue?.length) {
+      setImages(initialValue ?? []);
     }
   }, [initialValue]);
 

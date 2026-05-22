@@ -13,7 +13,10 @@ import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {Thread} from '@/subapps/forum/common/ui/components';
-import {Image as ImageType, Post} from '@/subapps/forum/common/types/forum';
+import {
+  Attachment,
+  PostWithMembership,
+} from '@/subapps/forum/common/types/forum';
 
 import styles from './styles.module.scss';
 import {PortalWorkspace} from '@/orm/workspace';
@@ -25,9 +28,9 @@ export const ThreadPopup = ({
   onClose,
   workspace,
 }: {
-  post?: Post;
+  post?: PostWithMembership;
   open: boolean;
-  images: any;
+  images: Attachment[];
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   onClose: () => void;
 }) => {
@@ -52,7 +55,7 @@ export const ThreadPopup = ({
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper h-full">
-                {images.map((image: ImageType, index: number) => (
+                {images.map((image, index) => (
                   <SwiperSlide key={index} className="flex items-center">
                     <div className="w-full h-full bg-no-repeat bg-center relative">
                       <Image

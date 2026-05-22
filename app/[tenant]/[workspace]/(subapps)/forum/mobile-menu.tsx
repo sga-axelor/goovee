@@ -18,13 +18,14 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
+import {MenuItem} from '@/subapps/forum/common/types/forum';
 import styles from './styles.module.scss';
 
-export default function MobileMenu({items}: any) {
+export default function MobileMenu({items}: {items: MenuItem[]}) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const [container, setContainer] = useState<any>(null);
+  const [container, setContainer] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
 
   const openSidebar = useCallback(() => setOpen(true), []);
@@ -32,9 +33,7 @@ export default function MobileMenu({items}: any) {
 
   const {data: session} = authClient.useSession();
 
-  const filteredItems = session
-    ? items
-    : items.filter((item: any) => item.id === 1);
+  const filteredItems = session ? items : items.filter(item => item.id === 1);
 
   const handleMenuClick = (link: string) => {
     router.push(`${workspaceURI}/${SUBAPP_CODES.forum}/${link}`);
@@ -64,7 +63,7 @@ export default function MobileMenu({items}: any) {
         <Sheet open={open} onOpenChange={closeSidebar}>
           <SheetContent side="left" className="bg-white divide-y divide-grey-1">
             <Accordion type="multiple" className="w-full space-y-4 mt-4">
-              {filteredItems.map(({link, id, name}: any) => {
+              {filteredItems.map(({link, id, name}) => {
                 return (
                   <AccordionItem
                     value={String(id)}

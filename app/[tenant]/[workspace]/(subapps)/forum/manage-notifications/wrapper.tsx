@@ -4,7 +4,7 @@ import {PortalWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
-import {Group} from '@/subapps/forum/common/types/forum';
+import {MemberGroup} from '@/subapps/forum/common/types/forum';
 import {GroupNotification} from '@/subapps/forum/common/ui/components';
 import {fetchGroupsByMembers} from '@/subapps/forum/common/action/action';
 
@@ -28,11 +28,11 @@ export async function MembersNoticationsWrapper({
       },
     },
     workspaceID,
-  }).then(clone)) as Group[];
+  }).then(clone)) as MemberGroup[];
 
   return (
     <div>
-      {groupMembers.map((group: Group) => (
+      {groupMembers.map((group: MemberGroup) => (
         <GroupNotification group={group} key={group.id} />
       ))}
     </div>

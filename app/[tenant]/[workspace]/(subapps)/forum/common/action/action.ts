@@ -32,6 +32,8 @@ import {
 import {zodParseFormData} from '@/utils/formdata';
 import {addComment, findComments} from '@/comments/orm';
 import {getStoragePath} from '@/storage/index';
+import {notifyUser} from '@/pwa/utils';
+import {NotificationTag} from '@/pwa/tags';
 
 //----LOCAL IMPORTS -----//
 import {
@@ -42,10 +44,8 @@ import {
 } from '@/subapps/forum/common/orm/forum';
 import {NOTIFICATION_VALUES} from '@/subapps/forum/common/constants';
 import {sendEmailNotifications} from '@/subapps/forum/common/utils/mail';
-import {ContentType} from '@/subapps/forum/common/types/forum';
+import {ContentType, MemberGroup} from '@/subapps/forum/common/types/forum';
 import {getArchivedFilter} from '@/subapps/forum/common/utils';
-import {notifyUser} from '@/pwa/utils';
-import {NotificationTag} from '@/pwa/tags';
 import {
   PinGroupSchema,
   ExitGroupSchema,
@@ -75,13 +75,10 @@ interface AttachmentResponse {
 const pump = promisify(pipeline);
 
 function extractFileValues(formData: FormData) {
-  const values: any = [];
+  const values: Array<{title?: string; description?: string; file?: File}> = [];
 
-  for (const pair of (formData as any).entries()) {
-    const key = pair[0];
-    const value = pair[1];
-
-    const index: any = Number(key.match(/\[(\d+)\]/)?.[1]);
+  for (const [key, value] of formData.entries()) {
+    const index = Number(key.match(/\[(\d+)\]/)?.[1]);
 
     if (Number.isNaN(index)) {
       continue;
@@ -94,7 +91,7 @@ function extractFileValues(formData: FormData) {
     const field = key.substring(key.lastIndexOf('[') + 1, key.lastIndexOf(']'));
 
     if (field === 'title' || field === 'description') {
-      values[index][field] = value;
+      values[index][field] = value as string;
     } else if (field === 'file') {
       values[index][field] =
         value instanceof File ? value : new File([value], 'filename');
@@ -158,7 +155,7 @@ export async function pinGroup({
     return {error: true, message: await t('Invalid workspace')};
   }
 
-  const memberGroup: any = await findMemberGroupById({
+  const memberGroup = await findMemberGroupById({
     id,
     groupID,
     workspaceID: workspace.id,
@@ -169,7 +166,7 @@ export async function pinGroup({
   if (!memberGroup) {
     return {
       error: true,
-      message: await t(memberGroup.message || 'Member group not found.'),
+      message: await t('Member group not found.'),
     };
   }
 
@@ -196,7 +193,7 @@ export async function pinGroup({
       data: result,
     };
   } catch (error) {
-    console.log('error >>>', error);
+    console.error('error >>>', error);
     return {
       error: true,
       message: await t('Some error occurred'),
@@ -258,7 +255,7 @@ export async function exitGroup({
     return {error: true, message: await t('Invalid workspace')};
   }
 
-  const memberGroup: any = await findMemberGroupById({
+  const memberGroup = await findMemberGroupById({
     id,
     groupID,
     workspaceID: workspace.id,
@@ -269,7 +266,7 @@ export async function exitGroup({
   if (!memberGroup) {
     return {
       error: true,
-      message: await t(memberGroup.message || 'Member not part of the group'),
+      message: await t('Member not part of the group'),
     };
   }
 
@@ -286,7 +283,7 @@ export async function exitGroup({
       data: result,
     };
   } catch (error) {
-    console.log('error >>>', error);
+    console.error('error >>>', error);
     return {
       error: true,
       message: await t('Some error occurred'),
@@ -386,7 +383,7 @@ export async function joinGroup({
       data: result,
     };
   } catch (error) {
-    console.log('error >>>', error);
+    console.error('error >>>', error);
     return {
       error: true,
       message: await t('Some error occurred'),
@@ -454,7 +451,7 @@ export async function addGroupNotification({
     return {error: true, message: await t('Invalid workspace')};
   }
 
-  const memberGroup: any = await findMemberGroupById({
+  const memberGroup = await findMemberGroupById({
     id,
     groupID,
     workspaceID: workspace.id,
@@ -465,7 +462,7 @@ export async function addGroupNotification({
   if (!memberGroup) {
     return {
       error: true,
-      message: await t(memberGroup.messgae || 'Member not part of the group'),
+      message: await t('Member not part of the group'),
     };
   }
 
@@ -484,7 +481,7 @@ export async function addGroupNotification({
     revalidatePath(`${workspaceURI}/${SUBAPP_CODES.forum}`);
     return {success: true, data: response};
   } catch (error) {
-    console.log('error >>>', error);
+    console.error('error >>>', error);
     return {
       error: true,
       message: await t('Some error occurred'),
@@ -499,7 +496,14 @@ export async function addPost({
   workspaceURL,
   workspaceURI,
   formData,
-}: any) {
+}: {
+  group: {id: string};
+  title: string;
+  content: string;
+  workspaceURL: string;
+  workspaceURI: string;
+  formData?: FormData;
+}) {
   const tenantId = (await headers()).get(TENANT_HEADER);
 
   if (!tenantId) {
@@ -550,14 +554,14 @@ export async function addPost({
       if (formData) {
         const attachmentResponse = await uploadAttachment(formData, txClient);
 
-        if (attachmentResponse.some((item: any) => item.error)) {
+        if (attachmentResponse.some(item => 'error' in item)) {
           throw new Error(
             await t('Something went wrong while attachment upload!'),
           );
         }
 
-        attachmentListArray = attachmentResponse.map(
-          ({title, metaFile}: AttachmentResponse) => ({
+        attachmentListArray = (attachmentResponse as AttachmentResponse[]).map(
+          ({title, metaFile}) => ({
             id: metaFile.id,
             fileName: metaFile.fileName,
             title,
@@ -613,15 +617,15 @@ export async function addPost({
       });
     }); // end $transaction
 
-    const subscribers: any = await getSubscribersByGroup({
+    const subscribers = await getSubscribersByGroup({
       groupID: group.id,
       workspaceURL,
     });
 
-    if (!subscribers.error) {
+    if (!('error' in subscribers)) {
       const postLink = `${workspaceURL}/${SUBAPP_CODES.forum}/${SUBAPP_PAGE.group}/${group.id}?searchid=${post.id}#post-${post.id}`;
 
-      for (const reciever of subscribers as any[]) {
+      for (const reciever of subscribers) {
         if (
           reciever.member?.id &&
           reciever.member.id !== user.id // exclude the post author
@@ -758,7 +762,7 @@ export async function fetchPosts({
   memberGroupIDs = [],
   groupIDs = [],
 }: {
-  sort?: any;
+  sort?: string | null;
   limit?: number;
   page?: string | number;
   search?: string | undefined;
@@ -808,7 +812,7 @@ export async function fetchPosts({
 async function uploadAttachment(
   formData: FormData,
   client: Client,
-): Promise<any> {
+): Promise<(AttachmentResponse | {error: string})[]> {
   const values = extractFileValues(formData);
 
   const getTimestampFilename = (name: string) =>
@@ -818,7 +822,7 @@ async function uploadAttachment(
     file,
     title,
   }: {
-    file: any;
+    file: File;
     title: string;
   }): Promise<AttachmentResponse> => {
     const name = file.name;
@@ -860,7 +864,7 @@ async function uploadAttachment(
 
   try {
     const responses = await Promise.all(
-      values.map(({title, file}: any) => create({title, file})),
+      values.map(({title, file}) => create({title: title ?? '', file: file!})),
     );
 
     return responses;
@@ -876,9 +880,9 @@ export async function fetchGroupsByMembers({
   orderBy,
   workspaceID,
 }: {
-  id: any;
+  id: ID;
   searchKey?: string;
-  orderBy?: any;
+  orderBy?: Record<string, unknown>;
   workspaceID: PortalWorkspace['id'];
 }) {
   const tenantId = (await headers()).get(TENANT_HEADER);
@@ -959,7 +963,7 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Unauthorized Access')};
   }
 
-  const {posts = []} = await findPosts({
+  const {posts} = await findPosts({
     whereClause: {id: rest.recordId},
     workspaceID: workspace.id,
     client,
@@ -970,15 +974,14 @@ export const createComment: CreateComment = async formData => {
     return {error: true, message: await t('Record not found')};
   }
 
-  const memberGroups: any = await findGroupsByMembers({
+  const memberGroups = (await findGroupsByMembers({
     id: user.id,
     workspaceID: workspace.id!,
     client,
     user,
-  });
+  })) as MemberGroup[];
 
-  const memberGroupIDs =
-    memberGroups?.map((group: any) => group?.forumGroup?.id) || [];
+  const memberGroupIDs = memberGroups?.map(group => group.forumGroup?.id) || [];
 
   const isAllowedToComment = memberGroupIDs?.includes(posts[0].forumGroup?.id);
   if (!isAllowedToComment) {
@@ -1053,7 +1056,7 @@ export const createComment: CreateComment = async formData => {
               if (replySubscriber) {
                 sendEmailNotifications({
                   type: ContentType.COMMENT,
-                  title: post.title,
+                  title: post.title ?? '',
                   content: comment.note ?? '',
                   author: {
                     id: comment?.partner?.id ?? '',
@@ -1094,7 +1097,7 @@ export const createComment: CreateComment = async formData => {
                     tr(
                       'You have {0} new comments on "{1}"',
                       String(count),
-                      post.title,
+                      post.title ?? '',
                     ),
                 });
               }
@@ -1102,7 +1105,7 @@ export const createComment: CreateComment = async formData => {
 
             sendEmailNotifications({
               type: ContentType.COMMENT,
-              title: post.title,
+              title: post.title ?? '',
               content: comment.note ?? '',
               author: {
                 id: comment?.partner?.id ?? '',
@@ -1172,7 +1175,7 @@ export const fetchComments: FetchComments = async props => {
     return {error: true, message: await t('Unauthorized Access')};
   }
 
-  const {posts = []}: any = await findPosts({
+  const {posts} = await findPosts({
     whereClause: {id: rest.recordId},
     workspaceID: workspace.id,
     client,

@@ -5,7 +5,10 @@ import {Avatar, AvatarImage} from '@/ui/components/avatar';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
-export const ThreadHeader = ({group}: {group: any}) => {
+// ---- LOCAL IMPORTS ---- //
+import {Group} from '@/subapps/forum/common/types/forum';
+
+export const ThreadHeader = ({group}: {group: Group | undefined}) => {
   const {workspaceURI} = useWorkspace();
   return (
     <div className="flex items-center gap-2 px-4 pb-4 border-b">

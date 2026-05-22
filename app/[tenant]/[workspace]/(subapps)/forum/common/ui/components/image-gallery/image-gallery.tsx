@@ -12,7 +12,10 @@ import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {MAX_IMAGES_BEFORE_OVERLAY} from '@/subapps/forum/common/constants';
-import type {Post} from '@/subapps/forum/common/types/forum';
+import type {
+  Attachment,
+  PostWithMembership,
+} from '@/subapps/forum/common/types/forum';
 import {ThreadPopup} from '@/subapps/forum/common/ui/components';
 import {PortalWorkspace} from '@/orm/workspace';
 
@@ -21,8 +24,8 @@ export const ImageGallery = ({
   post,
   workspace,
 }: {
-  images: any;
-  post?: Post;
+  images: Attachment[];
+  post?: PostWithMembership;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
 }) => {
   const showOverlay = images.length > MAX_IMAGES_BEFORE_OVERLAY;
@@ -44,7 +47,7 @@ export const ImageGallery = ({
       <div
         className={`grid grid-cols-${images.length >= 3 ? '3' : images.length} gap-6`}
         onClick={openThreadPopup}>
-        {images.slice(0, 3).map((image: any, index: number) => (
+        {images.slice(0, 3).map((image, index: number) => (
           <div key={image.id} className="w-full h-[12.813rem] relative">
             <Image
               fill

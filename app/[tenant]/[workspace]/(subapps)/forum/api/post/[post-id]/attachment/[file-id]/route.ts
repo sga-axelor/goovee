@@ -54,7 +54,7 @@ export async function GET(
     return new NextResponse('Unauthorized', {status: 401});
   }
 
-  const {posts = []}: any = await findPosts({
+  const {posts} = await findPosts({
     whereClause: {id: postId},
     workspaceID: workspace.id,
     client,
@@ -62,8 +62,7 @@ export async function GET(
   });
 
   const attachment = posts?.[0]?.attachmentList?.find(
-    (item: any) =>
-      item.metaFile?.id && String(item.metaFile.id) === String(fileId),
+    item => item.metaFile?.id && String(item.metaFile.id) === String(fileId),
   );
 
   if (!attachment) {
@@ -71,7 +70,7 @@ export async function GET(
   }
 
   const file = await findFile({
-    id: attachment.metaFile.id,
+    id: attachment.metaFile.id as string,
     meta: true,
     client: tenant.client,
     storage: tenant.config.aos.storage,

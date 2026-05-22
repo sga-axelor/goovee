@@ -10,17 +10,18 @@ import {SUBAPP_CODES} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {Skeleton} from '@/ui/components';
 
-export const NavMenu = ({items}: {items: any}) => {
+// ---- LOCAL IMPORTS ---- //
+import {MenuItem} from '@/subapps/forum/common/types/forum';
+
+export const NavMenu = ({items}: {items: MenuItem[]}) => {
   const {data: session} = authClient.useSession();
   const {workspaceURI} = useWorkspace();
 
-  const filteredItems = session
-    ? items
-    : items.filter((item: any) => item.id === 1);
+  const filteredItems = session ? items : items.filter(item => item.id === 1);
 
   return (
     <div className="bg-white flex items-center justify-center gap-5 px-6 py-4">
-      {filteredItems.map((item: any, index: number) => (
+      {filteredItems.map((item, index: number) => (
         <React.Fragment key={item.id}>
           <Link
             href={`${workspaceURI}/${SUBAPP_CODES.forum}/${item.link}`}

@@ -7,12 +7,12 @@ import {Dialog, DialogContent, DialogTitle} from '@/ui/components';
 // ---- LOCAL IMPORTS ---- //
 import {MAKE_A_NEW_POST} from '@/subapps/forum/common/constants';
 import {CreatePost} from '@/subapps/forum/common/ui/components';
-import type {ForumGroup} from '@/subapps/forum/common/types/forum';
+import type {Group} from '@/subapps/forum/common/types/forum';
 
 interface uploadPostProps {
   open?: boolean;
-  groups?: any[];
-  selectedGroup?: ForumGroup | null;
+  groups?: Group[];
+  selectedGroup?: Group | null;
   onClose: () => void;
 }
 export const UploadPost = ({

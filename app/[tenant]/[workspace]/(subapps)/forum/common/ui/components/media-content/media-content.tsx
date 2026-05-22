@@ -10,16 +10,20 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 // ---- LOCAL IMPORTS ---- //
 import {findMedia} from '@/subapps/forum/common/action/action';
 
+type MediaPost = {attachmentList: {metaFile: MetaFile}[]};
+
 export const MediaContent = ({groupId = ''}: {groupId: string}) => {
-  const [media, setMedia] = useState<any>([]);
+  const [media, setMedia] = useState<MediaPost[]>([]);
   const [attachmentList, setAttachmentList] = useState<{metaFile: MetaFile}[]>(
     [],
   );
 
-  const {tenant, workspaceURL} = useWorkspace();
+  const {workspaceURL} = useWorkspace();
 
   useEffect(() => {
-    findMedia({id: groupId, workspaceURL}).then(setMedia);
+    findMedia({id: groupId, workspaceURL}).then(data =>
+      setMedia(data as MediaPost[]),
+    );
   }, [groupId, workspaceURL]);
 
   useEffect(() => {

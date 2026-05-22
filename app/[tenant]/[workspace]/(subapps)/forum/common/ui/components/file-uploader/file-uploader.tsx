@@ -24,8 +24,8 @@ import {
 
 interface FileUploaderProps {
   open: boolean;
-  initialValue: any;
-  onUpload: (file: any) => void;
+  initialValue: FileDetails;
+  onUpload: (file: FileDetails) => void;
   handleClose: () => void;
 }
 

@@ -7,12 +7,12 @@ import {
   ThreadFooter,
   ThreadHeader,
 } from '@/subapps/forum/common/ui/components';
-import type {Post} from '@/subapps/forum/common/types/forum';
+import type {PostWithMembership} from '@/subapps/forum/common/types/forum';
 import {Skeleton} from '@/ui/components';
 import {PortalWorkspace} from '@/orm/workspace';
 
 interface ThreadProps {
-  post?: Post;
+  post?: PostWithMembership;
   showHeader?: boolean;
   showCommentsByDefault?: boolean;
   hideCloseComments?: boolean;
@@ -28,7 +28,7 @@ export const Thread = ({
   usePopUpStyles = false,
   workspace,
 }: ThreadProps) => {
-  const {forumGroup}: any = post || {};
+  const forumGroup = post?.forumGroup;
 
   const scrollToPost = useCallback((postId: string) => {
     const element = document.getElementById(`post-${postId}`);

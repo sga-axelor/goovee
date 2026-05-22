@@ -1,5 +1,8 @@
 import {IconType} from 'react-icons';
 
+// ---- CORE IMPORTS ---- //
+import {PageInfo} from '@/types';
+
 export type ID = string;
 export type Version = number;
 
@@ -14,9 +17,36 @@ export interface TextAlignment {
 }
 export type Level = 1 | 2 | 3 | 4 | 5 | 6;
 
+export interface Attachment {
+  id?: ID;
+  title?: string;
+  metaFile: Partial<MetaFile> & {fileType?: string};
+}
+
+export interface MenuItem {
+  id: number;
+  name: string;
+  link: string;
+}
+
+export interface SearchResult {
+  id: ID;
+  title: string;
+  content?: string;
+  forumGroup: {id: ID; name: string};
+  label: string;
+}
+
+export interface FilePreview {
+  id?: string;
+  url?: string;
+  name?: string;
+  type?: string;
+}
+
 export type PostsContentProps = {
-  posts: any;
-  pageInfo: any;
+  posts: Post[];
+  pageInfo: PageInfo;
 };
 export type MediaContentProps = {
   groupId: string;
@@ -39,16 +69,16 @@ export interface Image extends Model {
   metaFile: MetaFile;
 }
 
-export interface ForumGroup extends Group {
+export interface Group extends Model {
   name: string;
   description?: string;
   image?: Image;
 }
 
-export interface Group extends Model {
+export interface MemberGroup extends Model {
   isPin?: boolean;
   notificationSelect: string | null;
-  forumGroup: ForumGroup;
+  forumGroup: Group;
   name?: string | null;
 }
 
@@ -67,12 +97,15 @@ export interface Comment extends Model {
 export interface Post extends Model {
   title?: string;
   content?: string;
-  forumGroup: ForumGroup;
-  attachmentList: [];
+  postDateT?: string;
+  forumGroup: Group;
+  attachmentList: Attachment[];
   commentList: Comment[];
   author: Author;
   createdOn: string;
 }
+
+export type PostWithMembership = Post & {isMember: boolean};
 
 export interface RecentlyActivePost {
   id: ID;

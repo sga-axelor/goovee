@@ -17,7 +17,7 @@ import {MembersNoticationsWrapper} from './wrapper';
 import GroupAction from './groupAction';
 
 export default async function Page(props: {
-  params: Promise<any>;
+  params: Promise<{tenant: string; workspace: string}>;
   searchParams: Promise<{[key: string]: string | undefined}>;
 }) {
   const searchParams = await props.searchParams;

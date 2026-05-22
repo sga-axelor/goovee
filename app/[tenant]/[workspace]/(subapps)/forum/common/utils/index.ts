@@ -1,7 +1,6 @@
-import {t} from '@/locale/server';
 import {findGooveeUserByEmail} from '@/orm/partner';
 import type {Client} from '@/goovee/.generated/client';
-import {User} from '@/types';
+import {ID, User} from '@/types';
 import {PortalWorkspace} from '@/orm/workspace';
 import {getPageInfo} from '@/utils';
 import {getSkip} from '@/utils/pagination';
@@ -11,10 +10,10 @@ import {DEFAULT_PAGE} from '@/constants';
 import {Post} from '@/subapps/forum/common/types/forum';
 
 export const filterPrivateQuery = async (
-  user: any,
+  user: User | null | undefined,
   client: Client,
   startIndex: number = 1,
-): Promise<{clause: string; params: any[]; nextIndex: number}> => {
+): Promise<{clause: string; params: unknown[]; nextIndex: number}> => {
   const OPEN_RECORD_FILTERS = `COALESCE(forumGroup.is_private, false) IS FALSE`;
 
   if (!user) {
@@ -31,7 +30,7 @@ export const filterPrivateQuery = async (
     throw new Error('Unauthorized');
   }
 
-  const params: any[] = [];
+  const params: unknown[] = [];
   let idx = startIndex;
 
   params.push(partner.id);
@@ -84,7 +83,7 @@ export async function getPopularQuery({
   page?: string | number;
   limit?: number;
   workspaceID: PortalWorkspace['id'];
-  groupIDs?: any[];
+  groupIDs?: ID[];
   ids?: Array<Post['id']> | undefined;
   search?: string | undefined;
   client: Client;
@@ -93,14 +92,11 @@ export async function getPopularQuery({
   memberGroupIDs?: Array<string>;
 }) {
   if (!workspaceID) {
-    return {
-      error: true,
-      message: await t('Invalid workspace'),
-    };
+    throw new Error('Invalid workspace');
   }
   const skip = limit ? getSkip(limit, page ?? DEFAULT_PAGE) : undefined;
 
-  const params: any[] = [];
+  const params: unknown[] = [];
   let idx = 1;
 
   params.push(workspaceID);
@@ -139,7 +135,7 @@ export async function getPopularQuery({
   params.push(skip);
   const skipIdx = idx++;
 
-  const posts: any = await client
+  const posts = await client
     .$raw(
       `WITH
     postData AS (
@@ -252,17 +248,17 @@ export async function getPopularQuery({
         `,
       ...params,
     )
-    .then((posts: any) => {
-      return posts.map((post: any) => {
-        return {
-          ...post,
-          isMember: memberGroupIDs.includes(String(post.forumGroup?.id)),
-        };
-      });
+    .then(rawPosts => {
+      return (rawPosts as Array<Record<string, unknown>>).map(post => ({
+        ...post,
+        isMember: memberGroupIDs.includes(
+          String((post.forumGroup as {id?: unknown} | null)?.id ?? ''),
+        ),
+      })) as Array<Record<string, unknown> & {isMember: boolean}>;
     });
 
   const pageInfo = getPageInfo({
-    count: posts?.[0]?._count,
+    count: posts?.[0]?._count as string | number | undefined,
     page,
     limit,
   });
@@ -271,7 +267,7 @@ export async function getPopularQuery({
 }
 
 interface Element {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export const addProperties = ({
@@ -281,11 +277,11 @@ export const addProperties = ({
 }: {
   element: Element;
   key: string;
-  value: any;
+  value: unknown;
 }) => {
   if (!key) return element;
 
-  const properties = element[key] || [];
+  const properties = ((element[key] as unknown[]) || []) as unknown[];
   properties.push(value);
   element[key] = properties;
   return element;

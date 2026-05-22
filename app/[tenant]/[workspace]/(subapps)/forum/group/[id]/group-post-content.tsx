@@ -7,6 +7,7 @@ import {PortalWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 
 // ---- LOCAL IMPORTS ---- //
+import type {PostWithMembership} from '@/subapps/forum/common/types/forum';
 import {findPostsByGroupId} from '@/subapps/forum/common/orm/forum';
 import {ThreadList} from '@/subapps/forum/common/ui/components';
 
@@ -48,7 +49,7 @@ export async function GroupPostsContent({
     <div className="w-full mt-6">
       <ThreadList
         pageInfo={pageInfo}
-        posts={posts}
+        posts={posts as PostWithMembership[]}
         memberGroupIDs={memberGroupIDs}
         selectedGroupId={groupId}
         workspace={workspace}

@@ -16,6 +16,7 @@ import {
   findGroupsByMembers,
   findGroups,
 } from '@/subapps/forum/common/orm/forum';
+import type {Group, MemberGroup} from '@/subapps/forum/common/types/forum';
 import {
   FORUM_CONTENT,
   GROUPS_ORDER_BY,
@@ -54,7 +55,7 @@ async function ForumGroup({
   if (!tenant) return notFound();
   const {client} = tenant;
 
-  const workspace: any = await findWorkspace({
+  const workspace = await findWorkspace({
     user,
     url: workspaceURL,
     client,
@@ -66,32 +67,38 @@ async function ForumGroup({
 
   const groupId = params.id as string;
 
-  const groups = await findGroups({workspace, client, user}).then(clone);
+  const groups = await findGroups({
+    workspaceURL: workspace.url,
+    client,
+    user,
+  }).then(clone);
 
-  const memberGroups: any = userId
-    ? await findGroupsByMembers({
-        id: userId,
-        orderBy: GROUPS_ORDER_BY,
-        workspaceID: workspace?.id,
-        client,
-        user,
-      })
-    : [];
+  const memberGroups = (
+    userId
+      ? await findGroupsByMembers({
+          id: userId,
+          orderBy: GROUPS_ORDER_BY,
+          workspaceID: workspace?.id,
+          client,
+          user,
+        })
+      : []
+  ) as MemberGroup[];
 
-  const memberGroupIDs = memberGroups.map(
-    (group: any) => group?.forumGroup?.id,
-  );
+  const memberGroupIDs = memberGroups
+    ?.map(group => group.forumGroup?.id)
+    .filter((id): id is string => Boolean(id));
 
-  const nonMemberGroups: any = groups.filter((group: any) => {
-    return !memberGroupIDs.includes(group.id);
-  });
+  const nonMemberGroups = groups.filter(group => {
+    return !memberGroupIDs?.includes(group.id);
+  }) as Group[];
 
-  const selectedGroup: any = await findGroupById(
+  const selectedGroup = (await findGroupById(
     groupId,
     workspace?.id!,
     client,
     user,
-  ).then(clone);
+  ).then(clone)) as Group | null;
 
   const $user = (await findUser({userId, client}).then(clone)) as User;
 

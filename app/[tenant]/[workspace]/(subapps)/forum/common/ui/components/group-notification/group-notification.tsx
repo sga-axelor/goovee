@@ -17,11 +17,11 @@ import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {NOTIFICATIONS_OPTIONS} from '@/app/[tenant]/[workspace]/(subapps)/forum/common/constants';
-import {Group} from '@/subapps/forum/common/types/forum';
+import {MemberGroup} from '@/subapps/forum/common/types/forum';
 import {addGroupNotification} from '@/subapps/forum/common/action/action';
 
 interface groupNotificationPros {
-  group: Group;
+  group: MemberGroup;
 }
 
 export const GroupNotification = ({group}: groupNotificationPros) => {

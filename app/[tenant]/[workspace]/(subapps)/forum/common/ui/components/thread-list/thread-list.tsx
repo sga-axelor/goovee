@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import type {Cloned} from '@/types/util';
 
 // ---- CORE IMPORTS ---- //
@@ -9,14 +8,15 @@ import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
 import {URL_PARAMS} from '@/constants';
 import {SORT_BY_OPTIONS} from '@/comments';
+import {PageInfo} from '@/types';
+import {PortalWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {
   InfiniteScroll,
   ThreadSkeleton,
 } from '@/subapps/forum/common/ui/components';
-import {Post} from '@/subapps/forum/common/types/forum';
-import {PortalWorkspace} from '@/orm/workspace';
+import {PostWithMembership} from '@/subapps/forum/common/types/forum';
 
 export const ThreadList = ({
   posts,
@@ -25,8 +25,8 @@ export const ThreadList = ({
   selectedGroupId,
   workspace,
 }: {
-  posts: Post[];
-  pageInfo: any;
+  posts: PostWithMembership[];
+  pageInfo: PageInfo;
   memberGroupIDs: string[];
   selectedGroupId: string | null;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
@@ -34,7 +34,7 @@ export const ThreadList = ({
   const {update, searchParams} = useSearchParams();
   const sort = searchParams.get('sort') ?? 'new';
 
-  const handleSortBy = (value: any) => {
+  const handleSortBy = (value: string) => {
     if (!value) {
       return;
     }
@@ -77,7 +77,7 @@ export const ThreadList = ({
 export default ThreadList;
 
 export function ThreadListSkeleton({postCount = 3}: {postCount?: number}) {
-  const showImageView = Math.floor(Math.random() * postCount);
+  const showImageView = Math.floor(postCount / 2);
   return (
     <div>
       {[...Array(postCount)].map((_, i) => (

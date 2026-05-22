@@ -1,4 +1,5 @@
 'use client';
+
 import {useMemo, useState} from 'react';
 import {MdOutlineImage} from 'react-icons/md';
 
@@ -10,7 +11,7 @@ import {getPartnerImageURL} from '@/utils/files';
 
 // ---- LOCAL IMPORTS ---- //
 import {UploadPost} from '@/subapps/forum/common/ui/components';
-import {ForumGroup} from '@/subapps/forum/common/types/forum';
+import {Group, MemberGroup} from '@/subapps/forum/common/types/forum';
 import {
   DISABLED_SEARCH_PLACEHOLDER,
   JOIN_GROUP_TO_POST,
@@ -24,10 +25,10 @@ export function ComposePost({
   selectedGroup,
 }: {
   user: User | null;
-  memberGroups: ForumGroup[];
-  selectedGroup: ForumGroup | null;
+  memberGroups: MemberGroup[];
+  selectedGroup: Group | null;
 }) {
-  const {picture}: any = user || {};
+  const picture = (user as (User & {picture?: {id?: string}}) | null)?.picture;
   const {tenant} = useWorkspace();
   const [open, setOpen] = useState(false);
 
@@ -39,9 +40,7 @@ export function ComposePost({
   };
 
   const isAllowedToPost = selectedGroup
-    ? memberGroups
-        .map((group: any) => group.forumGroup.id)
-        .includes(selectedGroup.id)
+    ? memberGroups.map(group => group.forumGroup.id).includes(selectedGroup.id)
     : true;
 
   const isDisabled = useMemo(() => {
@@ -49,7 +48,7 @@ export function ComposePost({
   }, [isLoggedIn, isAllowedToPost]);
 
   const groups = useMemo(
-    () => memberGroups?.map((group: any) => group.forumGroup),
+    () => memberGroups?.map(group => group.forumGroup),
     [memberGroups],
   );
 

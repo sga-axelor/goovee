@@ -1,8 +1,12 @@
 'use client';
 
-import {useLayoutEffect, useState} from 'react';
+import {RefObject, useLayoutEffect, useState} from 'react';
 
-export const useTruncatedElement = ({ref}: {ref: any}) => {
+export const useTruncatedElement = ({
+  ref,
+}: {
+  ref: RefObject<HTMLElement | null>;
+}) => {
   const [isTruncated, setIsTruncated] = useState(false);
   const [isShowingMore, setIsShowingMore] = useState(false);
 

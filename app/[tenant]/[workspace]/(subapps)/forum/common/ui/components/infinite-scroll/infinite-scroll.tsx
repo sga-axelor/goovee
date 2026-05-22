@@ -11,19 +11,16 @@ import {useSearchParams} from '@/ui/hooks';
 import {DEFAULT_LIMIT} from '@/constants';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
+import {PortalWorkspace} from '@/orm/workspace';
+import {PageInfo} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {Thread} from '@/subapps/forum/common/ui/components';
 import {fetchPosts} from '@/subapps/forum/common/action/action';
-import {Post} from '@/subapps/forum/common/types/forum';
-import {PortalWorkspace} from '@/orm/workspace';
-
-interface PageInfo {
-  count: number;
-}
+import {PostWithMembership} from '@/subapps/forum/common/types/forum';
 
 interface InfiniteScrollProps {
-  initialPosts: Post[];
+  initialPosts: PostWithMembership[];
   pageInfo: PageInfo;
   memberGroupIDs: string[];
   selectedGroupId: string | null;
@@ -38,7 +35,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   workspace,
 }) => {
   const {count} = pageInfo;
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<PostWithMembership[]>(initialPosts);
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [ref, inView] = useInView();
@@ -61,7 +58,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
 
     try {
       const nextPage = page + 1;
-      const response: any = await fetchPosts({
+      const response = await fetchPosts({
         sort,
         limit: Number(limit),
         page: nextPage,
@@ -72,17 +69,22 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
         }),
       });
 
-      if (response.error) {
+      const res = response as {
+        error?: boolean;
+        message?: string;
+        posts?: PostWithMembership[];
+      };
+      if (res.error) {
         toast({
           variant: 'destructive',
-          title: i18n.t(response.message || 'An error occurred'),
+          title: i18n.t(res.message || 'An error occurred'),
         });
         return;
       }
 
-      if (response.posts?.length > 0) {
+      if (res.posts && res.posts.length > 0) {
         setPage(nextPage);
-        setPosts(prevPosts => [...prevPosts, ...response.posts]);
+        setPosts(prevPosts => [...prevPosts, ...(res.posts ?? [])]);
       }
     } catch (error) {
       console.error('Error occurred while loading posts:', error);
@@ -124,7 +126,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
         />
       ))}
 
-      {posts.length < count && (
+      {posts.length < Number(count ?? 0) && (
         <div
           ref={ref}
           className="col-span-1 mt-16 flex items-center justify-center sm:col-span-2 md:col-span-3 lg:col-span-4">
