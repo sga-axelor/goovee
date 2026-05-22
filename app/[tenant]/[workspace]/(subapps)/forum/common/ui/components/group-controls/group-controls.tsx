@@ -1,4 +1,5 @@
 'use client';
+
 import {useMemo, useOptimistic, useRef, useState, useTransition} from 'react';
 
 // ---- CORE IMPORTS ---- //
@@ -9,7 +10,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useToast} from '@/ui/hooks';
 
 // ---- LOCAL IMPORTS ---- //
-import {ForumGroup} from '@/subapps/forum/common/types/forum';
+import {Group, MemberGroup} from '@/subapps/forum/common/types/forum';
 import {
   GroupActionList,
   Search as GroupSearch,
@@ -27,10 +28,10 @@ export function GroupControls({
   user,
   selectedGroup,
 }: {
-  memberGroups: ForumGroup[];
-  nonMemberGroups: ForumGroup[];
+  memberGroups: MemberGroup[];
+  nonMemberGroups: Group[];
   user: User | null;
-  selectedGroup: ForumGroup | null;
+  selectedGroup: Group | null;
 }) {
   const userId = user?.id as string;
   const isLoggedIn = !!user?.id;
@@ -46,16 +47,16 @@ export function GroupControls({
   const [optimisticMemberGroups, dispatchMemberGroup] = useOptimistic(
     memberGroups,
     (
-      state: ForumGroup[],
+      state: MemberGroup[],
       action:
         | {type: 'remove'; groupId: string}
         | {type: 'toggle-pin'; groupId: string},
     ) => {
       if (action.type === 'remove') {
-        return state.filter((g: any) => g.forumGroup.id !== action.groupId);
+        return state.filter(g => g.forumGroup.id !== action.groupId);
       }
       if (action.type === 'toggle-pin') {
-        return state.map((g: any) =>
+        return state.map(g =>
           g.forumGroup.id === action.groupId ? {...g, isPin: !g.isPin} : g,
         );
       }
@@ -65,9 +66,9 @@ export function GroupControls({
 
   const [optimisticNonMemberGroups, dispatchNonMemberGroup] = useOptimistic(
     nonMemberGroups,
-    (state: any[], action: {type: 'remove'; groupId: string}) => {
+    (state: Group[], action: {type: 'remove'; groupId: string}) => {
       if (action.type === 'remove') {
-        return state.filter((g: any) => g.id !== action.groupId);
+        return state.filter(g => g.id !== action.groupId);
       }
       return state;
     },
@@ -80,7 +81,7 @@ export function GroupControls({
   const memberGroupList = useMemo(() => {
     if (!groupSearchValue) return optimisticMemberGroups || [];
     const searchKeyLower = groupSearchValue.toLowerCase();
-    return (optimisticMemberGroups || []).filter((group: ForumGroup) =>
+    return (optimisticMemberGroups || []).filter((group: MemberGroup) =>
       group?.forumGroup?.name?.toLowerCase().includes(searchKeyLower),
     );
   }, [optimisticMemberGroups, groupSearchValue]);
@@ -88,12 +89,12 @@ export function GroupControls({
   const nonMemberGroupList = useMemo(() => {
     if (!groupSearchValue) return optimisticNonMemberGroups || [];
     const searchKeyLower = groupSearchValue.toLowerCase();
-    return (optimisticNonMemberGroups || []).filter((group: any) =>
+    return (optimisticNonMemberGroups || []).filter(group =>
       group?.name?.toLowerCase().includes(searchKeyLower),
     );
   }, [optimisticNonMemberGroups, groupSearchValue]);
 
-  const handleExit = (group: ForumGroup) => {
+  const handleExit = (group: MemberGroup) => {
     const groupId = group.forumGroup.id;
     if (pendingRef.current.has(groupId)) return;
     pendingRef.current.add(groupId);
@@ -115,7 +116,7 @@ export function GroupControls({
     });
   };
 
-  const handleJoin = (group: ForumGroup) => {
+  const handleJoin = (group: Group) => {
     const groupId = group.id;
     if (pendingRef.current.has(groupId)) return;
     pendingRef.current.add(groupId);
@@ -137,7 +138,7 @@ export function GroupControls({
     });
   };
 
-  const handlePin = (group: ForumGroup) => {
+  const handlePin = (group: MemberGroup) => {
     const groupId = group.forumGroup.id;
     if (pendingRef.current.has(groupId)) return;
     pendingRef.current.add(groupId);

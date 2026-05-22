@@ -1,11 +1,13 @@
 'use client';
+
 import {useMemo} from 'react';
-import type {Cloned} from '@/types/util';
 
 // ---- CORE IMPORTS ---- //
 import {SUBAPP_CODES} from '@/constants';
 import {isCommentEnabled, Comments} from '@/comments';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {PortalWorkspace} from '@/orm/workspace';
+import type {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -16,7 +18,7 @@ import {
   fetchComments,
   createComment,
 } from '@/subapps/forum/common/action/action';
-import {PortalWorkspace} from '@/orm/workspace';
+import {PostWithMembership} from '@/subapps/forum/common/types/forum';
 
 export const ThreadFooter = ({
   post,
@@ -25,19 +27,22 @@ export const ThreadFooter = ({
   usePopUpStyles = false,
   workspace,
 }: {
-  post: any;
+  post?: PostWithMembership;
   showCommentsByDefault: boolean;
   hideCloseComments?: boolean;
   usePopUpStyles?: boolean;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
 }) => {
-  const isAllowToComment = useMemo(() => post.isMember, [post]);
+  const isAllowToComment = useMemo(() => post?.isMember, [post]);
+
   const {workspaceURI} = useWorkspace();
 
   const enableComment = isCommentEnabled({
     subapp: SUBAPP_CODES.forum,
     workspace: workspace,
   });
+
+  if (!post) return <div />;
 
   return enableComment ? (
     <Comments

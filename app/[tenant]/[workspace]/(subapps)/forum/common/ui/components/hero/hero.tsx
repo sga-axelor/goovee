@@ -16,18 +16,18 @@ import {
   SUBAPP_CODES,
   URL_PARAMS,
 } from '@/constants';
+import {PortalWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {ForumGroup} from '@/subapps/forum/common/types/forum';
+import {Group, SearchResult} from '@/subapps/forum/common/types/forum';
 import {SearchItem} from '@/subapps/forum/common/ui/components';
 import {fetchPosts} from '@/subapps/forum/common/action/action';
-import {PortalWorkspace} from '@/orm/workspace';
 
 export function Hero({
   selectedGroup,
   workspace,
 }: {
-  selectedGroup: ForumGroup | null;
+  selectedGroup: Group | null;
   workspace: PortalWorkspace | Cloned<PortalWorkspace> | null;
 }) {
   const [forceClose, setForceClose] = useState(false);
@@ -54,7 +54,7 @@ export function Hero({
   };
 
   const handleSearchItemClick = useCallback(
-    (result: any) => {
+    (result: SearchResult) => {
       if (!result) return;
       update([{key: URL_PARAMS.searchid, value: result.id}], {scroll: false});
       setForceClose(true);
@@ -84,18 +84,17 @@ export function Hero({
     <Search
       searchKey="label"
       forceClose={forceClose}
-      findQuery={async ({query}: any) => {
-        const response: any = await fetchPosts({
+      findQuery={async ({query}: {query: string}) => {
+        const response = await fetchPosts({
           workspaceURL,
           search: query,
           limit: DEFAULT_LIMIT,
         });
-        if (response) {
-          const {posts} = response;
-          return posts.map((p: any) => ({
+        if (response && 'posts' in response && response.posts) {
+          return response.posts.map(p => ({
             ...p,
-            label: `${p.title.toLowerCase()}=${p.id}`,
-          }));
+            label: `${(p.title ?? '').toLowerCase()}=${p.id}`,
+          })) as SearchResult[];
         }
         return [];
       }}

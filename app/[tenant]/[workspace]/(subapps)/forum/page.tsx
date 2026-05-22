@@ -10,24 +10,20 @@ import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 
 // ---- LOCAL IMPORTS ---- //
-import {
-  FORUM_CONTENT,
-  GROUPS_ORDER_BY,
-  MENU,
-} from '@/subapps/forum/common/constants';
+import {FORUM_CONTENT, GROUPS_ORDER_BY} from '@/subapps/forum/common/constants';
 import {
   findGroups,
   findGroupsByMembers,
   findUser,
 } from '@/subapps/forum/common/orm/forum';
 import {
-  NavMenu,
   Tabs,
   Hero,
   GroupControls,
   ThreadListSkeleton,
 } from '@/subapps/forum/common/ui/components';
 import {ComposePost} from '@/subapps/forum/common/ui/components';
+import {Group, MemberGroup} from '@/subapps/forum/common/types/forum';
 import {PostsContent} from './post-content';
 
 export default async function Page(props: {
@@ -48,7 +44,7 @@ export default async function Page(props: {
   if (!tenant) return notFound();
   const {client} = tenant;
 
-  const workspace: any = await findWorkspace({
+  const workspace = await findWorkspace({
     user,
     url: workspaceURL,
     client,
@@ -59,30 +55,32 @@ export default async function Page(props: {
   }
 
   const groups = await findGroups({
-    workspace: workspace!,
+    workspaceURL: workspace.url,
     client,
     user,
   }).then(clone);
 
-  const groupIDs = groups.map((group: any) => group.id);
+  const groupIDs = groups.map(group => group.id);
 
-  const memberGroups: any = userId
-    ? await findGroupsByMembers({
-        id: userId,
-        orderBy: GROUPS_ORDER_BY,
-        workspaceID: workspace?.id!,
-        client,
-        user,
-      })
-    : [];
+  const memberGroups = (
+    userId
+      ? await findGroupsByMembers({
+          id: userId,
+          orderBy: GROUPS_ORDER_BY,
+          workspaceID: workspace.id,
+          client,
+          user,
+        })
+      : []
+  ) as MemberGroup[];
 
-  const memberGroupIDs = memberGroups.map(
-    (group: any) => group?.forumGroup?.id,
-  );
+  const memberGroupIDs = memberGroups
+    ?.map(group => group.forumGroup.id)
+    .filter((id): id is string => Boolean(id));
 
-  const nonMemberGroups: any = groups.filter((group: any) => {
-    return !memberGroupIDs.includes(group.id);
-  });
+  const nonMemberGroups = groups.filter(group => {
+    return !memberGroupIDs?.includes(group.id);
+  }) as Group[];
 
   const $user = (await findUser({
     userId,

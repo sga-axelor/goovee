@@ -22,7 +22,7 @@ export const ImagePreviewer: React.FC<ImagePreviewerProps> = ({images}) => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
-    const urls = images.map((image: any) => {
+    const urls = images.map(image => {
       if (image.file instanceof File) {
         const url = URL.createObjectURL(image.file);
         return url;
@@ -43,11 +43,17 @@ export const ImagePreviewer: React.FC<ImagePreviewerProps> = ({images}) => {
 
   const showOverlay = images.length > MAX_IMAGES_BEFORE_OVERLAY;
 
+  const gridCols =
+    images.length >= 3
+      ? 'grid-cols-3'
+      : images.length === 2
+        ? 'grid-cols-2'
+        : 'grid-cols-1';
+
   return (
-    <div
-      className={`w-full grid grid-cols-${images.length >= 3 ? '3' : images.length} gap-6`}>
-      {imageUrls.slice(0, 3).map((url: any, index) => (
-        <div key={index} className="relative">
+    <div className={`w-full grid ${gridCols} gap-6`}>
+      {imageUrls.slice(0, 3).map((url, index) => (
+        <div key={index} className="relative aspect-square">
           <Image
             fill
             src={url}

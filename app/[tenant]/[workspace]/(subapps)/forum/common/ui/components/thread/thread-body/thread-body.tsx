@@ -22,7 +22,13 @@ import {cn} from '@/utils/css';
 
 // ---- LOCAL IMPORTS ---- //
 import {SEE_LESS, SEE_MORE} from '@/subapps/forum/common/constants';
-import type {Post} from '@/subapps/forum/common/types/forum';
+import type {
+  FilePreview,
+  PostWithMembership,
+} from '@/subapps/forum/common/types/forum';
+
+type FilePreviewItem = FilePreview & {id?: string};
+
 import {
   FilePreviewer,
   ImageGallery,
@@ -35,11 +41,11 @@ export const ThreadBody = ({
   usePopUpStyles = false,
   workspace,
 }: {
-  post?: Post;
+  post?: PostWithMembership;
   usePopUpStyles?: boolean;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
 }) => {
-  const {title, content, attachmentList, author, postDateT}: any = post || {};
+  const {title, content, attachmentList, author, postDateT} = post ?? {};
 
   const {tenant, workspaceURI} = useWorkspace();
 
@@ -52,7 +58,10 @@ export const ThreadBody = ({
   const {images, files} = useMemo(() => {
     return (
       attachmentList?.reduce(
-        (acc: any, attachment: any) => {
+        (
+          acc: {images: typeof attachmentList; files: FilePreviewItem[]},
+          attachment,
+        ) => {
           if (attachment?.metaFile?.fileType?.startsWith('image')) {
             acc.images.push(attachment);
           } else {
@@ -87,7 +96,7 @@ export const ThreadBody = ({
                 {author?.simpleFullName}
               </div>
               <div className="text-xs">
-                {formatDateTime(postDateT, {
+                {formatDateTime(postDateT ?? '', {
                   dateFormat: 'MMMM D YYYY,',
                   timeFormat: ' h:mm a',
                 })}
@@ -135,7 +144,7 @@ export const ThreadBody = ({
 
         {files?.length > 0 &&
           !usePopUpStyles &&
-          files.map((file: any) => (
+          files.map((file: FilePreviewItem) => (
             <React.Fragment key={file.id}>
               <FilePreviewer file={file} />
             </React.Fragment>

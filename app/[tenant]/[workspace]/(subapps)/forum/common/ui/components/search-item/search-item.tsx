@@ -1,11 +1,14 @@
 'use client';
 
+// ---- LOCAL IMPORTS ---- //
+import {SearchResult} from '@/subapps/forum/common/types/forum';
+
 export function SearchItem({
   result,
   onClick,
 }: {
-  result: any;
-  onClick: (result: {id: string; title: string}) => void;
+  result: SearchResult;
+  onClick: (result: SearchResult) => void;
 }) {
   const {id, title, forumGroup} = result;
   return (

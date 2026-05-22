@@ -39,7 +39,7 @@ import {
   REMOVE_PIN,
 } from '@/subapps/forum/common/constants';
 import {addGroupNotification} from '@/subapps/forum/common/action/action';
-import {ForumGroup, Group} from '@/subapps/forum/common/types/forum';
+import {Group, MemberGroup} from '@/subapps/forum/common/types/forum';
 
 export const GroupActionList = ({
   title,
@@ -52,20 +52,20 @@ export const GroupActionList = ({
   onPin,
 }: {
   title: string;
-  groups: any;
+  groups: (MemberGroup | Group)[];
   isMember?: boolean;
   userId?: string;
   groupId?: string;
-  onExit?: (group: ForumGroup) => void;
-  onJoin?: (group: ForumGroup) => void;
-  onPin?: (group: ForumGroup) => void;
+  onExit?: (group: MemberGroup) => void;
+  onJoin?: (group: Group) => void;
+  onPin?: (group: MemberGroup) => void;
 }) => {
   const router = useRouter();
   const {workspaceURI, workspaceURL} = useWorkspace();
   const {toast} = useToast();
 
   const handleNotifications = async (
-    group: Group,
+    group: MemberGroup,
     notificationType: string,
   ) => {
     const {id, forumGroup} = group;
@@ -97,9 +97,11 @@ export const GroupActionList = ({
         {i18n.t(title)}
       </h1>
       <div className="flex flex-col gap-4">
-        {groups?.map((group: any) => {
-          const id = group?.forumGroup?.id || group?.id;
-          const imageId = group?.forumGroup?.image?.id || group?.image?.id;
+        {groups?.map(group => {
+          const memberGroup = group as MemberGroup;
+          const id = memberGroup?.forumGroup?.id || group?.id;
+          const imageId =
+            memberGroup?.forumGroup?.image?.id || (group as Group)?.image?.id;
           const groupImage = imageId
             ? `${workspaceURI}/${SUBAPP_CODES.forum}/api/group/${id}/image`
             : NO_IMAGE_URL;
@@ -107,19 +109,24 @@ export const GroupActionList = ({
           return (
             <Collapsible key={group?.id}>
               <div
-                className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${groupId && groupId === (isMember ? group.forumGroup.id : group.id) ? 'bg-success-light px-1' : ''}`}>
+                className={`w-full flex-shrink-0 flex justify-between items-center gap-2 py-1 rounded ${groupId && groupId === (isMember ? memberGroup.forumGroup.id : group.id) ? 'bg-success-light px-1' : ''}`}>
                 <div
-                  onClick={() => handlePath(group?.forumGroup?.id || group?.id)}
+                  onClick={() =>
+                    handlePath(memberGroup?.forumGroup?.id || group?.id)
+                  }
                   className="flex items-center gap-2">
                   <Avatar className="rounded-lg h-6 w-6">
                     <AvatarImage
                       src={groupImage}
-                      alt={group?.forumGroup?.name || group?.name}
+                      alt={
+                        (memberGroup?.forumGroup?.name || group?.name) ??
+                        undefined
+                      }
                       size={24}
                     />
                   </Avatar>
                   <p className="font-normal text-sm leading-5 line-clamp-1 cursor-pointer">
-                    {group?.forumGroup?.name || group?.name}
+                    {memberGroup?.forumGroup?.name || group?.name}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -128,7 +135,7 @@ export const GroupActionList = ({
                       <span className="text-success text-[0.625rem]">2</span>
                     </div>
                   )}
-                  {group?.isPin && (
+                  {memberGroup?.isPin && (
                     <MdOutlinePushPin className="cursor-pointer w-4 h-4" />
                   )}
                   {userId && (
@@ -152,10 +159,12 @@ export const GroupActionList = ({
                       )}
                       <div
                         className="flex items-center gap-[0.625rem] px-2"
-                        onClick={() => onPin?.(group)}>
+                        onClick={() => onPin?.(group as MemberGroup)}>
                         <MdOutlinePushPin className="w-4 h-4" />
                         <span className="w-full text-xs leading-[1.125rem] font-normal cursor-pointer">
-                          {!group?.isPin ? i18n.t(PIN) : i18n.t(REMOVE_PIN)}
+                          {!memberGroup?.isPin
+                            ? i18n.t(PIN)
+                            : i18n.t(REMOVE_PIN)}
                         </span>
                       </div>
                     </>
@@ -176,9 +185,12 @@ export const GroupActionList = ({
                           {NOTIFICATIONS_OPTIONS.map(option => (
                             <div
                               key={option.id}
-                              className={`cursor-pointer px-4 ${option.value === group?.notificationSelect ? 'bg-success-light' : ''}`}
+                              className={`cursor-pointer px-4 ${option.value === memberGroup?.notificationSelect ? 'bg-success-light' : ''}`}
                               onClick={() =>
-                                handleNotifications(group, option.value)
+                                handleNotifications(
+                                  group as MemberGroup,
+                                  option.value,
+                                )
                               }>
                               {i18n.t(option.title)}
                             </div>
@@ -190,7 +202,7 @@ export const GroupActionList = ({
                   {isMember ? (
                     <div
                       className="flex items-center gap-[0.625rem] px-2 cursor-pointer"
-                      onClick={() => onExit?.(group)}>
+                      onClick={() => onExit?.(group as MemberGroup)}>
                       <MdExitToApp className="w-4 h-4" />
                       <span className="w-full text-xs leading-[1.125rem] font-normal">
                         {i18n.t(LEAVE_THIS_GROUP)}
@@ -199,7 +211,7 @@ export const GroupActionList = ({
                   ) : (
                     <div
                       className="flex items-center gap-[0.625rem] px-2 cursor-pointer"
-                      onClick={() => onJoin?.(group)}>
+                      onClick={() => onJoin?.(group as Group)}>
                       <MdOutlineGroupAdd className="w-4 h-4" />
                       <span className="w-full text-xs leading-[1.125rem] font-normal">
                         {i18n.t(ASK_TO_JOIN)}

@@ -60,7 +60,7 @@ export async function GET(
     return new NextResponse('Unauthorized', {status: 401});
   }
 
-  const {posts = []}: any = await findPosts({
+  const {posts = []} = await findPosts({
     whereClause: {id: postId},
     workspaceID: workspace.id,
     client,

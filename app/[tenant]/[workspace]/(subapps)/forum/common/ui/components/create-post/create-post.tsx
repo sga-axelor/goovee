@@ -33,6 +33,7 @@ import {
 } from '@/ui/components';
 import {useToast} from '@/ui/hooks/use-toast';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -52,7 +53,13 @@ import {
   FileUploader,
   ImageUploader,
 } from '@/subapps/forum/common/ui/components';
-import {NO_IMAGE_URL, SUBAPP_CODES} from '@/constants';
+import {Group} from '@/subapps/forum/common/types/forum';
+
+interface FileDetails {
+  file?: File;
+  title?: string;
+  fileTitle?: string;
+}
 
 interface ImageItem {
   file: File;
@@ -60,8 +67,8 @@ interface ImageItem {
 }
 
 interface CreatePostProps {
-  groups: any[];
-  selectedGroup: any;
+  groups: Group[];
+  selectedGroup: Group | null;
   onClose: () => void;
 }
 
@@ -79,7 +86,7 @@ export const CreatePost = ({
   const [editorContent, setEditorContent] = useState<string>('');
   const [attachments, setAttachments] = useState<{
     images: ImageItem[];
-    file?: any;
+    file?: FileDetails;
   }>({images: []});
   const [modalOpen, setModalOpen] = useState<ModalType>(ModalType.None);
   const [loading, setLoading] = useState(false);
@@ -116,7 +123,7 @@ export const CreatePost = ({
     }));
   };
 
-  const handleFileUpload = (newFile: any) => {
+  const handleFileUpload = (newFile: FileDetails) => {
     setAttachments(prev => ({
       ...prev,
       title: newFile?.fileTitle || newFile?.file?.name,
@@ -129,7 +136,7 @@ export const CreatePost = ({
 
     const formData = new FormData();
     if (attachments.images?.length) {
-      attachments.images.forEach((element: any, index) => {
+      attachments.images.forEach((element, index) => {
         formData.append(
           `attachmentList[${index}][title]`,
           element?.altText || '',
@@ -141,13 +148,16 @@ export const CreatePost = ({
         `attachmentList[0][title]`,
         attachments.file?.fileTitle || '',
       );
-      formData.append(`attachmentList[0][file]`, attachments.file?.file);
+      formData.append(
+        `attachmentList[0][file]`,
+        attachments.file?.file ?? new Blob([]),
+      );
     }
 
     const groupID = selectedGroup?.id || values.groupId;
 
     try {
-      const result: any = await addPost({
+      const result = await addPost({
         group: {id: groupID},
         title: values.title,
         content: editorContent,
@@ -219,7 +229,7 @@ export const CreatePost = ({
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        disabled={selectedGroup}>
+                        disabled={Boolean(selectedGroup)}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue
@@ -324,7 +334,7 @@ export const CreatePost = ({
       {modalOpen === ModalType.File && (
         <FileUploader
           open={modalOpen === ModalType.File}
-          initialValue={attachments.file}
+          initialValue={attachments.file ?? {}}
           onUpload={handleFileUpload}
           handleClose={handleClose}
         />

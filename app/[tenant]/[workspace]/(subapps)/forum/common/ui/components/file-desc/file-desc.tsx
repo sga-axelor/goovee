@@ -11,8 +11,14 @@ import {Input, Label} from '@/ui/components';
 import {FILE_TITLE} from '@/subapps/forum/common/constants';
 import {FilePreviewer} from '@/subapps/forum/common/ui/components';
 
+interface FileDetails {
+  file?: File;
+  title?: string;
+  fileTitle?: string;
+}
+
 interface FileDescProps {
-  fileDetails: any;
+  fileDetails: FileDetails;
   handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -39,7 +45,7 @@ export const FileDesc = ({
           <MdOutlineEdit className="w-5 h-5 font-medium" />
         </Label>
       </div>
-      {fileDetails && <FilePreviewer file={fileDetails.file} />}
+      {fileDetails?.file && <FilePreviewer file={fileDetails.file} />}
       <input
         id="file-upload"
         type="file"

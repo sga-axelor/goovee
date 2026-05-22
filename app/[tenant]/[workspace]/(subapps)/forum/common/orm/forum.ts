@@ -1,14 +1,13 @@
 // ---- CORE IMPORTS ---- //
 import {ORDER_BY} from '@/constants';
-import type {Cloned} from '@/types/util';
 import {SORT_TYPE} from '@/comments';
 import type {Client} from '@/goovee/.generated/client';
 import {ID, User} from '@/types';
+import type {PageInfo} from '@/types';
 import {clone, getPageInfo} from '@/utils';
 import {getSkip} from '@/utils/pagination';
 import {PortalWorkspace} from '@/orm/workspace';
 import {filterPrivate} from '@/orm/filter';
-import {t} from '@/locale/server';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -17,26 +16,29 @@ import {
   getPopularQuery,
   filterPrivateQuery,
 } from '@/subapps/forum/common/utils';
-import {Post, RecentlyActivePost} from '@/subapps/forum/common/types/forum';
+import {
+  Post,
+  PostWithMembership,
+  RecentlyActivePost,
+} from '@/subapps/forum/common/types/forum';
 
 export async function findGroups({
-  workspace,
+  workspaceURL,
   client,
   user,
   archived = false,
 }: {
-  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  memberGroupIDs?: any;
+  workspaceURL: PortalWorkspace['url'];
   client: Client;
   user?: User;
   archived?: boolean;
 }) {
-  if (!workspace) return [];
+  if (!workspaceURL) return [];
 
   const groups = await client.aOSPortalForumGroup.find({
     where: {
       workspace: {
-        id: workspace.id,
+        url: workspaceURL,
       },
       AND: [await filterPrivate({user, client}), getArchivedFilter({archived})],
     },
@@ -58,9 +60,9 @@ export async function findGroupsByMembers({
   user,
   archived = false,
 }: {
-  id: any;
+  id: ID | null;
   searchKey?: string;
-  orderBy?: any;
+  orderBy?: Record<string, unknown>;
   workspaceID: PortalWorkspace['id'];
   client: Client;
   user?: User;
@@ -102,12 +104,12 @@ export async function findUser({
   client,
   archived = false,
 }: {
-  userId: any;
+  userId: ID | null | undefined;
   client: Client;
   archived?: boolean;
 }) {
   if (!userId) {
-    return {};
+    return null;
   }
 
   const archivedFilter = getArchivedFilter({archived});
@@ -144,34 +146,34 @@ export async function findPosts({
   archived = false,
   memberGroupIDs = [],
 }: {
-  sort?: any;
+  sort?: string | null;
   limit?: number;
   page?: string | number;
   search?: string | undefined;
   ids?: Array<Post['id']> | undefined;
-  whereClause?: any;
+  whereClause?: Record<string, unknown>;
   workspaceID: PortalWorkspace['id'];
-  groupIDs?: any[];
+  groupIDs?: ID[];
   client: Client;
   user?: User;
   archived?: boolean;
   memberGroupIDs?: Array<string>;
-}) {
+}): Promise<{posts: PostWithMembership[]; pageInfo: PageInfo}> {
   if (!workspaceID) {
     return {
       posts: [],
-      pageInfo: {},
+      pageInfo: getPageInfo({}),
     };
   }
 
-  let orderBy: any = null;
+  let orderBy: Record<string, string> | null = null;
 
   switch (sort) {
     case SORT_TYPE.old:
       orderBy = {postDateT: ORDER_BY.ASC};
       break;
     case SORT_TYPE.popular:
-      const query: any = await getPopularQuery({
+      const query = await getPopularQuery({
         page,
         limit,
         workspaceID,
@@ -183,14 +185,9 @@ export async function findPosts({
         archived,
         memberGroupIDs,
       });
-      const {posts = [], pageInfo = {}, error, message} = query;
+      const {posts, pageInfo} = query;
 
-      return {
-        ...(error ? {error: true} : {success: true}),
-        message,
-        posts,
-        pageInfo,
-      };
+      return {posts: posts as unknown as PostWithMembership[], pageInfo};
 
     default:
       orderBy = {postDateT: ORDER_BY.DESC};
@@ -212,7 +209,7 @@ export async function findPosts({
         id: workspaceID,
       },
       ...(groupIDs.length ? {id: {in: groupIDs}} : {}),
-      ...whereClause.forumGroup,
+      ...(whereClause.forumGroup as object | undefined),
       AND: [await filterPrivate({client, user}), archivedFilter],
     },
     ...(search
@@ -268,19 +265,20 @@ export async function findPosts({
         createdOn: true,
       },
     })
-    .then((posts: any) => {
-      const $posts = posts?.map((post: any) => {
-        return {
-          ...post,
-          isMember: memberGroupIDs.includes(post.forumGroup?.id),
-        };
-      });
-      return clone($posts);
+    .then(posts => {
+      const $posts = (posts as unknown as Post[])?.map(post => ({
+        ...post,
+        isMember: memberGroupIDs.includes(post.forumGroup?.id ?? ''),
+      }));
+      return clone($posts) as PostWithMembership[];
     })
-    .catch(error => console.log('error >>>', error));
+    .catch(error => {
+      console.error('error >>>', error);
+      return [] as PostWithMembership[];
+    });
 
   const pageInfo = getPageInfo({
-    count: posts?.[0]?._count,
+    count: (posts?.[0] as {_count?: number} | undefined)?._count,
     page,
     limit,
   });
@@ -301,7 +299,7 @@ export async function findPostsByGroupId({
 }: {
   id: ID;
   workspaceID: string;
-  sort?: any;
+  sort?: string | null;
   limit?: number;
   search?: string | undefined;
   ids?: string[];
@@ -381,11 +379,11 @@ export async function findMemberGroupById({
   archived?: boolean;
 }) {
   if (!workspaceID) {
-    return {error: true, message: await t('Bad request')};
+    return null;
   }
 
   if (!(id || groupID)) {
-    return {error: true, message: await t('Reccord ID not found')};
+    return null;
   }
   const group = await client.aOSPortalForumGroupMember.findOne({
     where: {
@@ -422,7 +420,7 @@ export async function findRecentlyActivePosts({
 }): Promise<RecentlyActivePost[]> {
   if (!workspaceID) return [];
 
-  const params: any[] = [];
+  const params: unknown[] = [];
   let idx = 1;
 
   params.push(workspaceID);

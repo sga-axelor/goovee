@@ -9,13 +9,14 @@ import {i18n} from '@/locale';
 
 // ---- LOCAL IMPORTS ---- //
 import {TAB_TITLES} from '@/subapps/forum/common/constants';
+import {Tab as TabType} from '@/subapps/forum/common/types/forum';
 
 export const Tab = ({
   tab,
   onClick,
   isActive,
 }: {
-  tab: any;
+  tab: Omit<TabType, 'component'>;
   isActive: boolean;
   onClick: (value: string) => void;
 }) => {

@@ -20,7 +20,7 @@ export async function PostsContent({
 }: {
   searchParams: {[key: string]: string | undefined};
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  groupIDs: any[];
+  groupIDs: string[];
   memberGroupIDs: string[];
   user: User;
   client: Client;
