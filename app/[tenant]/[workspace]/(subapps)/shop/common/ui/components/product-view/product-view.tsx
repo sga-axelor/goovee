@@ -23,6 +23,7 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import type {Category, ComputedProduct} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
+import type {ModelField} from '@/orm/model-fields';
 
 // ---- LOCAL IMPORTS ---- //
 import {ProductMetaFieldView} from '@/subapps/shop/common/ui/components/product-meta-field-view';
@@ -36,11 +37,11 @@ export function ProductView({
   hidePriceAndPurchase,
 }: {
   hidePriceAndPurchase: boolean;
-  categories?: any;
+  categories?: Category[];
   product: ComputedProduct;
   workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
-  breadcrumbs: any;
-  metaFields: any;
+  breadcrumbs: Array<{id: string | number; name: string}>;
+  metaFields: Array<ModelField & {value: unknown}>;
 }) {
   const router = useRouter();
   const {workspaceURI, tenant} = useWorkspace();
@@ -92,7 +93,7 @@ export function ProductView({
     router.push(`${workspaceURI}/shop/category/${category.slug}`);
   };
 
-  const handleBreadCrumbClick = (category: any) => {
+  const handleBreadCrumbClick = (category: Category) => {
     handleCategoryClick({category});
   };
 

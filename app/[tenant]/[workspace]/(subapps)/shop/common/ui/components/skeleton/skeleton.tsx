@@ -1,6 +1,7 @@
 'use client';
 
 import {Fragment, useState} from 'react';
+import SwiperClass from 'swiper';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
 import {FreeMode, Navigation, Thumbs} from 'swiper/modules';
@@ -36,7 +37,7 @@ export function CarouselSkeleton({count = 5}) {
         <div class="h-2 w-2 rounded-full"></div>
       </div>`,
       }}>
-      {images.map((item: any, i: number) => {
+      {images.map((_, i) => {
         return (
           <SwiperSlide key={i} className="max-w-full">
             <div className="flex items-center relative bg-center bg-no-repeat bg-cover h-[750px] p-4 md:p-20">
@@ -205,7 +206,7 @@ export function ProductListSkeleton() {
 export function ThumbsCarouselSkeleton() {
   const images = Array.from({length: 5});
 
-  const [thumbsSwiper, setThumbsSwiper] = useState<any>();
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass>();
   const [prevEl, setPrevEl] = useState<HTMLElement | null>(null);
   const [nextEl, setNextEl] = useState<HTMLElement | null>(null);
 
@@ -237,7 +238,7 @@ export function ThumbsCarouselSkeleton() {
         style={{top: 0, left: 0, zIndex: 1}}>
         <div>
           <Skeleton
-            ref={(node: any) => {
+            ref={(node: HTMLElement | null) => {
               setPrevEl(node);
             }}
             className="absolute h-4 w-20"
@@ -245,7 +246,7 @@ export function ThumbsCarouselSkeleton() {
           />
 
           <Skeleton
-            ref={(node: any) => {
+            ref={(node: HTMLElement | null) => {
               setPrevEl(node);
             }}
             className="absolute h-4 w-20"
@@ -357,7 +358,7 @@ export function CartItemsSkeleton() {
 
   return (
     <div className="flex flex-col gap-6">
-      {items?.map((it: any, i) => <CartItemSkeleton key={i} />)}
+      {items?.map((_, i) => <CartItemSkeleton key={i} />)}
     </div>
   );
 }

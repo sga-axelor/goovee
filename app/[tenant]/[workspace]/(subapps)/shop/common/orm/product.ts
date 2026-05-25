@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type {Cloned} from '@/types/util';
+import type {OrderByOptions} from '@goovee/orm';
 
 // ---- CORE IMPORTS ---- //
 import {getAOSAuthHeaders} from '@/tenant/auth';
@@ -18,9 +19,57 @@ import type {Product, Currency, ComputedProduct, User} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 import type {TenantConfig} from '@/tenant';
 import type {Client} from '@/goovee/.generated/client';
+import type {AOSProduct} from '@/goovee/.generated/models';
 import {filterPrivate} from '@/orm/filter';
 import {formatNumber} from '@/locale/server/formatters';
 import {getPartnerId} from '@/utils';
+
+type RawProduct = {
+  id: string;
+  name: string | null;
+  code: string | null;
+  slug: string | null;
+  description: string | null;
+  inAti: boolean | null;
+  salePrice: number | null;
+  featured: number | null;
+  createdOn: string | null;
+  productAttrs: string | null;
+  allowCustomNote: boolean | null;
+  _count?: string;
+  saleCurrency: {symbol: string | null} | null;
+  thumbnailImage: {id: string} | null;
+  picture: {id: string} | null;
+  portalImageList: Array<{picture: {id: string} | null}> | null;
+  productCompanyList: Array<{
+    salePrice: number | null;
+    company: {
+      id: string;
+      name: string | null;
+      currency: {
+        code: string | null;
+        numberOfDecimals: number | null;
+        symbol: string | null;
+      } | null;
+    } | null;
+  }> | null;
+  productFamily: {
+    name: string | null;
+    accountManagementList: Array<{
+      name: string | null;
+      saleTaxSet: Array<{
+        name: string | null;
+        activeTaxLine: {name: string | null; value: number | null} | null;
+      }> | null;
+    }> | null;
+  } | null;
+  outOfStockConfig?: {
+    outOfStock: boolean;
+    showMessage: boolean;
+    canBuy: boolean;
+  };
+  images?: string[];
+};
 
 function getPageInfo({
   count = 0,
@@ -183,7 +232,7 @@ const getWhereClause = async ({
   return whereClause;
 };
 
-function getSortOrder(sort?: string) {
+function getSortOrder(sort?: string): OrderByOptions<AOSProduct> {
   switch (sort) {
     case 'byMostExpensive':
       return {salePrice: 'DESC'};
@@ -228,7 +277,8 @@ export async function findProducts({
   config?: TenantConfig;
   associateWorkspace?: boolean;
 }) {
-  if (!(workspace && workspace.config && client)) return [];
+  if (!(workspace && workspace.config && client))
+    return {products: [], pageInfo: getPageInfo({count: 0, limit, page})};
 
   const orderBy = getSortOrder(sort);
   const skip = limit ? getSkip(limit, page) : undefined;
@@ -259,7 +309,7 @@ export async function findProducts({
     shouldHidePrices: hidePrices,
   });
 
-  const $filters: any = await getWhereClause({
+  const $filters = await getWhereClause({
     ids,
     slugs,
     search,
@@ -270,7 +320,7 @@ export async function findProducts({
     user,
   });
 
-  let $products: any[] = [];
+  let $products: RawProduct[] = [];
 
   try {
     const isHideOutOfStockProducts =
@@ -283,7 +333,7 @@ export async function findProducts({
           categoryids,
           associateWorkspace,
           user,
-          outOfStockQty,
+          outOfStockQty: outOfStockQty != null ? Number(outOfStockQty) : null,
         })
       : [];
 
@@ -314,11 +364,11 @@ export async function findProducts({
         ],
       };
 
-      $products = await client.aOSProduct
+      $products = (await client.aOSProduct
         .find({
           where: updatedFilters,
-          orderBy: orderBy as any,
-          take: limit as any,
+          orderBy,
+          take: limit !== undefined ? Number(limit) : undefined,
           ...(skip ? {skip} : {}),
           select: productFields,
         })
@@ -331,13 +381,13 @@ export async function findProducts({
               canBuy: true,
             },
           })),
-        );
+        )) as RawProduct[];
     } else {
-      $products = await client.aOSProduct
+      $products = (await client.aOSProduct
         .find({
           where: $filters,
-          orderBy: orderBy as any,
-          take: limit as any,
+          orderBy,
+          take: limit !== undefined ? Number(limit) : undefined,
           ...(skip ? {skip} : {}),
           select: productFields,
         })
@@ -370,7 +420,7 @@ export async function findProducts({
               },
             };
           }),
-        );
+        )) as RawProduct[];
     }
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -391,18 +441,17 @@ export async function findProducts({
     wsProduct,
     errorMessage,
   }: {
-    product: any;
+    product: RawProduct;
     ws?: boolean;
     wsProduct?: WSProduct;
     errorMessage?: string;
-  }) => {
-    const productcompany =
-      workspace?.config?.company?.id &&
-      product?.productCompanyList?.find(
-        (c: any) =>
-          c.company &&
-          Number(c.company.id) === Number(workspace?.config?.company?.id),
-      );
+  }): Promise<ComputedProduct> => {
+    const companyId = workspace?.config?.company?.id;
+    const productcompany = companyId
+      ? product?.productCompanyList?.find(
+          c => c.company && Number(c.company.id) === Number(companyId),
+        )
+      : undefined;
 
     const account = product?.productFamily?.accountManagementList?.[0];
 
@@ -422,7 +471,7 @@ export async function findProducts({
         };
       }
 
-      const activeTax = account?.saleTaxSet?.find((t: any) => t.activeTaxLine);
+      const activeTax = account?.saleTaxSet?.find(t => t.activeTaxLine);
 
       const activeTaxLineValue =
         activeTax?.activeTaxLine?.value || DEFAULT_TAX_VALUE;
@@ -471,8 +520,7 @@ export async function findProducts({
 
       let ati, wt, displayAti, displayWt;
 
-      const {config = {}}: any = workspace;
-      const {mainPrice, displayTwoPrices} = config;
+      const {mainPrice, displayTwoPrices} = workspace.config ?? {};
 
       const currencySymbol = getCurrency().symbol;
       const unitScale = getScale().unit;
@@ -543,7 +591,7 @@ export async function findProducts({
     };
 
     return {
-      product,
+      product: product as unknown as Product,
       price: await getPrice(),
       tax: getTax(),
       scale: getScale(),
@@ -552,12 +600,12 @@ export async function findProducts({
     };
   };
 
-  $products = ($products || []).map((p: any) => ({
+  $products = $products.map(p => ({
     ...p,
     images: [
       p?.picture?.id,
-      ...(p?.portalImageList || [])?.map((i: any) => i?.picture?.id),
-    ].filter(Boolean),
+      ...(p?.portalImageList || [])?.map(i => i?.picture?.id),
+    ].filter((x): x is string => Boolean(x)),
   }));
 
   const pageInfo = getPageInfo({
@@ -574,8 +622,8 @@ export async function findProducts({
       config,
     });
 
-    const originalProduct = (id: any) =>
-      $products.find((p: any) => Number(p.id) === Number(id));
+    const originalProduct = (id: number | string) =>
+      $products.find(p => Number(p.id) === Number(id));
 
     return {
       products: await Promise.all(
@@ -595,9 +643,7 @@ export async function findProducts({
     };
   } else {
     return {
-      products: await Promise.all(
-        $products.map((product: any) => compute({product})),
-      ),
+      products: await Promise.all($products.map(product => compute({product}))),
       pageInfo,
     };
   }
@@ -633,7 +679,7 @@ export async function findProduct({
     client,
     config,
     categoryids,
-  }).then(({products}: any = {}) => products && products[0]);
+  }).then(({products}) => products?.[0] ?? null);
 }
 
 export async function findProductBySlug({
@@ -666,7 +712,7 @@ export async function findProductBySlug({
     client,
     config,
     categoryids,
-  }).then(({products}: any = {}) => products && products[0]);
+  }).then(({products}) => products?.[0] ?? null);
 }
 
 type WSProduct = {
@@ -750,7 +796,7 @@ export async function findProductsFromStockLocation({
   associateWorkspace?: boolean;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   user?: User;
-  outOfStockQty: any;
+  outOfStockQty: number | null | undefined;
 }): Promise<string[]> {
   if (!workspace?.config?.defaultStockLocation || !client) return [];
 
@@ -778,17 +824,23 @@ export async function findProductsFromStockLocation({
           },
         },
         {
-          currentQty: {ge: outOfStockQty},
+          currentQty: {ge: outOfStockQty ?? undefined},
         },
       ],
     };
 
-    const products = await client.aOSStockLocationLine.find({
-      where: filters,
+    const products = (await client.aOSStockLocationLine.find({
+      where: filters as Parameters<
+        typeof client.aOSStockLocationLine.find
+      >[0]['where'],
       select: {product: {id: true}},
-    });
+    })) as Array<{product?: {id?: string}}>;
 
-    return products?.map((item: any) => item.product.id) || [];
+    return (
+      products
+        ?.map(item => item.product?.id)
+        .filter((id): id is string => Boolean(id)) || []
+    );
   } catch (error) {
     console.error('Error fetching products from stock location:', error);
     return [];

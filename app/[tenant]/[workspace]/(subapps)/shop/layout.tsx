@@ -8,6 +8,7 @@ import {findWorkspace, findSubapp} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {SUBAPP_CODES} from '@/constants';
 import {manager} from '@/tenant';
+import type {Category} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import MobileMenuCategory from './mobile-menu-category';
@@ -59,7 +60,7 @@ export default async function Layout(props: {
     user,
   }).then(clone);
 
-  const parentcategories = categories?.filter((c: any) => !c.parent);
+  const parentcategories = (categories as Category[])?.filter(c => !c.parent);
 
   return (
     <div className="mb-20 lg:mb-4">

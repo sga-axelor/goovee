@@ -8,8 +8,8 @@ import {workspacePathname} from '@/utils/workspace';
 import {getSession} from '@/auth';
 import {DEFAULT_LIMIT} from '@/constants';
 import type {Category} from '@/types';
-import type {PortalAppConfig} from '@/orm/workspace';
 import {manager} from '@/tenant';
+import {shouldHidePricesAndPurchase} from '@/orm/product';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -17,10 +17,10 @@ import {
   ProductListSkeleton,
 } from '@/subapps/shop/common/ui/components';
 import {findProducts} from '@/subapps/shop/common/orm/product';
-import {shouldHidePricesAndPurchase} from '@/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
 import {SORT_BY_OPTIONS} from '@/subapps/shop/common/constants';
 import {getcategoryids} from '@/subapps/shop/common/utils/categories';
+import type {Breadcrumb} from '@/subapps/shop/common/types';
 
 async function Category({
   params,
@@ -59,16 +59,16 @@ async function Category({
     user,
   }).then(clone);
 
-  const getbreadcrumbs: any = (category: any) => {
+  const $cats = categories as Category[];
+
+  const getbreadcrumbs = (category: Category): Breadcrumb[] => {
     if (!category) return [];
 
-    let breadcrumbs: any = [];
+    let breadcrumbs: Breadcrumb[] = [];
 
     if (category?.parent?.id) {
       breadcrumbs = [
-        ...getbreadcrumbs(
-          categories.find((c: any) => c.id === category?.parent?.id),
-        ),
+        ...getbreadcrumbs($cats.find(c => c.id === category?.parent?.id)!),
       ];
     }
 
@@ -77,8 +77,8 @@ async function Category({
     return breadcrumbs;
   };
 
-  const $category: any = categorySlug
-    ? categories.find((c: any) => c.slug === categorySlug)
+  const $category = categorySlug
+    ? ($cats.find(c => c.slug === categorySlug) ?? null)
     : null;
 
   if (!$category) {
@@ -95,7 +95,7 @@ async function Category({
 
   const defaultSort = availableSortByOptions?.[0]?.value;
 
-  const {products, pageInfo}: any = await findProducts({
+  const {products, pageInfo} = await findProducts({
     search,
     sort: sort || defaultSort,
     page,
@@ -106,7 +106,7 @@ async function Category({
     client,
   });
 
-  const parentcategories = categories?.filter((c: any) => !c.parent);
+  const parentcategories = $cats.filter(c => !c.parent);
 
   const hidePriceAndPurchase = await shouldHidePricesAndPurchase({
     user,
@@ -116,7 +116,9 @@ async function Category({
 
   return (
     <ProductList
-      products={clone(products)}
+      products={clone(products).filter(
+        (p): p is NonNullable<typeof p> => p !== null,
+      )}
       breadcrumbs={breadcrumbs}
       category={$category}
       categories={parentcategories}

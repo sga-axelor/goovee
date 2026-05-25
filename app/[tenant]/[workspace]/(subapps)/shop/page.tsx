@@ -9,7 +9,7 @@ import {workspacePathname} from '@/utils/workspace';
 import {findWorkspace} from '@/orm/workspace';
 import {manager} from '@/tenant';
 import type {Client} from '@/goovee/.generated/client';
-import type {User} from '@/types';
+import type {User, Category, ComputedProduct} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -19,7 +19,6 @@ import {
   findCategories,
   findFeaturedCategories,
 } from '@/app/[tenant]/[workspace]/(subapps)/shop/common/orm/categories';
-
 import {
   ProductCategories,
   HomeCarousel,
@@ -29,6 +28,7 @@ import {
   FeaturedCategoriesSkeleton,
   OrderAlert,
 } from '@/app/[tenant]/[workspace]/(subapps)/shop/common/ui/components';
+import type {FeaturedCategory} from '@/subapps/shop/common/types';
 
 async function Categories({
   client,
@@ -45,12 +45,16 @@ async function Categories({
     user,
   }).then(clone);
 
-  const parentcategories = categories?.filter((c: any) => !c.parent);
+  const parentcategories = (categories as Category[])?.filter(c => !c.parent);
 
   return <ProductCategories categories={parentcategories} />;
 }
 
-async function Carousel({workspace}: any) {
+async function Carousel({
+  workspace,
+}: {
+  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+}) {
   const carouselList = workspace?.config?.carouselList;
 
   return <HomeCarousel images={carouselList} />;
@@ -65,23 +69,23 @@ async function Featured({
   user: User | undefined;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
 }) {
-  const featuredCategories: any = await findFeaturedCategories({
+  const featuredCategories = (await findFeaturedCategories({
     workspace: workspace!,
     client,
     user,
-  }).then(clone);
+  }).then(clone)) as FeaturedCategory[];
 
   for (const category of featuredCategories) {
     if (category?.productList?.length) {
-      const res: any = await findProducts({
-        ids: category.productList.map((p: any) => p.id),
+      const res = await findProducts({
+        ids: category.productList.map(p => p.id),
         workspace: workspace!,
         user,
         client,
         categoryids: [category.id],
       }).then(clone);
 
-      category.products = res?.products;
+      category.products = (res as {products: ComputedProduct[]})?.products;
     }
   }
 

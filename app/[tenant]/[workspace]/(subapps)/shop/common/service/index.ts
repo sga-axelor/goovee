@@ -8,16 +8,18 @@ import {PortalWorkspace} from '@/orm/workspace';
 import {Cloned} from '@/types/util';
 import type {Tenant} from '@/tenant';
 import type {Client} from '@/goovee/.generated/client';
+import type {User} from '@/types';
+import type {CartInput, CartItemInput} from '@/subapps/shop/common/validators';
 import {computeTotal} from '@/utils/cart';
 import {TENANT_HEADER} from '@/proxy';
 import {getSession} from '@/auth';
 import {manager} from '@/tenant';
 import {MAIN_PRICE} from '@/constants';
+import {calculateAdvanceAmount} from '@/utils/payment';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/orm/product';
 import {formatNumber} from '@/subapps/shop/common/utils/order';
-import {calculateAdvanceAmount} from '@/utils/payment';
 
 export async function createOrder({
   cart,
@@ -27,9 +29,9 @@ export async function createOrder({
   config,
   paymentModeId,
 }: {
-  cart: any;
+  cart: CartInput;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  user: NonNullable<any>;
+  user: NonNullable<User>;
   client: Client;
   config: Tenant['config'];
   paymentModeId?: string;
@@ -38,18 +40,19 @@ export async function createOrder({
   const ws = `${aos.url}/ws/portal/orders/order`;
 
   const computedProducts = await Promise.all(
-    cart.items.map((i: any) =>
+    cart.items.map((i: CartItemInput) =>
       findProduct({id: i.product, workspace, user, client}),
     ),
   );
 
   const $cart = {
     ...cart,
-    items: cart.items.map((i: any) => ({
+    items: cart.items.map((i: CartItemInput) => ({
       ...i,
-      computedProduct: computedProducts.find(
-        cp => Number(cp?.product?.id) === Number(i.product),
-      ),
+      computedProduct:
+        computedProducts.find(
+          cp => Number(cp?.product?.id) === Number(i.product),
+        ) ?? undefined,
     })),
   };
 
@@ -80,7 +83,7 @@ export async function createOrder({
     shipping: 0,
     total,
     inAti: isAtiPricing,
-    items: $cart.items.map((i: any) => {
+    items: $cart.items.map(i => {
       const {computedProduct, note, quantity} = i;
       if (!computedProduct) return null;
       const {product, price} = computedProduct;
@@ -118,7 +121,7 @@ export async function requestOrder({
   workspace,
   type = 'order',
 }: {
-  cart: any;
+  cart: CartInput;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   type?: 'quotation' | 'order';
 }) {
@@ -147,7 +150,7 @@ export async function requestOrder({
   try {
     const computedProducts = (
       await Promise.all(
-        cart.items.map((i: any) =>
+        cart.items.map(i =>
           findProduct({id: i.product, workspace, user, client}),
         ),
       )
@@ -156,11 +159,12 @@ export async function requestOrder({
     const $cart = {
       ...cart,
       items: [
-        ...cart?.items?.map((i: any) => ({
+        ...cart.items.map(i => ({
           ...i,
-          computedProduct: computedProducts.find(
-            cp => Number(cp?.product?.id) === Number(i.product),
-          ),
+          computedProduct:
+            computedProducts.find(
+              cp => Number(cp?.product?.id) === Number(i.product),
+            ) ?? undefined,
         })),
       ],
     };
@@ -187,7 +191,7 @@ export async function requestOrder({
       shipping: 0,
       total,
       inAti: isAtiPricing,
-      items: $cart.items.map((i: any) => {
+      items: $cart.items.map(i => {
         const {computedProduct, note, quantity} = i;
         if (!computedProduct) return null;
         const {product, price} = computedProduct;

@@ -17,7 +17,7 @@ export function MobileCategories({
   onClick,
 }: {
   categories?: Category[];
-  onClick?: any;
+  onClick?: (opts: {category: Category; url: string | null}) => void;
   showCart?: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -57,11 +57,15 @@ export function MobileCategories({
   );
 }
 
-export default function MobileMenuCategory({categories}: any) {
+export default function MobileMenuCategory({
+  categories,
+}: {
+  categories: Category[];
+}) {
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
 
-  const [container, setContainer] = useState<any>(null);
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
   const handleCategoryClick = ({category}: {category: Category}) => {
     router.push(`${workspaceURI}/shop/category/${category.slug}`);

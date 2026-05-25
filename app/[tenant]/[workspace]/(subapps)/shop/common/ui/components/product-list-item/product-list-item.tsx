@@ -5,17 +5,16 @@ import {MdAddShoppingCart} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
 import {Button, BackgroundImage, InnerHTML} from '@/ui/components';
-import {cn} from '@/utils/css';
 import {getProductImageURL} from '@/utils/files';
 import {useResponsive} from '@/ui/hooks';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import type {Category, ComputedProduct, ID, Product} from '@/types';
+import type {Category, ComputedProduct, ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {Link} from '@/subapps/shop/common/ui/components';
 
-export type ProductListItemProps = {
+type ProductListItemProps = {
   product: ComputedProduct;
   quantity?: string | number;
   onAdd: (product: ComputedProduct) => Promise<void>;
@@ -46,8 +45,8 @@ export function ProductListItem({
     onAdd(computedProduct);
   };
 
-  const res: any = useResponsive();
-  const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
+  const res = useResponsive();
+  const large = (['md', 'lg', 'xl', 'xxl'] as const).some(x => res[x]);
 
   return (
     <div className="rounded-2xl grid grid-cols-1 md:grid-cols-[14.875rem_1fr] gap-6 w-full bg-card text-card-foreground">

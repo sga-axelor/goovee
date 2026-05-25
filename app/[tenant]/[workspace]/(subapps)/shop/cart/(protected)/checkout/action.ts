@@ -15,12 +15,12 @@ import {createStripeOrder, findStripeOrder} from '@/payment/stripe/actions';
 import {manager} from '@/tenant';
 import {PaymentOption} from '@/types';
 import {computeTotal} from '@/utils/cart';
-import {getPaymentModeId} from '@/utils/payment';
-
-// ---- LOCAL IMPORTS ---- //
+import {getPaymentModeId, isPaymentOptionAvailable} from '@/utils/payment';
 import {findGooveeUserByEmail} from '@/orm/partner';
 import {shouldHidePricesAndPurchase} from '@/orm/product';
 import {markPaymentAsProcessed} from '@/lib/core/payment/common/orm';
+
+// ---- LOCAL IMPORTS ---- //
 import {
   computeExpectedAmount,
   formatNumber,
@@ -116,8 +116,9 @@ export async function paypalCaptureOrder({
     };
   }
 
-  const allowPaypal = workspace?.config?.paymentOptionSet?.find(
-    (o: any) => o?.typeSelect === PaymentOption.paypal,
+  const allowPaypal = isPaymentOptionAvailable(
+    workspace?.config?.paymentOptionSet,
+    PaymentOption.paypal,
   );
 
   if (!allowPaypal) {
@@ -269,8 +270,9 @@ export async function paypalCreateOrder({cart, workspaceURL}: CartOrderInput) {
     };
   }
 
-  const allowPaypal = workspace?.config?.paymentOptionSet?.find(
-    (o: any) => o?.typeSelect === PaymentOption.paypal,
+  const allowPaypal = isPaymentOptionAvailable(
+    workspace?.config?.paymentOptionSet,
+    PaymentOption.paypal,
   );
 
   if (!allowPaypal) {
@@ -402,8 +404,9 @@ export async function createStripeCheckoutSession({
     };
   }
 
-  const allowStripe = workspace?.config?.paymentOptionSet?.find(
-    (o: any) => o?.typeSelect === PaymentOption.stripe,
+  const allowStripe = isPaymentOptionAvailable(
+    workspace?.config?.paymentOptionSet,
+    PaymentOption.stripe,
   );
 
   if (!allowStripe) {
@@ -556,10 +559,10 @@ export async function validateStripePayment({
     };
   }
 
-  const allowStripe = workspace?.config?.paymentOptionSet?.find(
-    (o: any) => o?.typeSelect === PaymentOption.stripe,
+  const allowStripe = isPaymentOptionAvailable(
+    workspace?.config?.paymentOptionSet,
+    PaymentOption.stripe,
   );
-
   if (!allowStripe) {
     return {
       error: true,
@@ -720,10 +723,10 @@ export async function payboxCreateOrder({
     };
   }
 
-  const allowPaybox = workspace?.config?.paymentOptionSet?.find(
-    (o: any) => o?.typeSelect === PaymentOption.paybox,
+  const allowPaybox = isPaymentOptionAvailable(
+    workspace?.config?.paymentOptionSet,
+    PaymentOption.paybox,
   );
-
   if (!allowPaybox) {
     return {
       error: true,
@@ -864,10 +867,10 @@ export async function validatePayboxPayment({
     };
   }
 
-  const allowPaybox = workspace?.config?.paymentOptionSet?.find(
-    (o: any) => o?.typeSelect === PaymentOption.paybox,
+  const allowPaybox = isPaymentOptionAvailable(
+    workspace?.config?.paymentOptionSet,
+    PaymentOption.paybox,
   );
-
   if (!allowPaybox) {
     return {
       error: true,

@@ -2,28 +2,37 @@
 import {filterPrivate} from '@/orm/filter';
 import type {Cloned} from '@/types/util';
 import type {Client} from '@/goovee/.generated/client';
-import type {User} from '@/types';
+import type {User, Category} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 
-function transform($categories: any[]) {
-  const categories: any = {};
+type RawCategory = {
+  id: string;
+  name: string | null;
+  slug: string | null;
+  parentProductCategory: {id: string} | null;
+};
+
+function transform($categories: RawCategory[]): Category[] {
+  const categoriesMap: Record<string, Category> = {};
 
   $categories.forEach(category => {
-    categories[category.id] = {
-      ...category,
+    categoriesMap[category.id] = {
+      id: category.id,
+      name: category.name ?? '',
+      slug: category.slug ?? '',
       parent: category.parentProductCategory,
       items: [],
     };
   });
 
-  Object.values(categories).forEach((category: any) => {
+  Object.values(categoriesMap).forEach(category => {
     const {parent} = category;
-    if (parent && categories[parent.id]) {
-      categories[parent.id].items.push(category);
+    if (parent && categoriesMap[parent.id]) {
+      categoriesMap[parent.id].items!.push(category);
     }
   });
 
-  return Object.values(categories);
+  return Object.values(categoriesMap);
 }
 
 export async function findCategories({
@@ -52,6 +61,7 @@ export async function findCategories({
       ],
     },
     select: {
+      id: true,
       name: true,
       parentProductCategory: {id: true},
       slug: true,

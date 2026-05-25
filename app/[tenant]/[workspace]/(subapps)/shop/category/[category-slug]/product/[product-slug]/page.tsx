@@ -1,5 +1,6 @@
 import {Suspense} from 'react';
 import {notFound, redirect} from 'next/navigation';
+import {Metadata} from 'next';
 
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/auth';
@@ -7,6 +8,9 @@ import {findWorkspace} from '@/orm/workspace';
 import {clone, htmlToNormalString} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
 import {manager} from '@/tenant';
+import type {Category} from '@/types';
+import {findModelFields} from '@/orm/model-fields';
+import {shouldHidePricesAndPurchase} from '@/orm/product';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -14,15 +18,13 @@ import {
   ProductViewSkeleton,
 } from '@/subapps/shop/common/ui/components';
 import {findProductBySlug} from '@/subapps/shop/common/orm/product';
-import {shouldHidePricesAndPurchase} from '@/orm/product';
 import {findCategories} from '@/subapps/shop/common/orm/categories';
-import {findModelFields} from '@/orm/model-fields';
 import {
   BASE_PRODUCT_MODEL,
   PRODUCT_ATTRS,
 } from '@/subapps/shop/common/constants';
 import {transformMetaFields} from '@/subapps/shop/common/utils/meta-field-value';
-import {Metadata} from 'next';
+import type {Breadcrumb} from '@/subapps/shop/common/types';
 
 export async function generateMetadata(props: {
   params: Promise<{
@@ -61,7 +63,8 @@ export async function generateMetadata(props: {
     user,
   }).then(clone);
 
-  const $category: any = categories.find((c: any) => c.slug === categorySlug);
+  const $category =
+    (categories as Category[]).find(c => c.slug === categorySlug) ?? null;
 
   if (!$category) {
     return null;
@@ -72,7 +75,7 @@ export async function generateMetadata(props: {
     workspace,
     user,
     client,
-    categoryids: $category.id,
+    categoryids: [$category.id],
   });
 
   if (!computedProduct?.product) {
@@ -83,7 +86,7 @@ export async function generateMetadata(props: {
 
   return {
     title: product?.name,
-    description: htmlToNormalString(product?.description),
+    description: htmlToNormalString(product?.description ?? ''),
   };
 }
 
@@ -132,7 +135,8 @@ async function Product({
     user,
   }).then(clone);
 
-  const $category: any = categories.find((c: any) => c.slug === categorySlug);
+  const $category =
+    (categories as Category[]).find(c => c.slug === categorySlug) ?? null;
 
   if (!$category) {
     return redirect(`${workspaceURI}/shop`);
@@ -143,7 +147,7 @@ async function Product({
     workspace,
     user,
     client,
-    categoryids: $category.id,
+    categoryids: [$category.id],
   });
 
   if (!computedProduct) redirect(`${workspaceURI}/shop`);
@@ -156,39 +160,38 @@ async function Product({
 
   const metaFieldsValues = await transformMetaFields(
     metaFields,
-    computedProduct?.product?.productAttrs,
+    computedProduct?.product?.productAttrs as unknown as Record<
+      string,
+      unknown
+    >,
     client,
   );
 
-  let breadcrumbs: any = [];
+  const $cats = categories as Category[];
 
-  const getbreadcrumbs: any = (category: any) => {
+  const getbreadcrumbs = (category: Category): Breadcrumb[] => {
     if (!category) return [];
 
-    let breadcrumbs: any = [];
+    let bc: Breadcrumb[] = [];
 
     if (category?.parent?.id) {
-      breadcrumbs = [
-        ...getbreadcrumbs(
-          categories.find((c: any) => c.id === category?.parent?.id),
-        ),
-      ];
+      bc = [...getbreadcrumbs($cats.find(c => c.id === category?.parent?.id)!)];
     }
 
-    breadcrumbs.push({id: category.id, name: category.name});
+    bc.push({id: category.id, name: category.name});
 
-    return breadcrumbs;
+    return bc;
   };
 
-  breadcrumbs = $category ? getbreadcrumbs($category) : [];
+  let breadcrumbs: Breadcrumb[] = $category ? getbreadcrumbs($category) : [];
 
   const {product} = computedProduct;
 
   if (breadcrumbs.length) {
-    breadcrumbs.push({id: product.id, name: product.name});
+    breadcrumbs.push({id: product.id, name: product.name ?? ''});
   }
 
-  const parentcategories = categories?.filter((c: any) => !c.parent);
+  const parentcategories = $cats.filter(c => !c.parent);
 
   const hidePriceAndPurchase = await shouldHidePricesAndPurchase({
     user,

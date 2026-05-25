@@ -8,16 +8,23 @@ import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import type {Product, Category, ComputedProduct} from '@/types';
+import type {ComputedProduct} from '@/types';
+import type {Cloned} from '@/types/util';
+import type {PortalWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {Link, ProductCard} from '@/subapps/shop/common/ui/components';
+import type {FeaturedCategory} from '@/subapps/shop/common/types';
 
 export function FeaturedCategories({
   categories,
   workspace,
   hidePriceAndPurchase,
-}: any) {
+}: {
+  categories: FeaturedCategory[];
+  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+  hidePriceAndPurchase: boolean;
+}) {
   const router = useRouter();
 
   const {workspaceURI} = useWorkspace();
@@ -39,7 +46,7 @@ export function FeaturedCategories({
     });
   };
 
-  return categories?.map((category: any) =>
+  return categories?.map(category =>
     category?.products?.length ? (
       <Fragment key={category.id}>
         <div className="flex justify-between items-center">
@@ -54,7 +61,7 @@ export function FeaturedCategories({
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {category.products.map((computedProduct: ComputedProduct) => {
             const quantity = cart?.items?.find(
-              (i: any) =>
+              (i: {product: string | number}) =>
                 Number(i.product) === Number(computedProduct?.product.id),
             )?.quantity;
 
@@ -65,8 +72,12 @@ export function FeaturedCategories({
                 product={computedProduct}
                 quantity={quantity}
                 onAdd={handleAddProduct}
-                category={category}
-                displayPrices={workspace?.config?.displayPrices}
+                category={{
+                  ...category,
+                  name: category.name ?? '',
+                  slug: category.slug ?? '',
+                }}
+                displayPrices={Boolean(workspace?.config?.displayPrices)}
               />
             );
           })}
