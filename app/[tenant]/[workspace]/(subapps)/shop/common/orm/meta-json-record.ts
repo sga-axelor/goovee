@@ -13,14 +13,15 @@ export async function findModelRecord({
     return null;
   }
 
-  const record = await client.aOSMetaJsonRecord
-    .findOne({
-      where: {id: recordId},
-      select: {attrs: true},
-    })
-    .then(clone);
+  const record = await client.aOSMetaJsonRecord.findOne({
+    where: {id: recordId},
+    select: {attrs: true},
+  });
 
-  return record;
+  if (!record) return null;
+
+  const attrs = await record.attrs;
+  return clone({...record, attrs});
 }
 
 export async function findModelRecords({
@@ -34,15 +35,21 @@ export async function findModelRecords({
     return [];
   }
 
-  const record = await client.aOSMetaJsonRecord
-    .find({
-      where: {
-        id: {
-          in: recordIds,
-        },
+  const records = await client.aOSMetaJsonRecord.find({
+    where: {
+      id: {
+        in: recordIds,
       },
-    })
-    .then(clone);
+    },
+    select: {attrs: true},
+  });
 
-  return record;
+  const resolved = await Promise.all(
+    records.map(async r => {
+      const attrs = await r.attrs;
+      return {...r, attrs};
+    }),
+  );
+
+  return clone(resolved);
 }
