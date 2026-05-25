@@ -18,6 +18,7 @@ import {
   PRODUCT_ATTRS,
 } from '@/subapps/shop/common/constants';
 import {isRelationalType} from '@/subapps/shop/common/utils';
+import {FileAttr} from '@/subapps/shop/common/types';
 
 export async function GET(
   request: NextRequest,
@@ -87,24 +88,28 @@ export async function GET(
     },
   });
 
-  const attrs = product?.productAttrs as unknown as Record<string, any> | null;
+  const attrs = product?.productAttrs as unknown as Record<
+    string,
+    unknown
+  > | null;
 
   if (!attrs) return new NextResponse('File not found', {status: 404});
 
   const fileBelongsToProduct = relationalFields.some(field => {
-    const value = attrs[field.name as any];
-    const values: any[] = Array.isArray(value) ? value : [value];
+    const value = attrs[field.name];
+    const values: unknown[] = Array.isArray(value) ? value : [value];
 
-    return values.some(
-      (value: any) =>
-        value &&
-        value.id &&
-        String(value.id) === fileId &&
-        value.fileName &&
-        value.fileType &&
-        value.fileSize &&
-        value.filePath,
-    );
+    return values.some(value => {
+      const v = value as FileAttr | null;
+      return (
+        v?.id &&
+        String(v.id) === fileId &&
+        v.fileName &&
+        v.fileType &&
+        v.fileSize &&
+        v.filePath
+      );
+    });
   });
 
   if (!fileBelongsToProduct) {

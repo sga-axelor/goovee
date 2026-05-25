@@ -7,8 +7,13 @@ import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {SUBAPP_CODES} from '@/constants';
 import {Button} from '@/ui/components/button';
 import {i18n} from '@/locale';
+import type {PortalAppConfig} from '@/orm/workspace';
 
-export function HomeCarousel({images}: any) {
+export function HomeCarousel({
+  images,
+}: {
+  images: NonNullable<PortalAppConfig['carouselList']> | null | undefined;
+}) {
   const {workspaceURI} = useWorkspace();
 
   return images?.length ? (
@@ -24,7 +29,7 @@ export function HomeCarousel({images}: any) {
             <div class="h-2 w-2 rounded-full"></div>
           </div>`,
       }}>
-      {images.map((item: any, i: number) => {
+      {images.map((item, i) => {
         return (
           <SwiperSlide key={i} className="max-w-full">
             <div
@@ -41,7 +46,10 @@ export function HomeCarousel({images}: any) {
                     href={item.href || '#'}
                     target="_blank"
                     rel="noopener noreferrer">
-                    {i18n.t(item?.buttonLabel || 'Shop products')}
+                    {i18n.t(
+                      (item as {buttonLabel?: string})?.buttonLabel ||
+                        'Shop products',
+                    )}
                   </a>
                 </Button>
               </div>

@@ -4,10 +4,11 @@ import {
   JSON_MANY_TO_ONE,
 } from '@/subapps/shop/common/constants';
 import type {Client} from '@/goovee/.generated/client';
+import type {ModelField} from '@/orm/model-fields';
 
 export async function transformMetaFields(
-  metaFields: any[],
-  attrs: any,
+  metaFields: ModelField[],
+  attrs: Record<string, unknown> | null | undefined,
   client: Client,
 ) {
   const transformedFields = [];
@@ -18,8 +19,9 @@ export async function transformMetaFields(
     if (attrs) {
       if (field.type === JSON_MANY_TO_ONE && attrs[field.name]) {
         try {
+          const manyToOneVal = attrs[field.name] as {id: string};
           const modelRecord = await findModelRecord({
-            recordId: attrs[field.name].id,
+            recordId: manyToOneVal.id,
             client,
           });
 
@@ -28,13 +30,15 @@ export async function transformMetaFields(
           value = attrs[field.name];
         }
       } else if (field.type === JSON_MANY_TO_MANY && attrs[field.name]) {
-        const recordIds = attrs[field.name].map((attr: any) => attr.id);
+        const recordIds = (attrs[field.name] as Array<{id: string}>).map(
+          attr => attr.id,
+        );
         const modelRecords = await findModelRecords({
           recordIds: recordIds,
           client,
         });
 
-        value = modelRecords.map((modelRecord: any) => modelRecord.attrs);
+        value = modelRecords.map(modelRecord => modelRecord.attrs);
       } else {
         value = attrs[field.name];
       }

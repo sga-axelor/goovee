@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import type {Cloned} from '@/types/util';
 import Link from 'next/link';
 import {usePathname, useRouter} from 'next/navigation';
@@ -31,13 +31,30 @@ import {getProductImageURL} from '@/utils/files';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {SEARCH_PARAMS} from '@/constants';
-import type {Cart, Product, ComputedProduct} from '@/types';
+import type {Product, ComputedProduct} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/app/[tenant]/[workspace]/(subapps)/shop/common/actions/cart';
+import type {
+  EnrichedCartItem,
+  EnrichedCart,
+  ConfirmationDialog,
+} from '@/subapps/shop/common/types';
 
-function CartItem({item, disabled, handleRemove, displayPrices}: any) {
+function CartItem({
+  item,
+  disabled,
+  handleRemove,
+  displayPrices,
+}: {
+  item: EnrichedCartItem;
+  disabled?: boolean;
+  handleRemove: (
+    product: Product,
+  ) => (event: React.MouseEvent<HTMLElement>) => void;
+  displayPrices?: boolean;
+}) {
   const [updating, setUpdating] = useState(false);
   const {updateQuantity, getProductNote, setProductNote} = useCart();
   const {workspaceURI, tenant} = useWorkspace();
@@ -96,6 +113,7 @@ function CartItem({item, disabled, handleRemove, displayPrices}: any) {
   ) => {
     const {value} = event.target;
     setNote(value);
+    if (!item.computedProduct) return;
     await setProductNote(item.computedProduct.product.id, value);
   };
   const handleChange = (newValue: string | number) => {
@@ -184,7 +202,7 @@ function CartItems({
   onRemove,
   workspace,
 }: {
-  cart: Cart;
+  cart: EnrichedCart;
   disabled?: boolean;
   onRemove: (product: Product) => Promise<void>;
   workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
@@ -196,13 +214,13 @@ function CartItems({
 
   return (
     <div className="flex flex-col gap-6">
-      {cart?.items?.map((item: any) => (
+      {cart?.items?.map(item => (
         <CartItem
           key={item?.computedProduct?.product?.id}
           item={item}
           disabled={disabled}
           handleRemove={handleRemove}
-          displayPrices={workspace?.config?.displayPrices}
+          displayPrices={workspace?.config?.displayPrices ?? undefined}
         />
       ))}
     </div>
@@ -216,8 +234,8 @@ function CartSummary({
   hideCheckout,
   workspace,
 }: {
-  cart: Cart;
-  onRequestQuotation: any;
+  cart: EnrichedCart;
+  onRequestQuotation: () => void;
   hideRequestQuotation?: boolean;
   hideCheckout?: boolean;
   workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
@@ -312,10 +330,13 @@ export default function Content({
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
   const [updating, setUpdating] = useState(false);
-  const [computedProducts, setComputedProducts] = useState<any[]>([]);
+  const [computedProducts, setComputedProducts] = useState<
+    (ComputedProduct | null)[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
-  const [confirmationDialog, setConfirmationDialog] = useState<any>(null);
+  const [confirmationDialog, setConfirmationDialog] =
+    useState<ConfirmationDialog | null>(null);
 
   const handleRemoveProduct = async (product: Product) => {
     setUpdating(true);
@@ -323,10 +344,7 @@ export default function Content({
     setUpdating(false);
   };
 
-  const openConfirmation = (confirmationDialog: {
-    title: string;
-    onContinue: any;
-  }) => {
+  const openConfirmation = (confirmationDialog: ConfirmationDialog) => {
     setConfirmationDialog(confirmationDialog);
   };
 
@@ -359,7 +377,9 @@ export default function Content({
         .map(cp => cp?.product?.id)
         .filter(Boolean);
 
-      const cartItemIDs = cart?.items?.map((i: any) => i.product);
+      const cartItemIDs = cart?.items?.map(
+        (i: {product: string | number}) => i.product,
+      );
 
       const diff = cartItemIDs?.filter(
         (id: string) => !computedProductIDs.includes(id),
@@ -367,9 +387,9 @@ export default function Content({
 
       if (diff?.length) {
         await Promise.all(
-          cart.items.map((i: any) =>
+          cart.items.map((i: {product: string | number}) =>
             findProduct({
-              id: i.product,
+              id: String(i.product),
               workspace,
             }),
           ),
@@ -403,7 +423,7 @@ export default function Content({
     () => ({
       ...cart,
       items: [
-        ...(cart?.items ?? []).map((i: any) => ({
+        ...(cart?.items ?? []).map((i: {product: string | number}) => ({
           ...i,
           computedProduct: computedProducts.find(
             cp => Number(cp?.product?.id) === Number(i.product),

@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import type {Cloned} from '@/types/util';
 import {authClient} from '@/lib/auth-client';
 import {useRouter} from 'next/navigation';
@@ -26,15 +26,17 @@ import {computeTotal} from '@/utils/cart';
 import {getProductImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import {type PortalWorkspace} from '@/orm/workspace';
+import {type PortalWorkspace, type Subapp} from '@/orm/workspace';
 import {formatNumber} from '@/locale/formatters';
 import {calculateAdvanceAmount} from '@/utils/payment';
+import type {ComputedProduct} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {findProduct} from '@/subapps/shop/common/actions/cart';
 import {AddressSelection} from '@/subapps/shop/common/ui/components/address-selection';
 import {SHIPPING_TYPE} from '@/subapps/shop/common/constants/index';
 import {ShopPayments} from '@/subapps/shop/common/ui/components';
+import type {CheckoutCart} from '@/subapps/shop/common/types';
 import styles from './content.module.scss';
 
 const SHIPPING_TYPE_COST = {
@@ -42,52 +44,55 @@ const SHIPPING_TYPE_COST = {
   [SHIPPING_TYPE.FAST]: 5,
 };
 
-function Summary({cart}: any) {
+function Summary({cart}: {cart: CheckoutCart}) {
   const {tenant} = useWorkspace();
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
       <Title className="text-xl font-semibold mb-6" text={i18n.t('Summary')} />
       <div className="flex flex-col gap-4 pt-4">
-        {cart.items.map(
-          ({
-            computedProduct: {product, price} = {} as any,
-            quantity,
-            note,
-            images,
-          }: any = {}) => (
-            <div key={product?.id} className="flex gap-4">
-              <BackgroundImage
-                src={getProductImageURL(
-                  product?.thumbnailImage?.id || product?.images?.[0],
-                  tenant,
-                )}
-                className="rounded-lg w-[5rem] h-[5rem] bg-cover"
-              />
-              <div>
-                <Title
-                  className="text-base font-medium line-clamp-1"
-                  text={i18n.tattr(product?.name)}></Title>
-                {note && (
-                  <div>
-                    {i18n.t('Note')} : {note}
-                  </div>
-                )}
-                <div className="flex items-center gap-4">
-                  <p className="text-sm font-medium">{i18n.t('Quantity')}</p>
-                  <p className="border rounded px-4">{quantity}</p>
+        {cart.items.map(({computedProduct, quantity, note}) => (
+          <div key={computedProduct?.product?.id} className="flex gap-4">
+            <BackgroundImage
+              src={getProductImageURL(
+                computedProduct?.product?.thumbnailImage?.id ||
+                  computedProduct?.product?.images?.[0] ||
+                  '',
+                tenant,
+              )}
+              className="rounded-lg w-[5rem] h-[5rem] bg-cover"
+            />
+            <div>
+              <Title
+                className="text-base font-medium line-clamp-1"
+                text={i18n.tattr(computedProduct?.product?.name ?? '')}></Title>
+              {note && (
+                <div>
+                  {i18n.t('Note')} : {note}
                 </div>
-                <Title
-                  className="font-semibold"
-                  text={price?.displayPrimary}></Title>
+              )}
+              <div className="flex items-center gap-4">
+                <p className="text-sm font-medium">{i18n.t('Quantity')}</p>
+                <p className="border rounded px-4">{quantity}</p>
               </div>
+              <Title
+                className="font-semibold"
+                text={computedProduct?.price?.displayPrimary ?? ''}></Title>
             </div>
-          ),
-        )}
+          </div>
+        ))}
       </div>
     </div>
   );
 }
-function Total({cart, shippingType, workspace}: any) {
+function Total({
+  cart,
+  shippingType,
+  workspace,
+}: {
+  cart: CheckoutCart;
+  shippingType: string;
+  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
+}) {
   const {
     total,
     displayTotal,
@@ -95,7 +100,7 @@ function Total({cart, shippingType, workspace}: any) {
     currency: {symbol: currencySymbol},
   } = computeTotal({cart, workspace});
 
-  const payInAdvance = workspace.config?.payInAdvance;
+  const payInAdvance = workspace.config?.payInAdvance ?? false;
   const advancePaymentPercentage = workspace.config?.advancePaymentPercentage;
 
   const shipping = Number(
@@ -112,7 +117,10 @@ function Total({cart, shippingType, workspace}: any) {
 
   const advanceAmount = calculateAdvanceAmount({
     amount: Number(total),
-    percentage: advancePaymentPercentage,
+    percentage:
+      advancePaymentPercentage !== null
+        ? Number(advancePaymentPercentage)
+        : undefined,
     payInAdvance,
   });
 
@@ -166,7 +174,13 @@ function Total({cart, shippingType, workspace}: any) {
   );
 }
 
-function Shipping({value, onChange}: {value: string; onChange: any}) {
+function Shipping({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: React.ReactEventHandler;
+}) {
   return (
     <div className="bg-card text-card-foreground p-6 rounded-lg">
       <Title className="text-xl font-medium" text={i18n.t('Shipping method')} />
@@ -214,7 +228,10 @@ function Shipping({value, onChange}: {value: string; onChange: any}) {
   );
 }
 
-function Title({text, ...rest}: {text: string} & any) {
+function Title({
+  text,
+  ...rest
+}: {text: string} & React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3 className="font-bold text-3xl" {...rest}>
       {text}
@@ -228,7 +245,7 @@ export default function Content({
   tenant,
 }: {
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  orderSubapp?: any;
+  orderSubapp?: Subapp | null;
   tenant: string;
 }) {
   const {data: session} = authClient.useSession();
@@ -242,7 +259,9 @@ export default function Content({
   const router = useRouter();
   const {workspaceURI} = useWorkspace();
   const {cart} = useCart();
-  const [computedProducts, setComputedProducts] = useState<any[]>([]);
+  const [computedProducts, setComputedProducts] = useState<
+    (ComputedProduct | null)[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [confirmationDialog, setConfirmationDialog] = useState(false);
 
@@ -267,9 +286,9 @@ export default function Content({
     const init = async () => {
       if (!computedProducts?.length && cart) {
         await Promise.all(
-          cart.items.map((i: any) =>
+          cart.items.map((i: {product: string | number}) =>
             findProduct({
-              id: i.product,
+              id: String(i.product),
               workspace: workspace,
             }),
           ),
@@ -289,7 +308,7 @@ export default function Content({
     () => ({
       ...cart,
       items: [
-        ...(cart?.items ?? []).map((i: any) => ({
+        ...(cart?.items ?? []).map((i: {product: string | number}) => ({
           ...i,
           computedProduct: computedProducts.find(
             cp => Number(cp?.product?.id) === Number(i.product),

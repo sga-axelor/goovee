@@ -1,18 +1,23 @@
 'use client';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {MdOutlineChevronRight} from 'react-icons/md';
 
 // ---- CORE IMPORTS ---- //
-import type {ID} from '@/types';
+import type {ID, MetaFile} from '@/types';
+
 // ---- LOCAL IMPORTS ---- //
 import {MetaFieldPicture} from '@/subapps/shop/common/ui/components/meta-field-picture';
 import {isRelationalType} from '@/subapps/shop/common/utils';
+import type {
+  MetaFieldWithValue,
+  FieldValueItem,
+} from '@/subapps/shop/common/types';
 
 export function ProductMetaFieldView({
   fields,
   productId,
 }: {
-  fields: any[];
+  fields: MetaFieldWithValue[];
   productId: ID;
 }) {
   const [expandedFields, setExpandedFields] = useState<{
@@ -32,32 +37,37 @@ export function ProductMetaFieldView({
     }
   };
 
-  const transformValueToArray = (field: any) => ({
+  const transformValueToArray = (field: MetaFieldWithValue) => ({
     ...field,
-    value: Array.isArray(field.value) ? field.value : [field.value],
+    value: (Array.isArray(field.value)
+      ? field.value
+      : [field.value]) as FieldValueItem[],
   });
 
-  const renderFieldMTM = (field: any) => {
+  const renderFieldMTM = (
+    field: MetaFieldWithValue & {value: FieldValueItem[]},
+  ) => {
     const fieldValue = field.value[0]?.value ?? field.value[0];
-    if (fieldValue.fileType && isImage(fieldValue.fileType)) {
+    const titleKey = field.title ?? '';
+    if (fieldValue?.fileType && isImage(fieldValue.fileType)) {
       return (
         <div className="w-full">
           <div
-            onClick={() => toggleField(field.title)}
+            onClick={() => toggleField(titleKey)}
             className="flex items-center cursor-pointer gap-2">
             <MdOutlineChevronRight
               className={`transition-transform duration-200 ${
-                expandedFields[field.title] ? 'rotate-90' : ''
+                expandedFields[titleKey] ? 'rotate-90' : ''
               }`}
               size={15}
             />
             <span className="font-medium">{field.title}</span>
           </div>
-          {expandedFields[field.title] && (
+          {expandedFields[titleKey] && (
             <div className="ml-7 mt-2 space-y-4">
-              {field.value.map((image: any, index: number) => (
+              {field.value.map((image, index) => (
                 <MetaFieldPicture
-                  image={image.value ?? image}
+                  image={(image.value ?? image) as MetaFile}
                   key={index}
                   productId={productId}
                 />
@@ -68,7 +78,7 @@ export function ProductMetaFieldView({
       );
     } else {
       const concatValues = field.value
-        .map((item: any) => item.value)
+        .map(item => String(item.value ?? item.fileName ?? ''))
         .join(' - ');
       return (
         <div className="flex">
@@ -80,7 +90,7 @@ export function ProductMetaFieldView({
     }
   };
 
-  const renderFieldValue = (field: any) => {
+  const renderFieldValue = (field: MetaFieldWithValue) => {
     const transFormedField = transformValueToArray(field);
     if (isRelationalType(field.type) && field.value) {
       return renderFieldMTM(transFormedField);
@@ -89,7 +99,7 @@ export function ProductMetaFieldView({
       <div className="flex">
         <div>
           <span className="font-medium">{transFormedField.title}</span> :{' '}
-          {transFormedField.value}
+          {String(field.value ?? '')}
         </div>
       </div>
     );

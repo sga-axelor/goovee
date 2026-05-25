@@ -5,7 +5,6 @@ import {getSession} from '@/auth';
 import {findWorkspace} from '@/orm/workspace';
 import {clone} from '@/utils';
 import {workspacePathname} from '@/utils/workspace';
-import type {Cart} from '@/types';
 import {manager} from '@/tenant';
 
 // ---- LOCAL IMPORTS ---- //

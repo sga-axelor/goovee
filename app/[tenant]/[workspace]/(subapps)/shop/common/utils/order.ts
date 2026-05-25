@@ -3,7 +3,7 @@ import {PortalWorkspace} from '@/orm/workspace';
 import {calculateAdvanceAmount} from '@/utils/payment';
 import type {Cloned} from '@/types/util';
 
-export const formatNumber = (n: any) => n;
+export const formatNumber = (n: number | string) => n;
 
 export function computeExpectedAmount({
   total,

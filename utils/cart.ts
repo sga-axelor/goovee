@@ -23,7 +23,7 @@ export function computeTotal({
     }>;
   };
   workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
-  formatNumber?: any;
+  formatNumber?: typeof formatNumber;
 }) {
   let mainPrice: PortalAppConfig['mainPrice'] = MAIN_PRICE.ATI;
 
@@ -60,7 +60,7 @@ export function computeTotal({
     } as {subtotal: number; tax: number},
   ) ?? {subtotal: 0, tax: 0};
 
-  const firstItem = (cart?.items?.[0] as any)?.computedProduct;
+  const firstItem = cart?.items?.[0]?.computedProduct;
 
   const {
     scale: {currency: currencyScale},

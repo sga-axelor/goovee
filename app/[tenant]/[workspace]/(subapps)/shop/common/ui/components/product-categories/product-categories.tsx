@@ -7,7 +7,7 @@ import type {Category} from '@/types';
 
 import {NavbarCategoryMenu} from '@/ui/components/navbar-category-menu';
 
-export function ProductCategories({categories}: any) {
+export function ProductCategories({categories}: {categories: Category[]}) {
   const {workspaceURI} = useWorkspace();
   const router = useRouter();
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import {useState} from 'react';
 
 // ---- CORE IMPORTS ---- //
 import {cn} from '@/utils/css';
@@ -17,7 +17,7 @@ const filters = [
 export function ProductListColorFilter() {
   const [selected, setSelected] = useState<string[]>([]);
 
-  const toggleSelected = (filter: any) => () => {
+  const toggleSelected = (filter: (typeof filters)[number]) => () => {
     setSelected(codes =>
       codes.includes(filter.code)
         ? codes.filter(c => c !== filter.code)

@@ -175,6 +175,7 @@ export type Category = {
   slug: string;
   id: number | string;
   items?: Category[];
+  parent?: {id: number | string} | null;
 };
 
 export interface Unit {

@@ -1,17 +1,20 @@
 'use client';
 
 import {useCallback} from 'react';
-import type {Cloned} from '@/types/util';
 import {useRouter} from 'next/navigation';
 
 // ---- CORE IMPORTS ---- //
-import {PortalWorkspace} from '@/orm/workspace';
 import {Payments} from '@/ui/components/payment';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
 import {useToast} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {i18n} from '@/locale';
+import type {SuccessResponse} from '@/types/action';
+import {PortalWorkspace, Subapp} from '@/orm/workspace';
+import {Cloned} from '@/types/util';
+
+// ---- LOCAL IMPORTS ---- //
 import {
   createStripeCheckoutSession,
   paypalCaptureOrder,
@@ -22,10 +25,10 @@ import {
 } from '@/subapps/shop/cart/(protected)/checkout/action';
 import {ORDER_SUCCESS_PARAM} from '@/subapps/shop/common/constants';
 
-interface ShopPaymentsProps {
+type ShopPaymentsProps = {
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  orderSubapp?: any;
-}
+  orderSubapp?: Subapp | null;
+};
 
 export function ShopPayments({workspace, orderSubapp}: ShopPaymentsProps) {
   const router = useRouter();
@@ -36,7 +39,7 @@ export function ShopPayments({workspace, orderSubapp}: ShopPaymentsProps) {
   const noAddress = !(cart?.invoicingAddress && cart?.deliveryAddress);
 
   const redirectOrder = useCallback(
-    async (order: any) => {
+    async (order: SuccessResponse<string>) => {
       if (orderSubapp) {
         router.replace(
           `${workspaceURI}/${SUBAPP_CODES.orders}/${SUBAPP_PAGE.orders}/${order.data}`,

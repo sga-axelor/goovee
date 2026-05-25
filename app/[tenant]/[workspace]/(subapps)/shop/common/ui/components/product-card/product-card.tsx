@@ -8,14 +8,13 @@ import {BackgroundImage, Button} from '@/ui/components';
 import {getProductImageURL} from '@/utils/files';
 import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
-import {useToast} from '@/ui/hooks';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
-import type {Category, ComputedProduct, ID, Product} from '@/types';
+import type {Category, ComputedProduct, ID} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {Link} from '@/subapps/shop/common/ui/components';
 
-export type ProductCardProps = {
+type ProductCardProps = {
   product: ComputedProduct;
   quantity?: string | number;
   onAdd: (product: ComputedProduct) => Promise<void>;

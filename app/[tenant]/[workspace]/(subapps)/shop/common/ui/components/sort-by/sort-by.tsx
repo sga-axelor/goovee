@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import type {Cloned} from '@/types/util';
 import {MdSort} from 'react-icons/md';
 
@@ -15,10 +14,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/ui/components';
-import type {PortalAppConfig, PortalWorkspace} from '@/orm/workspace';
+import type {PortalWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
 import {SORT_BY_OPTIONS} from '@/subapps/shop/common/constants';
+import type {SortOption} from '@/subapps/shop/common/types';
 import styles from './sort-by.module.scss';
 
 export function SortBy({
@@ -27,7 +27,13 @@ export function SortBy({
   value: valueProp,
   workspace,
   className,
-}: any) {
+}: {
+  onChange: (opts: {value: string}) => void;
+  options?: SortOption[];
+  value?: string;
+  workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
+  className?: string;
+}) {
   const options =
     optionsProp ||
     SORT_BY_OPTIONS.filter(

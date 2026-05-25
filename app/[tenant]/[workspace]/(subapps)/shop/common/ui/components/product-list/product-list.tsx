@@ -1,11 +1,9 @@
 'use client';
 
-import React, {Fragment, useState} from 'react';
+import React, {useState} from 'react';
 import type {Cloned} from '@/types/util';
 import {useRouter, usePathname, useSearchParams} from 'next/navigation';
 import {BiSearch} from 'react-icons/bi';
-import {MdOutlineFilterAlt} from 'react-icons/md';
-import {LuChevronRight} from 'react-icons/lu';
 import {MdGridView} from 'react-icons/md';
 import {MdOutlineList} from 'react-icons/md';
 
@@ -20,7 +18,7 @@ import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {i18n} from '@/locale';
 import {useToast} from '@/ui/hooks';
-import type {ComputedProduct, Product, Category} from '@/types';
+import type {ComputedProduct, Product, Category, PageInfo} from '@/types';
 import type {PortalWorkspace} from '@/orm/workspace';
 
 // ---- LOCAL IMPORTS ---- //
@@ -43,18 +41,18 @@ export function ProductList({
   products = [],
   categories,
   category,
-  pageInfo = {page: 1, pages: 1},
+  pageInfo = {page: 1, pages: 1, count: 0, hasNext: false, hasPrev: false},
   workspace,
   breadcrumbs,
   productPath,
   defaultSort,
   hidePriceAndPurchase,
 }: {
-  breadcrumbs?: any;
+  breadcrumbs?: Array<{id: string | number; name: string}>;
   products: ComputedProduct[];
-  categories?: any;
-  category?: any;
-  pageInfo?: any;
+  categories?: Category[];
+  category?: Category;
+  pageInfo?: PageInfo;
   workspace?: PortalWorkspace | Cloned<PortalWorkspace>;
   productPath?: string;
   defaultSort?: string;
@@ -79,12 +77,12 @@ export function ProductList({
     }>,
   ) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    values.forEach(({key, value = ''}: any) => {
+    values.forEach(({key, value = ''}) => {
       value = value && String(value)?.trim();
       if (!value) {
         current.delete(key);
       } else {
-        current.set(key, value);
+        current.set(key, String(value));
       }
     });
     const search = current.toString();
@@ -116,7 +114,7 @@ export function ProductList({
     ]);
   };
 
-  const handleChangeSortBy = ({value}: any) => {
+  const handleChangeSortBy = ({value}: {value: string}) => {
     updateSearchParams([{key: 'sort', value}]);
   };
 
@@ -148,7 +146,7 @@ export function ProductList({
     router.push(`${productPath}/${product.slug}`);
   };
 
-  const handleBreadCrumbClick = (category: any) => {
+  const handleBreadCrumbClick = (category: Category) => {
     handleCategoryClick({category});
   };
 
@@ -184,7 +182,7 @@ export function ProductList({
       <div className={'container portal-container'}>
         <div className="my-10 text-foreground">
           <Breadcrumbs
-            breadcrumbs={breadcrumbs}
+            breadcrumbs={breadcrumbs ?? []}
             onClick={handleBreadCrumbClick}
           />
         </div>
@@ -228,7 +226,7 @@ export function ProductList({
             {products?.length ? (
               products.map(computedProduct => {
                 const quantity = cart?.items?.find(
-                  (i: any) =>
+                  (i: {product: string | number}) =>
                     Number(i.product) === Number(computedProduct?.product.id),
                 )?.quantity;
                 const Component = isListView ? ProductListItem : ProductCard;
@@ -241,7 +239,7 @@ export function ProductList({
                     onAdd={handleAdd}
                     displayPrices={workspace?.config?.displayPrices ?? false}
                     hidePriceAndPurchase={hidePriceAndPurchase}
-                    category={category}
+                    category={category!}
                   />
                 );
               })

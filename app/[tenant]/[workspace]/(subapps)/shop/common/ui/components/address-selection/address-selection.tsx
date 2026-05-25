@@ -1,12 +1,17 @@
 'use client';
 
-import {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Link from 'next/link';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
 import {useCart} from '@/app/[tenant]/[workspace]/cart-context';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
+import {Button, Loader, Separator} from '@/ui/components';
+import {ADDRESS_TYPE} from '@/constants';
+import type {PartnerAddress} from '@/types';
+
+// ---- LOCAL IMPORTS ---- //
 import {
   findAddress,
   fetchDeliveryAddresses,
@@ -14,8 +19,6 @@ import {
   findDefaultDelivery,
   findDefaultInvoicing,
 } from '@/subapps/shop/common/actions/address';
-import {Button, Loader, Separator} from '@/ui/components';
-import {ADDRESS_TYPE} from '@/constants';
 
 export function AddressSelection({
   callbackURL,
@@ -25,8 +28,11 @@ export function AddressSelection({
   title?: string;
 }) {
   const [loading, setLoading] = useState(false);
-  const [invoicingAddress, setInvoicingAddress] = useState<any>(null);
-  const [deliveryAddress, setDeliveryAddress] = useState<any>(null);
+  const [invoicingAddress, setInvoicingAddress] =
+    useState<PartnerAddress | null>(null);
+  const [deliveryAddress, setDeliveryAddress] = useState<PartnerAddress | null>(
+    null,
+  );
 
   const {cart, updateAddress} = useCart();
   const {workspaceURI} = useWorkspace();
@@ -43,30 +49,26 @@ export function AddressSelection({
       cartDeliveryAddress ? findAddress(cartDeliveryAddress) : null,
       cartInvoicingAddress ? findAddress(cartInvoicingAddress) : null,
     ]);
-    if (delivery) setDeliveryAddress(delivery);
-    if (invoicing) setInvoicingAddress(invoicing);
+    if (delivery) setDeliveryAddress(delivery as unknown as PartnerAddress);
+    if (invoicing) setInvoicingAddress(invoicing as unknown as PartnerAddress);
     setLoading(false);
   }, [cartDeliveryAddress, cartInvoicingAddress]);
 
   const resolveDefaultAddresses = useCallback(async () => {
     setLoading(true);
 
-    const getDeliveryAddress = async () => {
-      let address: any = await findDefaultDelivery();
-      if (!address) {
-        const addresses = await fetchDeliveryAddresses();
-        address = addresses?.[0];
-      }
-      return address;
+    const getDeliveryAddress = async (): Promise<PartnerAddress | null> => {
+      const def = await findDefaultDelivery();
+      if (def) return def as unknown as PartnerAddress;
+      const addresses = await fetchDeliveryAddresses();
+      return (addresses?.[0] ?? null) as unknown as PartnerAddress | null;
     };
 
-    const getInvoicingAddress = async () => {
-      let address: any = await findDefaultInvoicing();
-      if (!address) {
-        const addresses = await fetchInvoicingAddresses();
-        address = addresses?.[0];
-      }
-      return address;
+    const getInvoicingAddress = async (): Promise<PartnerAddress | null> => {
+      const def = await findDefaultInvoicing();
+      if (def) return def as unknown as PartnerAddress;
+      const addresses = await fetchInvoicingAddresses();
+      return (addresses?.[0] ?? null) as unknown as PartnerAddress | null;
     };
 
     const [deliveryResult, invoicingResult] = await Promise.allSettled([
@@ -114,7 +116,10 @@ export function AddressSelection({
     invoicingAddress?.id && invoicingAddress.id === deliveryAddress?.id,
   );
 
-  const LinkButton = ({children, ...props}: any) => (
+  const LinkButton = ({
+    children,
+    ...props
+  }: React.ComponentPropsWithoutRef<typeof Button>) => (
     <Link
       className="block"
       href={`${workspaceURI}/account/addresses?checkout=true${callbackURL ? `&callbackURL=${callbackURL}` : ''}`}>

@@ -51,9 +51,7 @@ export async function findProduct({
     user,
   });
 
-  const categoryids = (categories || [])
-    .map((c: any) => getcategoryids(c))
-    .flat();
+  const categoryids = categories.map(c => getcategoryids(c)).flat();
 
   return await $findProduct({
     id,
