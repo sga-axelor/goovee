@@ -3,6 +3,7 @@
 import {useCallback} from 'react';
 import type {Cloned} from '@/types/util';
 import {useRouter} from 'next/navigation';
+import type {UseFormReturn} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
 import {PaymentOption} from '@/types';
@@ -27,7 +28,7 @@ import type {FullEvent} from '../../../orm/event';
 import type {ModelField} from '@/orm/model-fields';
 import {URL_PARAMS} from '@/subapps/events/common/constants';
 import type {SuccessResponse} from '@/types/action';
-import {type Registration} from '../../../orm/registration';
+import type {Registration} from '@/subapps/events/common/types';
 export function EventPayments({
   workspace,
   event,
@@ -41,7 +42,7 @@ export function EventPayments({
     Cloned<FullEvent>,
     'id' | 'displayAti' | 'facilityList' | 'priceScale'
   >;
-  form: any;
+  form: UseFormReturn<Record<string, unknown>>;
   metaFields: ModelField[];
   metaFieldsFacilities: ModelField[];
   additionalFieldSet: ModelField[] | null | undefined;
@@ -65,8 +66,11 @@ export function EventPayments({
     [workspaceURI, router],
   );
 
-  function getMappedParticipants(form: any, metaFields: ModelField[]) {
-    const values = form.getValues();
+  function getMappedParticipants(
+    form: UseFormReturn<Record<string, unknown>>,
+    metaFields: ModelField[],
+  ) {
+    const values = form.getValues() as Parameters<typeof mapParticipants>[0];
     return mapParticipants(
       values,
       metaFields,
@@ -79,7 +83,7 @@ export function EventPayments({
     form,
     metaFields,
   }: {
-    form: any;
+    form: UseFormReturn<Record<string, unknown>>;
     metaFields: ModelField[];
   }): Promise<boolean> {
     try {

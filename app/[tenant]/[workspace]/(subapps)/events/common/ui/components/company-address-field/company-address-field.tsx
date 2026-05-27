@@ -1,6 +1,6 @@
 'use client';
 
-import {Control} from 'react-hook-form';
+import type {Control} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
 import {
@@ -15,7 +15,7 @@ import type {Field} from '@/ui/form';
 
 interface CompanyAddressFieldProps {
   form: {
-    control: Control<any>;
+    control: Control<Record<string, unknown>>;
   };
   formKey: string;
   title: string;
@@ -48,6 +48,7 @@ export function CompanyAddressField({
           <FormControl>
             <InputComponent
               {...field}
+              value={field.value as string}
               placeholder={placeholder}
               className="py-3 px-4 rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal h-[2.875rem] border text-sm font-normal"
             />

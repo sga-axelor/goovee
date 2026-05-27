@@ -10,12 +10,14 @@ import {SUBAPP_CODES} from '@/constants';
 import {i18n} from '@/locale';
 import {useSearchParams} from '@/ui/hooks';
 import {authClient} from '@/lib/auth-client';
+import type {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {EventDateCard} from '@/subapps/events/common/ui/components';
+import type {FullEvent} from '@/subapps/events/common/orm/event';
 
 type ContentProps = {
-  event: any;
+  event: Cloned<FullEvent>;
 };
 
 function Content({event}: ContentProps) {

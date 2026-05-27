@@ -19,6 +19,8 @@ import {
 import {useToast} from '@/ui/hooks/use-toast';
 import {dateIsExist} from '@/utils/date';
 import {i18n} from '@/locale';
+import type {PortalWorkspace} from '@/orm/workspace';
+import type {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {getAllEvents} from '@/subapps/events/common/actions/actions';
@@ -151,7 +153,7 @@ export function Calendar({
   ...props
 }: CalendarProps & {
   date: Date | undefined;
-  workspace: any;
+  workspace: PortalWorkspace | Cloned<PortalWorkspace>;
   onlyRegisteredEvent: boolean;
 }) {
   const [eventDates, setEventDates] = React.useState<Date[]>([]);
@@ -239,7 +241,7 @@ export function Calendar({
       }
     };
     fetchEventDates();
-  }, [month, workspace, onlyRegisteredEvent]);
+  }, [month, workspace, onlyRegisteredEvent, toast]);
 
   return (
     <DayPicker

@@ -36,7 +36,7 @@ export const Hero = ({
 
   const renderSearch = () => (
     <Search
-      findQuery={async ({query}: any) => {
+      findQuery={async ({query}: {query: string}) => {
         try {
           const {error, message, data} = await getAllEvents({
             workspaceURL: workspace.url,

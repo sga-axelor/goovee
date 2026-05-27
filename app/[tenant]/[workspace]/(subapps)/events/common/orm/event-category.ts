@@ -6,15 +6,8 @@ import {and} from '@/utils/orm';
 import type {AOSPortalEventCategory} from '@/goovee/.generated/models';
 import type {Client} from '@/goovee/.generated/client';
 
-export type Category = {
-  id: string;
-  version: number;
-  name: string | null;
-  color: string | null;
-  description: string | null;
-  image: {id: string; version: number} | null;
-  thumbnailImage: {id: string; version: number} | null;
-};
+// ---- LOCAL IMPORTS ---- //
+import type {Category} from '@/subapps/events/common/types';
 
 export async function findEventCategories({
   workspaceURL,
@@ -38,7 +31,7 @@ export async function findEventCategories({
       },
       await filterPrivate({user, client}),
     ]),
-    orderBy: {name: ORDER_BY.ASC} as any,
+    orderBy: {name: ORDER_BY.ASC},
     select: {
       id: true,
       name: true,

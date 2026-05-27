@@ -10,9 +10,10 @@ import {AccordionMenu} from '@/ui/components/accordion-menu/accordion-menu';
 import {useWorkspace} from '@/app/[tenant]/[workspace]/workspace-context';
 import {useSearchParams} from '@/ui/hooks';
 import {i18n} from '@/lib/core/locale';
-import type {Category, User} from '@/types';
+import type {User} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
+import type {Category} from '@/subapps/events/common/types';
 import styles from '@/subapps/events/common/ui/components/mobile-menu-category/index.module.scss';
 import {
   MY_REGISTRATION_TAB_ITEMS,
@@ -51,7 +52,7 @@ export function MobileCategories({
       id: '2',
       name: i18n.t('My registrations'),
       url: '',
-      items: MY_REGISTRATION_TAB_ITEMS.map((item: any) => ({
+      items: MY_REGISTRATION_TAB_ITEMS.map(item => ({
         id: item.id,
         name: i18n.t(item.title),
         url: item.label,
@@ -118,8 +119,14 @@ export function MobileCategories({
   );
 }
 
-export function MobileMenuCategory({categories, user}: any) {
-  const [container, setContainer] = useState<any>(null);
+export function MobileMenuCategory({
+  categories,
+  user,
+}: {
+  categories?: Category[];
+  user?: User;
+}) {
+  const [container, setContainer] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     const container = document.getElementById('subapp-menu');

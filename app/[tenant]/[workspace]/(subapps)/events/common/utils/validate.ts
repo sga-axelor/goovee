@@ -17,7 +17,7 @@ export const getPaymentInfo = async ({
   client,
 }: {
   mode: PaymentOption;
-  data: {id?: string; params?: any};
+  data: {id?: string; params?: unknown};
   client: Client;
 }): Promise<ActionResponse<PaymentOrder>> => {
   try {

@@ -15,7 +15,12 @@ import {isSameDay} from '@/utils/date';
 
 // ---- LOCAL IMPORTS ---- //
 import type {Cloned} from '@/types/util';
-import type {FullEvent, ListEvent} from '@/subapps/events/common/orm/event';
+import type {FullEvent} from '@/subapps/events/common/orm/event';
+import type {
+  ListEvent,
+  PartnerAddress,
+  UserWithAddress,
+} from '@/subapps/events/common/types';
 import type {RegistrationValues} from '@/subapps/events/common/actions/validators';
 
 type IcsEvent = Pick<
@@ -142,7 +147,9 @@ export function mapParticipants(
   return data as unknown as RegistrationValues;
 }
 
-export function getPartnerAddress(user: any): string {
+export function getPartnerAddress(
+  user: UserWithAddress | null | undefined,
+): string {
   if (!user) return '';
 
   const partnerAddresses =
@@ -154,9 +161,10 @@ export function getPartnerAddress(user: any): string {
 
   const address =
     partnerAddresses.find(
-      (addr: any) => addr.isInvoicingAddr && addr.isDefaultAddr,
+      (addr: PartnerAddress) => addr.isInvoicingAddr && addr.isDefaultAddr,
     )?.address ||
-    partnerAddresses.find((addr: any) => addr.isInvoicingAddr)?.address ||
+    partnerAddresses.find((addr: PartnerAddress) => addr.isInvoicingAddr)
+      ?.address ||
     partnerAddresses[0]?.address;
 
   const fullName = user?.mainPartner?.simpleFullName || '';

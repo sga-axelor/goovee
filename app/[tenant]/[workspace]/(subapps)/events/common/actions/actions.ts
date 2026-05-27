@@ -49,15 +49,12 @@ import {
   findEventConfig,
   findEvents,
   type FullEvent,
-  type ListEvent,
 } from '@/subapps/events/common/orm/event';
 import type {PageInfo} from '@/types';
+import type {ListEvent, Registration} from '@/subapps/events/common/types';
 
 import {findContacts, type Contact} from '@/subapps/events/common/orm/partner';
-import {
-  registerParticipants,
-  type Registration,
-} from '@/subapps/events/common/orm/registration';
+import {registerParticipants} from '@/subapps/events/common/orm/registration';
 import {
   error,
   isEventPrivate,

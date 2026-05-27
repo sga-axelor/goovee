@@ -1,7 +1,6 @@
 // ---- CORE IMPORTS ---- //
 import {getSession} from '@/lib/core/auth';
 import NotificationManager, {NotificationType} from '@/lib/core/notification';
-import type {Participant} from '@/subapps/events/common/actions/validators';
 import {html} from '@/utils/template-string';
 import {findEvent} from '../orm/event';
 import {generateIcs} from './index';
@@ -9,11 +8,24 @@ import {formatDate} from '@/lib/core/locale/server/formatters';
 import type {Client} from '@/goovee/.generated/client';
 import type {TenantConfig} from '@/tenant';
 
+// ---- LOCAL IMPORTS ---- //
+import type {Participant} from '@/subapps/events/common/actions/validators';
+
+type MailEvent = {
+  eventTitle: string | null;
+  eventPlace: string | null;
+  eventAllDay: boolean | null;
+  eventStartDateTime: string | Date | null;
+  eventEndDateTime: string | Date | null;
+  eventDescription: string | null;
+  eventLink: string;
+};
+
 export async function mailTemplate({
   event,
   participant,
 }: {
-  event: any;
+  event: MailEvent;
   participant: Participant;
 }) {
   const {
@@ -29,11 +41,14 @@ export async function mailTemplate({
   const {name, surname, subscriptionSet = []} = participant;
   const fullName = `${name} ${surname}`.trim();
 
-  const formattedEventStartDateTime = await formatDate(eventStartDateTime, {
-    timezone: 'Europe/Paris',
-    dateFormat: 'YYYY-MM-DD HH:mm Z',
-  });
-  const formattedEventEndDateTime = await formatDate(eventEndDateTime, {
+  const formattedEventStartDateTime = await formatDate(
+    eventStartDateTime ?? '',
+    {
+      timezone: 'Europe/Paris',
+      dateFormat: 'YYYY-MM-DD HH:mm Z',
+    },
+  );
+  const formattedEventEndDateTime = await formatDate(eventEndDateTime ?? '', {
     timezone: 'Europe/Paris',
     dateFormat: 'YYYY-MM-DD HH:mm Z',
   });
@@ -43,8 +58,8 @@ export async function mailTemplate({
         ${formattedEventEndDateTime}`;
 
   const subscriptionDetails = subscriptionSet?.length
-    ? subscriptionSet
-        .map((subscription: any) => html`<li>${subscription.facility}</li>`)
+    ? (subscriptionSet as Array<{facility?: string | null}>)
+        .map(subscription => html`<li>${subscription.facility}</li>`)
         .join('')
     : null;
 
@@ -148,7 +163,7 @@ export const generateRegistrationMailAction = async ({
   config,
 }: {
   participants: Participant[];
-  eventId: any;
+  eventId: string;
   workspaceURL: string;
   client: Client;
   config: TenantConfig;

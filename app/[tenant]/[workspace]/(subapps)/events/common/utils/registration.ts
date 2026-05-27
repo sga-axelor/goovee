@@ -1,11 +1,11 @@
 import type {Client} from '@/goovee/.generated/client';
 import type {Participant} from '../actions/validators';
 import {type RegistrationValues} from '../actions/validators';
-import {
-  type EventConfig,
-  type EventConfigPartner,
-  findPartnerByEmailForEvent,
-} from '../orm/event';
+import {findPartnerByEmailForEvent} from '../orm/event';
+import type {
+  EventConfig,
+  EventConfigPartner,
+} from '@/subapps/events/common/types';
 import {isEventPrivate, isEventPublic} from './index';
 
 export function isAlreadyRegistered({

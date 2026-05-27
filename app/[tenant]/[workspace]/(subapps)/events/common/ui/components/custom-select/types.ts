@@ -1,11 +1,20 @@
 import type {Control} from 'react-hook-form';
+
 export interface OptionType {
   value: string;
-  label: string;
+  label: string | null;
+  id: string;
+  name: string | null;
+  firstName: string | null;
+  simpleFullName: string | null;
+  emailAddress: {address: string | null} | null;
+  fixedPhone: string | null;
+  mainPartner: {id: string; simpleFullName: string | null} | null;
 }
+
 export interface CustomSelectProps {
-  control: Control<any>;
+  control: Control<Record<string, unknown>>;
   name: string;
-  selectedOptions: any[];
-  setSelectedOptions: React.Dispatch<React.SetStateAction<any[]>>;
+  selectedOptions: OptionType[];
+  setSelectedOptions: React.Dispatch<React.SetStateAction<OptionType[]>>;
 }

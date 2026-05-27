@@ -127,7 +127,7 @@ export async function createStripeCheckoutSession(props: {
     console.error('Stripe checkout session error:', err);
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message: await t(err instanceof Error ? err.message : String(err)),
     };
   }
 }
@@ -217,7 +217,7 @@ export async function paypalCreateOrder(props: {
   } catch (err) {
     return {
       error: true,
-      message: await t((err as any)?.message),
+      message: await t(err instanceof Error ? err.message : String(err)),
     };
   }
 }
@@ -308,6 +308,6 @@ export async function payboxCreateOrder(props: {
     return {success: true, order: response};
   } catch (err) {
     console.error('An error occurred while creatinig paybox order:', err);
-    return error(await t((err as any)?.message));
+    return error(await t(err instanceof Error ? err.message : String(err)));
   }
 }

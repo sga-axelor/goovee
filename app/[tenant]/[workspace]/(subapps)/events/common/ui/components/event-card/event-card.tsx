@@ -51,7 +51,7 @@ function getListEventImageURL({
 export const EventCard = ({event}: EventCardProps) => {
   const {workspaceURI} = useWorkspace();
 
-  const stripImages = (htmlContent: any = '') =>
+  const stripImages = (htmlContent: string = '') =>
     htmlContent?.replace(/<img[^>]*>/g, '');
 
   return (

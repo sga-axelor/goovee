@@ -26,7 +26,7 @@ export default async function Page(props: {
 
   const {workspaceURL} = workspacePathname(params);
 
-  const workspace: any = await findWorkspace({
+  const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
     client,
@@ -36,7 +36,7 @@ export default async function Page(props: {
     return notFound();
   }
 
-  const eventDetails: any = await findEvent({
+  const eventDetails = await findEvent({
     slug,
     workspaceURL,
     client,

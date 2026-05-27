@@ -12,6 +12,10 @@ import {
 } from '@/ui/components';
 import {i18n} from '@/locale';
 import {cn} from '@/utils/css';
+import type {customComponentOptions, Field} from '@/ui/form';
+import type {FullEvent} from '@/subapps/events/common/orm/event';
+
+type FacilityItem = NonNullable<FullEvent['facilityList']>[number];
 
 const getParentFromFormKey = (formKey: string) => {
   const parts = formKey.split('.');
@@ -27,18 +31,18 @@ export function SubscriptionsView({
   requiredFacilitiesCustomFields,
 }: {
   formKey: string;
-  form: any;
-  list: any[];
+  form: customComponentOptions['form'];
+  list: FacilityItem[];
   isSecondary?: boolean;
   event: {
     price: number;
-    formattedDefaultPriceAti: string;
+    formattedDefaultPriceAti: string | null;
   };
-  requiredFacilitiesCustomFields: any[];
+  requiredFacilitiesCustomFields: Field[];
 }) {
   const triggers = useMemo(() => {
     if (!requiredFacilitiesCustomFields?.length) return;
-    const fieldNames = requiredFacilitiesCustomFields?.map((f: any) => f.name);
+    const fieldNames = requiredFacilitiesCustomFields?.map(f => f.name);
 
     let parent = getParentFromFormKey(formKey);
     parent = parent && parent + '.';
@@ -55,17 +59,19 @@ export function SubscriptionsView({
     form.setValue(`${formKey}_eventPrice`, true, {shouldValidate: true});
   }, [form, formKey]);
 
-  const selectedSubscriptions = form.watch(formKey) || [];
+  const selectedSubscriptions: FacilityItem[] = form.watch(formKey) || [];
 
-  const handleSubscriptionToggle = (subscription: any) => {
+  const handleSubscriptionToggle = (subscription: FacilityItem) => {
     const isSelected = selectedSubscriptions.some(
-      (f: any) => f.id === subscription.id,
+      (f: FacilityItem) => f.id === subscription.id,
     );
 
     form.setValue(
       formKey,
       isSelected
-        ? selectedSubscriptions.filter((f: any) => f.id !== subscription.id)
+        ? selectedSubscriptions.filter(
+            (f: FacilityItem) => f.id !== subscription.id,
+          )
         : [...selectedSubscriptions, subscription],
       {shouldValidate: true, shouldDirty: true},
     );
@@ -96,7 +102,7 @@ export function SubscriptionsView({
 
       {list.map((subscription, idx) => {
         const isChecked = selectedSubscriptions.some(
-          (f: any) => f.id === subscription.id,
+          (f: FacilityItem) => f.id === subscription.id,
         );
 
         return (
