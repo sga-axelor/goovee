@@ -116,6 +116,11 @@ export function Stripe<TData>({
       }
     }
 
+    if (!isBankTransferEnabled) {
+      await handleCardPayment();
+      return;
+    }
+
     setShowPaymentOptions(true);
   };
 
