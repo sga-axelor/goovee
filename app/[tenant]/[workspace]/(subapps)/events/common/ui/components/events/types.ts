@@ -1,7 +1,9 @@
 import type {PageInfo} from '@/types';
 import type {Cloned} from '@/types/util';
-import type {ListEvent as OrmListEvent} from '@/subapps/events/common/orm/event';
-import type {Category} from '@/subapps/events/common/orm/event-category';
+import type {
+  ListEvent as OrmListEvent,
+  Category,
+} from '@/subapps/events/common/types';
 
 export type {Category};
 

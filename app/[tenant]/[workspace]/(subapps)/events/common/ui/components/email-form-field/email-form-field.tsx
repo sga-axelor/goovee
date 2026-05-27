@@ -28,8 +28,10 @@ export function EmailFormField({
   placeholder: string;
   disabled?: boolean;
   formKey: string;
-  form: UseFormReturn<any>;
-  onValidation: any;
+  form: UseFormReturn<Record<string, unknown>>;
+  onValidation: (
+    email: string,
+  ) => Promise<{success?: boolean; message?: string} | null | undefined>;
   field: Field;
 }) {
   const {setValue, watch, setError, clearErrors} = form;
@@ -45,7 +47,7 @@ export function EmailFormField({
       setValidating(true);
 
       try {
-        const response: any = await onValidation(email);
+        const response = await onValidation(email);
         if (response?.success) {
           setValue(formKey, email, {shouldValidate: true});
           clearErrors(formKey);
@@ -68,7 +70,7 @@ export function EmailFormField({
   );
 
   useEffect(() => {
-    if (emailValue && !hasValidated.current) {
+    if (emailValue && typeof emailValue === 'string' && !hasValidated.current) {
       hasValidated.current = true;
       handleValidation(emailValue);
     }
@@ -78,7 +80,7 @@ export function EmailFormField({
     <FormField
       control={form.control}
       name={formKey}
-      render={({field}: any) => (
+      render={({field}) => (
         <FormItem>
           <FormLabel className="text-base font-medium leading-6">
             {title}
@@ -87,11 +89,12 @@ export function EmailFormField({
           <FormControl>
             <Input
               {...field}
+              value={field.value as string}
               className="py-3 px-4 rounded-lg focus-visible:ring-offset-0 focus-visible:ring-0 text-main-black dark:text-white placeholder:text-sm placeholder:font-normal h-[2.875rem] border text-sm font-normal"
               placeholder={placeholder}
               disabled={disabled}
               onBlur={e => {
-                field.onBlur(e);
+                field.onBlur();
                 clearErrors(formKey);
                 handleValidation(e.target.value);
               }}

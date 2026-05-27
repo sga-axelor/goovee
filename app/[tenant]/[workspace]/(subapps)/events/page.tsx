@@ -21,12 +21,9 @@ import {
   LIMIT,
 } from '@/subapps/events/common/constants';
 import {findEvents} from '@/subapps/events/common/orm/event';
-import {
-  findEventCategories,
-  type Category,
-} from '@/subapps/events/common/orm/event-category';
+import {findEventCategories} from '@/subapps/events/common/orm/event-category';
 import type {PageInfo} from '@/types';
-import type {ListEvent} from '@/subapps/events/common/orm/event';
+import type {ListEvent, Category} from '@/subapps/events/common/types';
 import {
   EventCalendar,
   EventCardSkeleton,
@@ -38,17 +35,20 @@ import {
 } from '@/subapps/events/common/ui/components';
 import Hero from './hero';
 
-export default async function Page(context: any) {
-  const params = await context?.params;
-  const page = (await context?.searchParams)?.page || 1;
-  const category = (await context?.searchParams)?.category
-    ? Array.isArray((await context?.searchParams)?.category)
-      ? (await context?.searchParams)?.category
-      : [(await context?.searchParams)?.category]
+export default async function Page(props: {
+  params: Promise<{tenant: string; workspace: string}>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+  const page = [searchParams?.page].flat()[0] || 1;
+  const categoryIds = searchParams?.category
+    ? Array.isArray(searchParams.category)
+      ? searchParams.category
+      : [searchParams.category]
     : [];
-
-  const date = (await context?.searchParams)?.date || undefined;
-  const type = (await context?.searchParams)?.type || EVENT_TYPE.ACTIVE;
+  const date = [searchParams?.date].flat()[0];
+  const type = [searchParams?.type].flat()[0] || EVENT_TYPE.ACTIVE;
 
   if (!EVENT_TAB_ITEMS.some(item => item.label === type)) {
     return notFound();
@@ -80,7 +80,7 @@ export default async function Page(context: any) {
       <div className="py-6 container mx-auto grid grid-cols-1 lg:grid-cols-[24rem_1fr] gap-4 lg:gap-6 mb-16">
         <Card className="p-4 border-none shadow-none flex flex-col gap-2 md:flex-row lg:flex-col h-fit rounded-2xl">
           <EventCalendar
-            dateOfEvent={date}
+            dateOfEvent={date ?? ''}
             workspace={workspace}
             tabs={EVENT_TAB_ITEMS}
           />
@@ -90,7 +90,7 @@ export default async function Page(context: any) {
                 user={user}
                 client={client}
                 workspace={workspace}
-                category={category}
+                categoryIds={categoryIds}
               />
             </Suspense>
           </EventCollapsible>
@@ -103,8 +103,8 @@ export default async function Page(context: any) {
               client={client}
               type={type}
               page={page}
-              date={date}
-              category={category}
+              date={date ?? ''}
+              categoryIds={categoryIds}
             />
           </Suspense>
         </EventTabs>
@@ -117,12 +117,12 @@ async function Categories({
   workspace,
   user,
   client,
-  category,
+  categoryIds,
 }: {
   user?: User;
   client: Client;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
-  category: string[];
+  categoryIds: string[];
 }) {
   const categories: Cloned<Category>[] = await findEventCategories({
     workspaceURL: workspace.url,
@@ -131,7 +131,10 @@ async function Categories({
   }).then(clone);
 
   return (
-    <EventCategoryList categories={categories} selectedCategories={category} />
+    <EventCategoryList
+      categories={categories}
+      selectedCategories={categoryIds}
+    />
   );
 }
 
@@ -142,10 +145,10 @@ async function EventList({
   type,
   page,
   date,
-  category,
+  categoryIds,
 }: {
   date: string;
-  category: string[];
+  categoryIds: string[];
   page: string | number;
   user?: User;
   workspace: PortalWorkspace | Cloned<PortalWorkspace>;
@@ -156,7 +159,7 @@ async function EventList({
     await findEvents({
       limit: LIMIT,
       page: page,
-      categoryids: category,
+      categoryids: categoryIds,
       day: new Date(date).getDate() || undefined,
       month: new Date(date).getMonth() + 1 || undefined,
       year: new Date(date).getFullYear() || undefined,

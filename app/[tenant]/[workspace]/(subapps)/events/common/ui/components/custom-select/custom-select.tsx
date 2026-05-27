@@ -1,7 +1,8 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Select, {MultiValue} from 'react-select';
+import type {FieldValues, UseFormReturn} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
 import {i18n} from '@/locale';
@@ -17,54 +18,62 @@ import {
 } from '@/subapps/events/common/actions/actions';
 import type {OptionType} from '@/subapps/events/common/ui/components/custom-select/types';
 
-function formatItems(array: any) {
-  return (
-    array.map((participant: any) => ({
-      ...participant,
-      value: participant.id,
-      label: participant.simpleFullName,
-    })) ?? []
-  );
+type ContactItem = {
+  id: string;
+  simpleFullName: string | null;
+  [key: string]: unknown;
+};
+
+function formatItems(array: ContactItem[]): OptionType[] {
+  return array.map(participant => ({
+    ...(participant as unknown as OptionType),
+    value: participant.id,
+    label: participant.simpleFullName,
+  }));
 }
+
+type ParticipantItem = {
+  fromParticipant?: boolean;
+  valueId?: string;
+  [key: string]: unknown;
+};
 
 export const CustomSelect = ({
   form,
   field,
-  renderItem,
   arrayName,
   subSchema,
   eventId,
   maxSelections,
 }: {
-  form: any;
+  form: UseFormReturn<FieldValues>;
   field: Field;
-  renderItem: (item: Field, idx: number) => React.JSX.Element;
   arrayName: string;
   subSchema: Field[];
   eventId: string;
   maxSelections?: number;
 }) => {
   const [inputValue, setInputValue] = useState('');
-  const [filteredOptions, setFilteredOptions] = useState([]);
+  const [filteredOptions, setFilteredOptions] = useState<OptionType[]>([]);
 
   const {workspaceURL} = useWorkspace();
   const {toast} = useToast();
 
   const handleChange = async (selected: MultiValue<OptionType>) => {
-    const _current = form.getValues(arrayName) ?? [];
-    const selectedUsers: any = selected ?? [];
+    const _current = (form.getValues(arrayName) ?? []) as ParticipantItem[];
+    const selectedUsers = selected ?? [];
     const customParticipants = _current.filter(
-      ({fromParticipant, valueId}: any) =>
+      ({fromParticipant, valueId}: ParticipantItem) =>
         !fromParticipant ||
         (fromParticipant &&
-          selectedUsers.find((_s: any) => _s.id === valueId) != null),
+          selectedUsers.find((_s: OptionType) => _s.id === valueId) != null),
     );
 
     const invalidParticipants: string[] = [];
     for await (const _s of selectedUsers) {
       if (
         customParticipants.find(
-          ({valueId, fromParticipant}: any) =>
+          ({valueId, fromParticipant}: ParticipantItem) =>
             fromParticipant && valueId === _s.id,
         ) == null
       ) {
@@ -78,8 +87,17 @@ export const CustomSelect = ({
           });
           return;
         }
+        const email = _s.emailAddress?.address;
+        if (!email) {
+          toast({
+            variant: 'destructive',
+            title: i18n.t('Email address cannot be empty'),
+          });
+          invalidParticipants.push(_s.id);
+          continue;
+        }
         const {error, message} = await isValidParticipant({
-          email: _s.emailAddress?.address,
+          email,
           eventId,
           workspaceURL,
         });
@@ -149,7 +167,7 @@ export const CustomSelect = ({
   }, []);
 
   return (
-    <Select
+    <Select<OptionType, true>
       isMulti
       options={filteredOptions}
       placeholder={i18n.t('Select a user')}

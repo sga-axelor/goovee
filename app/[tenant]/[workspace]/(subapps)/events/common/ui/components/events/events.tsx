@@ -17,6 +17,7 @@ import {PortalWorkspace} from '@/orm/workspace';
 import {Checkbox, Pagination} from '@/ui/components';
 import {useResponsive, useSearchParams} from '@/ui/hooks';
 import {convertDateToISO8601} from '@/utils/date';
+import type {PageInfo} from '@/types';
 
 // ---- LOCAL IMPORTS ---- //
 import {
@@ -53,7 +54,7 @@ export const EventCalendar = ({
   tabs: {id: string; title: string; label: string}[];
 }) => {
   const [date, setDate] = useState<Date | undefined>(
-    dateOfEvent !== undefined ? new Date(dateOfEvent) : undefined,
+    dateOfEvent ? new Date(dateOfEvent) : undefined,
   );
   const {update} = useSearchParams();
 
@@ -101,8 +102,8 @@ export function EventTabs({
   tabs: {id: string; title: string; label: string}[];
   children: React.ReactNode;
 }) {
-  const res: any = useResponsive();
-  const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x]);
+  const res = useResponsive();
+  const large = ['md', 'lg', 'xl', 'xxl'].some(x => res[x as keyof typeof res]);
   const {update} = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabItem>(
     () => tabs.find(t => t.label === eventType)!,
@@ -133,10 +134,10 @@ export function EventTabs({
 }
 
 export function EventTabsContent({
-  pageInfo: {page, pages, hasPrev, hasNext} = {},
+  pageInfo: {page, pages, hasPrev, hasNext} = {} as PageInfo,
   events,
 }: {
-  pageInfo: any;
+  pageInfo: PageInfo;
   events: ListEvent[];
 }) {
   const {workspaceURI} = useWorkspace();
@@ -251,7 +252,7 @@ export const EventCategoryList = ({
     setSelectedCategory(updatedCategories);
   };
 
-  return categories.map((category: any) => {
+  return categories.map((category: Category) => {
     const isActive = selectedCategories.includes(category.id);
     const isPending = isActive != selectedCategory.includes(category.id);
 

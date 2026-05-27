@@ -27,7 +27,7 @@ export async function createInvoice({
   registrationId: ID;
   currencyCode: string;
   paymentModeId?: string;
-}): ActionResponse<any> {
+}): ActionResponse<Record<string, unknown>> {
   const aos = config?.aos;
 
   if (!aos?.url) {

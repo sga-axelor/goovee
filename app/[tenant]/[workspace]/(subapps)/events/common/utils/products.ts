@@ -2,6 +2,12 @@
 import {DEFAULT_TAX_VALUE} from '@/constants';
 import {ComputedProduct} from '@/types';
 
+type PriceEntry = {type: string; price: number | string | null};
+type WsProduct = {prices?: PriceEntry[] | null};
+type TaxLine = {activeTaxLine: {value: number | null} | null};
+type Account = {saleTaxSet?: TaxLine[] | null};
+type ProductCompany = {company?: unknown};
+
 export const getTax = ({
   ws,
   wsProduct,
@@ -9,18 +15,16 @@ export const getTax = ({
   productcompany,
 }: {
   ws: boolean;
-  wsProduct: any;
-  account: any;
-  productcompany: any;
+  wsProduct: WsProduct | null | undefined;
+  account: Account | null | undefined;
+  productcompany: ProductCompany | null | undefined;
 }): ComputedProduct['tax'] => {
   if (ws) {
     const wt = Number(
-      wsProduct?.prices.find((p: {type: string}) => p.type === 'WT')?.price ||
-        0,
+      wsProduct?.prices?.find((p: PriceEntry) => p.type === 'WT')?.price || 0,
     );
     const ati = Number(
-      wsProduct?.prices.find((p: {type: string}) => p.type === 'ATI')?.price ||
-        0,
+      wsProduct?.prices?.find((p: PriceEntry) => p.type === 'ATI')?.price || 0,
     );
 
     return {
@@ -28,7 +32,7 @@ export const getTax = ({
     };
   }
 
-  const activeTax = account?.saleTaxSet?.find((t: any) => t.activeTaxLine);
+  const activeTax = account?.saleTaxSet?.find((t: TaxLine) => t.activeTaxLine);
 
   const activeTaxLineValue =
     activeTax?.activeTaxLine?.value || DEFAULT_TAX_VALUE;

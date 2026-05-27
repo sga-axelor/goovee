@@ -3,6 +3,7 @@
 import {useCallback, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {MdAdd} from 'react-icons/md';
+import type {UseFormReturn} from 'react-hook-form';
 
 // ---- CORE IMPORTS ---- //
 import {Card, CardContent, CardHeader, CardTitle} from '@/ui/components/card';
@@ -13,6 +14,7 @@ import {
   ArrayComponent,
   formatStudioFields,
   type Field,
+  type customComponentOptions,
 } from '@/ui/form';
 import {useToast} from '@/ui/hooks/use-toast';
 import {SUBAPP_CODES, SUBAPP_PAGE} from '@/constants';
@@ -84,7 +86,7 @@ export const RegistrationForm = ({
   //NOTE: temprorary disable contacts list
   const showContactsList = false && isLoggedIn && !user?.isContact;
   const canPay = defaultPrice || facilityList?.length;
-  const eventPrice = defaultPrice ? (displayAti ?? 0) : 0;
+  const eventPrice = defaultPrice ? Number(displayAti ?? 0) : 0;
 
   const isCompanyOrAddressRequired =
     workspace.config?.isCompanyOrAddressRequired;
@@ -132,7 +134,7 @@ export const RegistrationForm = ({
         order: 3,
         defaultValue: getPartnerAddress(user) || '',
         required: isCompanyOrAddressRequired ?? false,
-        customComponent: (props: any) => (
+        customComponent: (props: customComponentOptions) => (
           <CompanyAddressField
             {...props}
             title={i18n.t('Company/Address')}
@@ -171,7 +173,7 @@ export const RegistrationForm = ({
         widget: 'custom',
         hidden: !facilityList.length,
         order: 7,
-        customComponent: (props: any) => (
+        customComponent: (props: customComponentOptions) => (
           <SubscriptionsView
             {...props}
             list={facilityList}
@@ -253,17 +255,18 @@ export const RegistrationForm = ({
               widget: 'custom',
               helper: null,
               hidden: false,
-              hideIf: (formState: any) => !formState?.addOtherPeople,
+              hideIf: (formState: Record<string, unknown>) =>
+                !formState?.addOtherPeople,
               required: false,
               readonly: false,
               order: 110,
-              customComponent: (props: any) =>
+              customComponent: (props: customComponentOptions) =>
                 CustomSelect({
                   ...props,
                   eventId,
-                  maxSelections: maxParticipantPerRegistration,
+                  maxSelections: maxParticipantPerRegistration ?? undefined,
                   arrayName: 'otherPeople',
-                  subSchema: externalParticipantForm,
+                  subSchema: externalParticipantForm as Field[],
                 }),
             },
           ]
@@ -275,13 +278,15 @@ export const RegistrationForm = ({
         widget: 'custom',
         helper: null,
         hidden: false,
-        hideIf: (formState: any) => !formState?.addOtherPeople,
+        hideIf: (formState: Record<string, unknown>) =>
+          !formState?.addOtherPeople,
         required: false,
         readonly: false,
         order: 120,
-        customComponent: (props: any) =>
+        customComponent: (props: customComponentOptions) =>
           ArrayComponent({
             ...props,
+            renderItem: props.renderItem!,
             subItemTitle: i18n.t('Participant'),
             renderAddMore: ({addItem}) => {
               if (isPrivate) return null;
@@ -317,7 +322,7 @@ export const RegistrationForm = ({
           field.name === 'subscriptionSet'
             ? {
                 ...field,
-                customComponent: (props: any) => (
+                customComponent: (props: customComponentOptions) => (
                   <SubscriptionsView
                     {...props}
                     list={facilityList}
@@ -335,7 +340,7 @@ export const RegistrationForm = ({
             : field.name === 'company'
               ? {
                   ...field,
-                  customComponent: (props: any) => (
+                  customComponent: (props: customComponentOptions) => (
                     <CompanyAddressField
                       {...props}
                       title={i18n.t('Company')}
@@ -345,7 +350,7 @@ export const RegistrationForm = ({
                   ),
                 }
               : field,
-        ),
+        ) as Field[],
       },
     ],
     [
@@ -367,10 +372,10 @@ export const RegistrationForm = ({
     setTotalPrice(value);
   }, []);
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: Record<string, unknown>) => {
     try {
       const result = mapParticipants(
-        values,
+        values as Parameters<typeof mapParticipants>[0],
         metaFields,
         metaFieldsFacilities,
         (additionalFieldSet ?? []).filter(f => f !== null),
@@ -448,16 +453,19 @@ export const RegistrationForm = ({
                 type: 'array',
                 widget: 'custom',
                 hidden: !canPay,
-                customComponent: (props: any) => (
+                customComponent: (props: customComponentOptions) => (
                   <SubscriptionsPriceView
                     {...props}
                     list={facilityList}
                     event={{
-                      id: eventId,
                       displayAti: eventPrice,
                       facilityList,
                     }}
-                    currency={eventProduct?.saleCurrency}
+                    currency={
+                      eventProduct?.saleCurrency as
+                        | {symbol: string; numberOfDecimals: number}
+                        | undefined
+                    }
                     onTotalPriceChange={handleTotalPriceChange}
                   />
                 ),
@@ -465,7 +473,7 @@ export const RegistrationForm = ({
             ] as Field[]
           }
           submitTitle={i18n.t('Register')}
-          superRefineCheck={(val: any, ctx) => {
+          superRefineCheck={(val: Record<string, unknown>, ctx) => {
             requiredFacilitiesCustomFields.forEach(field => {
               if (field.requiredIf?.(val) && !val?.[field.name]) {
                 ctx.addIssue({
@@ -474,8 +482,10 @@ export const RegistrationForm = ({
                   path: [field.name],
                 });
               }
-              val.otherPeople?.forEach((p: any, i: number) => {
-                if (field.requiredIf(p) && !p?.[field.name]) {
+              (
+                val.otherPeople as Array<Record<string, unknown>> | undefined
+              )?.forEach((p: Record<string, unknown>, i: number) => {
+                if (field.requiredIf?.(p) && !p?.[field.name]) {
                   ctx.addIssue({
                     code: 'custom',
                     message: i18n.t('Required'),
@@ -488,7 +498,11 @@ export const RegistrationForm = ({
           mode={'onChange'}
           {...((canPay && totalPrice > 0) || stripeSessionId || payboxResponse
             ? {
-                submitButton: ({form}: any) => (
+                submitButton: ({
+                  form,
+                }: {
+                  form: UseFormReturn<Record<string, unknown>>;
+                }) => (
                   <EventPayments
                     workspace={workspace}
                     event={{
@@ -520,7 +534,7 @@ const getEmailFieldComponent = ({
   eventId: string;
   workspaceURL: string;
 }) => {
-  const EmailComponent = (props: any) => (
+  const EmailComponent = (props: customComponentOptions) => (
     <EmailFormField
       {...props}
       title={i18n.t('Email')}

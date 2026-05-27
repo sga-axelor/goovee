@@ -32,8 +32,12 @@ import {
   isLoginNeededForRegistration,
 } from '@/subapps/events/common/utils';
 import styles from './style.module.css';
+import type {EventPageCardProps} from './types';
 
-export const EventPageCard = ({eventDetails, workspace}: any) => {
+export const EventPageCard = ({
+  eventDetails,
+  workspace,
+}: EventPageCardProps) => {
   const {
     formattedDefaultPriceAti,
     formattedDefaultPrice,
@@ -95,7 +99,7 @@ export const EventPageCard = ({eventDetails, workspace}: any) => {
             'text-sm font-normal tracking-wide leading-6 w-full overflow-x-auto text-slate-500 dark:text-slate-400',
             styles['card-description-html'],
           )}
-          content={eventDetails?.eventDescription}
+          content={eventDetails?.eventDescription ?? undefined}
         />
         <div className="border-l border-success space-y-4 text-base font-semibold px-4">
           {eventDetails?.eventPlace && (

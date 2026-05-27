@@ -17,7 +17,8 @@ import {User} from '@/types';
 import {type Participant} from './validators';
 import {PortalWorkspace, Subapp} from '@/orm/workspace';
 import {ActionResponse} from '@/types/action';
-import {EventConfig, findEventConfig} from '../orm/event';
+import {findEventConfig} from '../orm/event';
+import type {EventConfig} from '@/subapps/events/common/types';
 import {
   getParticipantsFromValues,
   getTotalRegisteredParticipants,

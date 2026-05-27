@@ -5,9 +5,18 @@ import {InnerHTML} from '@/ui/components/inner-html';
 import {DATE_FORMATS} from '@/constants';
 import {formatDate} from '@/locale/formatters';
 
-export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
+// ---- LOCAL IMPORTS ---- //
+import type {ListEvent} from '@/subapps/events/common/ui/components/events/types';
+
+export const SearchItem = ({
+  result,
+  onClick,
+}: {
+  result: ListEvent;
+  onClick: (slug: string | null) => void;
+}) => {
   const {eventTitle, eventStartDateTime, eventDescription, slug} = result;
-  const stripImages = (htmlContent: any = '') =>
+  const stripImages = (htmlContent: string = '') =>
     htmlContent?.replace(/<img[^>]*>/g, '');
   return (
     <>
@@ -17,7 +26,7 @@ export const SearchItem = ({result, onClick}: {result: any; onClick: any}) => {
             {eventTitle}
           </p>
           <p className="text-sm font-normal text-main-black min-w-fit">
-            {formatDate(eventStartDateTime, {
+            {formatDate(eventStartDateTime ?? '', {
               dateFormat: DATE_FORMATS.full_month_day_year_12_hour,
             })}
           </p>

@@ -19,7 +19,7 @@ export default async function Page(props: {
   const {slug, tenant: tenantId} = params;
 
   const session = await getSession();
-  const user: any = session?.user;
+  const user = session?.user;
 
   const {workspaceURL} = workspacePathname(params);
 
@@ -27,7 +27,7 @@ export default async function Page(props: {
   if (!tenant) return notFound();
   const {client, config} = tenant;
 
-  const workspace: any = await findWorkspace({
+  const workspace = await findWorkspace({
     user: session?.user,
     url: workspaceURL,
     client,

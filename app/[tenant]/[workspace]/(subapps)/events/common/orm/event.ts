@@ -36,6 +36,13 @@ import {
   modelFieldSelect,
   type ModelField,
 } from '@/orm/model-fields';
+import type {
+  ListEvent,
+  EventConfig,
+  EventConfigPartner,
+  PartnerForEvent,
+} from '@/subapps/events/common/types';
+export type {ListEvent, EventConfig, EventConfigPartner, PartnerForEvent};
 
 const buildDateFilters = ({
   eventStartDateTimeCriteria,
@@ -222,7 +229,7 @@ export async function findEvent({
       const isRegistered = user?.email
         ? Boolean(
             event?.registrationList?.find(
-              (r: any) => r.participantList.length > 0,
+              r => (r.participantList?.length ?? 0) > 0,
             ),
           )
         : false;
@@ -261,7 +268,7 @@ export async function findEvent({
 
   const updatedFacilityList = event?.facilityList?.map(async facility => {
     const matchingFacility = productsFromWS?.facilityPricingList?.find(
-      (f: any) => Number(f.id) === Number(facility.id),
+      (f: {id: string | number}) => Number(f.id) === Number(facility.id),
     );
 
     const facilityWt = matchingFacility
@@ -341,55 +348,6 @@ export async function findEvent({
   };
 }
 
-export type ListEvent = {
-  isRegistered: boolean;
-  id: string;
-  version: number;
-  eventEndDateTime: Date | null;
-  eventStartDateTime: Date | null;
-  eventAllDay: boolean | null;
-  eventTitle: string | null;
-  eventCategorySet:
-    | {
-        id: string;
-        version: number;
-        name: string | null;
-        color: string | null;
-        image: {
-          id: string;
-          version: number;
-        } | null;
-        thumbnailImage: {
-          id: string;
-          version: number;
-        } | null;
-      }[]
-    | null;
-  registrationDeadlineDateTime: Date | null;
-  eventImage: {
-    id: string;
-    version: number;
-  } | null;
-  eventDescription: string | null;
-  registrationList:
-    | {
-        id: string;
-        version: number;
-        participantList:
-          | {
-              id: string;
-              version: number;
-              emailAddress: string | null;
-            }[]
-          | null;
-      }[]
-    | null;
-  slug: string | null;
-  _count?: string | undefined;
-  _cursor?: string | undefined;
-  _hasNext?: boolean | undefined;
-  _hasPrev?: boolean | undefined;
-};
 export async function findEvents({
   ids,
   search,
@@ -500,15 +458,19 @@ export async function findEvents({
     onlyRegisteredEvent
       ? {registrationList: {participantList: {emailAddress: user?.email}}}
       : {
-          OR: [{isHidden: false}, {isHidden: null}].concat(
-            user?.email
-              ? ({
-                  registrationList: {
-                    participantList: {emailAddress: user?.email},
+          OR: [
+            {isHidden: false},
+            {isHidden: null},
+            ...(user?.email
+              ? [
+                  {
+                    registrationList: {
+                      participantList: {emailAddress: user?.email},
+                    },
                   },
-                } as any)
-              : [],
-          ),
+                ]
+              : []),
+          ],
         },
   ]);
 
@@ -559,7 +521,7 @@ export async function findEvents({
         isRegistered: user?.email
           ? Boolean(
               event.registrationList?.find(
-                (r: any) => r.participantList.length > 0,
+                r => (r.participantList?.length ?? 0) > 0,
               ),
             )
           : false,
@@ -574,71 +536,6 @@ export async function findEvents({
 
   return {events, pageInfo};
 }
-
-export type EventConfig = {
-  id: string;
-  version: number;
-  eventEndDateTime: Date | null;
-  eventStartDateTime: Date | null;
-  eventAllDay: boolean | null;
-  registrationDeadlineDateTime: Date | null;
-  eventAllowRegistration: boolean | null;
-  eventAllowMultipleRegistrations: boolean | null;
-  isPrivate: boolean | null;
-  isPublic: boolean | null;
-  isLoginNotNeeded: boolean | null;
-  isHidden: boolean | null;
-  maxParticipantPerEvent: number | null;
-  maxParticipantPerRegistration: number | null;
-  partnerCategorySet:
-    | {
-        id: string;
-        version: number;
-        partners: EventConfigPartner[] | null;
-      }[]
-    | null;
-  partnerSet: EventConfigPartner[] | null;
-  registrationList:
-    | {
-        id: string;
-        version: number;
-        participantList:
-          | {
-              id: string;
-              version: number;
-              emailAddress: string | null;
-            }[]
-          | null;
-      }[]
-    | null;
-};
-
-export type EventConfigPartner = {
-  id: string;
-  version: number;
-  isContact: boolean | null;
-  isProspect: boolean | null;
-  isCustomer: boolean | null;
-  emailAddress: {
-    id: string;
-    version: number;
-    address: string | null;
-  } | null;
-  contactPartnerSet:
-    | {
-        id: string;
-        version: number;
-        emailAddress: {
-          id: string;
-          version: number;
-          address: string | null;
-        } | null;
-        isActivatedOnPortal: boolean | null;
-      }[]
-    | null;
-  isActivatedOnPortal: boolean | null;
-  canSubscribeNoPublicEvent: boolean | null;
-};
 
 export async function findEventConfig({
   id,
@@ -667,13 +564,15 @@ export async function findEventConfig({
   };
 
   const eventConfig = await client.aOSPortalEvent.findOne({
-    where: {
-      statusSelect: EVENT_STATUS.PUBLISHED,
-      id,
-      slug: {ne: null},
-      eventCategorySet: {workspace: {url: workspaceURL}},
-      OR: [{archived: false}, {archived: null}],
-    },
+    where: and<AOSPortalEvent>([
+      {
+        statusSelect: EVENT_STATUS.PUBLISHED,
+        id,
+        slug: {ne: null},
+        eventCategorySet: {workspace: {url: workspaceURL}},
+      },
+      {OR: [{archived: false}, {archived: null}]},
+    ]),
     select: {
       isPrivate: true,
       isHidden: true,
@@ -697,14 +596,6 @@ export async function findEventConfig({
 
   return eventConfig;
 }
-
-export type PartnerForEvent = {
-  id: string;
-  version: number;
-  emailAddress: {id: string; version: number; address: string | null} | null;
-  isActivatedOnPortal: boolean | null;
-  canSubscribeNoPublicEvent: boolean | null;
-};
 
 export async function findPartnerByEmailForEvent(
   email: string,

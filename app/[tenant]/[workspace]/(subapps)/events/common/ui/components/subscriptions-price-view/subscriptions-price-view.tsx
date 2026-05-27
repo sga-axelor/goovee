@@ -7,13 +7,29 @@ import {i18n} from '@/locale';
 import {formatNumber} from '@/locale/formatters';
 import {Separator} from '@/ui/components';
 import {DEFAULT_CURRENCY_SCALE, DEFAULT_CURRENCY_SYMBOL} from '@/constants';
+import type {customComponentOptions} from '@/ui/form';
+import type {Cloned} from '@/types/util';
 
 // ---- LOCAL IMPORTS ---- //
 import {getCalculatedTotalPrice} from '@/subapps/events/common/utils/payments';
 import type {FullEvent} from '../../../orm/event';
 
-const getParticipantsNames = (participants: any[]): string =>
-  participants.map((_p: any) => `${_p.name} ${_p.surname}`).join(', ');
+type FacilityItem = NonNullable<FullEvent['facilityList']>[number];
+
+type SubscriptionView = {id: string; facility?: string | null};
+
+type EventParticipantView = {
+  name: string;
+  surname: string;
+  subscriptionSet: SubscriptionView[];
+};
+
+type PriceViewEvent = Pick<FullEvent | Cloned<FullEvent>, 'facilityList'> & {
+  displayAti: string | number;
+};
+
+const getParticipantsNames = (participants: EventParticipantView[]): string =>
+  participants.map(_p => `${_p.name} ${_p.surname}`).join(', ');
 
 export function SubscriptionsPriceView({
   form,
@@ -22,40 +38,44 @@ export function SubscriptionsPriceView({
   event,
   onTotalPriceChange,
 }: {
-  form: any;
-  list: any[];
-  currency: {
-    symbol: string;
-    numberOfDecimals: number;
-  };
-  event: FullEvent;
+  form: customComponentOptions['form'];
+  list: FacilityItem[];
+  currency?: {
+    symbol?: string | null;
+    numberOfDecimals?: number | null;
+  } | null;
+  event: PriceViewEvent;
   onTotalPriceChange: (value: number) => void;
 }) {
   const currencySymbol = currency?.symbol || DEFAULT_CURRENCY_SYMBOL;
   const scale = currency?.numberOfDecimals || DEFAULT_CURRENCY_SCALE;
 
-  const otherPeople = form.watch('otherPeople') || [];
-  const rootName = form.watch('name');
-  const rootSurname = form.watch('surname');
+  const otherPeople: EventParticipantView[] = form.watch('otherPeople') || [];
+  const rootName: string = form.watch('name');
+  const rootSurname: string = form.watch('surname');
+  const watchedSubscriptionSet = form.watch('subscriptionSet');
 
-  const subscriptionSet = form.watch('subscriptionSet') || [];
+  const subscriptionSet: SubscriptionView[] = useMemo(
+    () => (watchedSubscriptionSet as SubscriptionView[]) || [],
+    [watchedSubscriptionSet],
+  );
 
   const selectedMainSubscriptions = useMemo(() => {
     return list.filter(subscription =>
-      subscriptionSet.some((s: any) => s.id === subscription.id),
+      subscriptionSet.some(s => s.id === subscription.id),
     );
   }, [subscriptionSet, list]);
 
-  const secondaryParticipants = otherPeople.map((p: any) => ({
+  const secondaryParticipants: EventParticipantView[] = otherPeople.map(p => ({
     ...p,
-    subscriptionSet: p.subscriptionSet || [],
+    subscriptionSet: (p.subscriptionSet || []) as SubscriptionView[],
   }));
 
   const participants = useMemo(() => {
-    const mainParticipant = {
+    const mainParticipant: EventParticipantView = {
       name: rootName || '',
       surname: rootSurname || '',
-      subscriptionSet: selectedMainSubscriptions,
+      subscriptionSet: selectedMainSubscriptions as SubscriptionView[],
     };
     return [mainParticipant, ...secondaryParticipants];
   }, [selectedMainSubscriptions, rootName, rootSurname, secondaryParticipants]);
@@ -68,7 +88,10 @@ export function SubscriptionsPriceView({
       otherPeople: secondaryParticipants,
     };
 
-    return getCalculatedTotalPrice(formValues, event);
+    return getCalculatedTotalPrice(
+      formValues as unknown as Parameters<typeof getCalculatedTotalPrice>[0],
+      {...event, displayAti: String(event.displayAti)},
+    );
   }, [
     selectedMainSubscriptions,
     rootName,
@@ -79,7 +102,7 @@ export function SubscriptionsPriceView({
 
   const validParticipants = useMemo(() => {
     return participants.filter(
-      (p: any) => p.name.trim() !== '' || p.surname.trim() !== '',
+      p => p.name.trim() !== '' || p.surname.trim() !== '',
     );
   }, [participants]);
 
@@ -118,8 +141,8 @@ export function SubscriptionsPriceView({
           {subscriptionPrices?.length > 0 && (
             <div className="flex flex-col gap-4 pl-4 border-success border-l">
               {subscriptionPrices.map(({facility, price}) => {
-                const subscriptionUsers = participants.filter((p: any) =>
-                  p.subscriptionSet.some((f: any) => f.facility === facility),
+                const subscriptionUsers = participants.filter(p =>
+                  p.subscriptionSet.some(f => f.facility === facility),
                 );
 
                 return (

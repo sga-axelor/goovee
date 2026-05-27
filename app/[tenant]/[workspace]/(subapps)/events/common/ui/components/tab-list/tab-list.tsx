@@ -10,28 +10,28 @@ interface TabItem {
   title: string;
 }
 
-type TabsListProps = {
-  items: TabItem[];
+type TabsListProps<T extends TabItem> = {
+  items: T[];
   activeTab: string;
-  onTabChange: (e: any) => void;
+  onTabChange: (tab: T) => void;
   children: React.ReactNode;
   controlled?: boolean;
 };
 
-export const TabsList = ({
+export const TabsList = <T extends TabItem>({
   items,
   activeTab,
   onTabChange,
   children,
   controlled,
-}: TabsListProps) => {
+}: TabsListProps<T>) => {
   return (
     <div>
       <StyledTabs
         controlled={controlled}
         items={items}
         activeTab={activeTab}
-        onTabChange={onTabChange}>
+        onTabChange={onTabChange as (e: unknown) => void}>
         <TabsContent className="mt-6" value={activeTab}>
           {children}
         </TabsContent>
