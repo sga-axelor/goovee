@@ -34,7 +34,9 @@ const partnerFields = {
   linkedinLink: true,
   mainPartner: {
     id: true,
+    version: true,
     simpleFullName: true,
+    emailAddress: {address: true},
     isInDirectory: true,
     isEmailInDirectory: true,
     isPhoneInDirectory: true,
@@ -196,6 +198,93 @@ export async function findGooveeUserByEmail(email: string, client: Client) {
   });
 }
 
+/* ------------------------------------------------------------------ *
+ * Short-TTL cache for the session-enrichment hot path.
+ *
+ * `customSession` calls findGooveeUserByEmail on EVERY getSession — i.e. in
+ * middleware, in generateMetadata, in the layout, AND for every speculative
+ * <Link> prefetch. Uncached, an authenticated page view fires ~100 of these
+ * partner queries (most for links never clicked). This caches that read with a
+ * short TTL that bounds how stale auth/permission data can be.
+ *
+ * Scope/safety:
+ * - Key MUST include tenantId (multi-tenant isolation). Never key by email alone.
+ * - Use ONLY for the read/enrichment path. Auth & registration flows keep using
+ *   the uncached findGooveeUserByEmail (they need a guaranteed-fresh read).
+ * - Values are cloned in and out — never share a cached reference across requests.
+ * - TTL bounds staleness; call invalidateGooveeUser() to bust eagerly on
+ *   deactivation / profile / permission changes (see invalidation notes in the ticket).
+ * ------------------------------------------------------------------ */
+type CachedGooveeUser = Awaited<ReturnType<typeof findGooveeUserByEmail>>;
+
+const GOOVEE_USER_TTL_MS = 10_000; // 10s — tune with security sign-off
+const GOOVEE_USER_MAX = 2000;
+// Stores the in-flight PROMISE, not the resolved value: concurrent misses on a
+// cold/expired key share one DB query instead of stampeding (observed: 4-6
+// parallel queries at startup and on every TTL expiry with value-caching).
+const gooveeUserCache = new Map<
+  string,
+  {value: Promise<CachedGooveeUser>; expiresAt: number}
+>();
+
+const gooveeUserKey = (tenantId: string, email: string) =>
+  `${tenantId}::${email.toLowerCase()}`;
+
+/** Evict the cached partner for (tenant, email). Call on deactivation, profile/permission change, or registration. */
+export function invalidateGooveeUser(
+  tenantId: string | null | undefined,
+  email: string | null | undefined,
+) {
+  if (!tenantId || !email) return;
+  gooveeUserCache.delete(gooveeUserKey(tenantId, email));
+}
+
+/**
+ * Tenant-scoped, short-TTL cached read of the portal user, for the
+ * high-frequency session-enrichment path ONLY. Falls back to an uncached read
+ * when tenantId is absent. Do not use where a guaranteed-fresh read is required.
+ */
+export async function findGooveeUserByEmailCached(
+  email: string,
+  client: Client,
+  tenantId: string | null | undefined,
+) {
+  if (!email || !tenantId) {
+    return findGooveeUserByEmail(email, client);
+  }
+
+  const key = gooveeUserKey(tenantId, email);
+  const entry = gooveeUserCache.get(key);
+  if (entry && entry.expiresAt > Date.now()) {
+    return clone(await entry.value); // clone out — callers must not mutate the cached value
+  }
+
+  const promise = findGooveeUserByEmail(email, client).then(partner => {
+    if (!partner) {
+      // never cache null — customSession's !partner branch clears the user's
+      // session cookies, so a stale null would force-logout for the whole TTL
+      gooveeUserCache.delete(key);
+    }
+    return partner;
+  });
+  // a failed query must not stay cached; waiters still see the rejection
+  promise.catch(() => gooveeUserCache.delete(key));
+
+  if (gooveeUserCache.size >= GOOVEE_USER_MAX) {
+    const oldest = gooveeUserCache.keys().next().value; // bound memory (FIFO eviction)
+    if (oldest !== undefined) {
+      gooveeUserCache.delete(oldest);
+    }
+  }
+  // set BEFORE awaiting — this is what makes concurrent misses coalesce
+  gooveeUserCache.set(key, {
+    value: promise,
+    expiresAt: Date.now() + GOOVEE_USER_TTL_MS,
+  });
+
+  return clone(await promise); // the cached copy is never handed out directly
+}
+
 export async function findContactByEmail(email: string, client: Client) {
   return findPartnerByEmail(email, client, {
     where: {
@@ -256,9 +345,13 @@ export async function findPartnerAllowedToRegister(
 export async function updatePartner({
   data,
   client,
+  tenantId,
+  email,
 }: {
   data: UpdateArgs<AOSPartner>;
   client: Client;
+  tenantId?: string | null;
+  email?: string | null;
 }) {
   if (!data) return null;
 
@@ -274,6 +367,10 @@ export async function updatePartner({
     })
     .then(clone);
 
+  if (tenantId && email) {
+    invalidateGooveeUser(tenantId, email);
+  }
+
   return partner;
 }
 
@@ -287,6 +384,7 @@ export async function registerContact({
   partnerId,
   localizationId,
   existingRecord,
+  tenantId,
 }: {
   name: string;
   firstName?: string;
@@ -297,6 +395,7 @@ export async function registerContact({
   partnerId: string;
   localizationId?: Localization['id'];
   existingRecord?: {id: string; version: number} | null;
+  tenantId?: string | null;
 }) {
   if (!(name && email && partnerId)) {
     return null;
@@ -382,6 +481,10 @@ export async function registerContact({
     },
     select: {id: true},
   });
+
+  if (tenantId) {
+    invalidateGooveeUser(tenantId, email);
+  }
   return contact;
 }
 

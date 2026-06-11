@@ -1,6 +1,9 @@
 import {experimental_taintUniqueValue} from 'react';
 import {z} from 'zod';
-import {findGooveeUserByEmail} from '@/orm/partner';
+import {
+  findGooveeUserByEmail,
+  findGooveeUserByEmailCached,
+} from '@/orm/partner';
 import {manager} from '@/tenant';
 import {getPartnerImageURL} from '@/utils/files';
 import {
@@ -247,7 +250,14 @@ export const auth = betterAuth({
       const partner =
         tenant &&
         user.email &&
-        (await findGooveeUserByEmail(user.email, tenant.client));
+        // Hot path: runs on every getSession (middleware, metadata, layout) and
+        // every <Link> prefetch. Cached read (tenant-scoped, short TTL) to avoid
+        // ~100 partner queries per authenticated page view.
+        (await findGooveeUserByEmailCached(
+          user.email,
+          tenant.client,
+          tenantId,
+        ));
 
       if (!partner) {
         // Session cookie exists but partner no longer found — clear cookies and treat as no session

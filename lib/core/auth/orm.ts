@@ -150,6 +150,7 @@ export async function registerByInvite({
       existingRecord,
       partnerId: invite.partner.id,
       localizationId: localization?.id,
+      tenantId,
     });
 
     const uri = toWorkspaceURI(workspace.url, process.env.GOOVEE_PUBLIC_HOST);
@@ -419,6 +420,8 @@ async function transformAosContactAsPartner(
         isContact: false,
       },
       client,
+      tenantId,
+      email: contact.emailAddress?.address,
     });
   } catch (err) {
     throw new Error(
@@ -540,7 +543,7 @@ async function registerAosContactAsAdmin({
   const isCompany = type === UserType.company;
   const $name = isCompany ? companyName : name;
 
-  const result = await client.aOSPartner.update({
+  const result = await updatePartner({
     data: {
       id: contact.id,
       version: contact.version,
@@ -562,7 +565,9 @@ async function registerAosContactAsAdmin({
         },
       }),
     },
-    select: {id: true},
+    client,
+    tenantId,
+    email,
   });
 
   const $contact = result?.id && (await findContactById(result.id, client));

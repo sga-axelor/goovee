@@ -15,6 +15,7 @@ import {
   SubscribeSchema,
   type Subscribe,
 } from '@/lib/core/auth/validation-utils';
+import {updatePartner} from '@/orm/partner';
 
 function error(message: string): {error: true; message: string} {
   return {
@@ -76,6 +77,7 @@ export async function subscribe(data: Subscribe) {
       id: user.id,
     },
     select: {
+      version: true,
       isContact: true,
       mainPartner: {
         id: true,
@@ -89,7 +91,7 @@ export async function subscribe(data: Subscribe) {
 
   if (!$user.isContact) {
     try {
-      await client.aOSPartner.update({
+      await updatePartner({
         data: {
           id: $user.id,
           version: $user.version,
@@ -101,7 +103,9 @@ export async function subscribe(data: Subscribe) {
             ],
           },
         },
-        select: {id: true},
+        client,
+        tenantId,
+        email: user.email,
       });
 
       revalidatePath('/', 'layout');
@@ -145,7 +149,7 @@ export async function subscribe(data: Subscribe) {
       );
     } else {
       try {
-        await client.aOSPartner.update({
+        await updatePartner({
           data: {
             id: $user.id,
             version: $user.version,
@@ -162,7 +166,9 @@ export async function subscribe(data: Subscribe) {
               ],
             },
           },
-          select: {id: true},
+          client,
+          tenantId,
+          email: user.email,
         });
 
         revalidatePath('/', 'layout');

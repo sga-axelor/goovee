@@ -94,6 +94,8 @@ export async function updateDirectorySettings({
           isAddressInDirectory: data.companyAddress,
           directoryCompanyDescription: data.companyDescription,
         },
+        tenantId,
+        email: companyPartner.emailAddress?.address,
       });
     }
 
@@ -109,6 +111,8 @@ export async function updateDirectorySettings({
           isPhoneInDirectory: data.contactPhone,
           isLinkedinInDirectory: data.contactLinkedin,
         },
+        tenantId,
+        email: user.email,
       });
     }
     return {success: true, data: null};
@@ -240,6 +244,8 @@ export async function updateCompanyProfileImage(
             }),
       },
       client: client,
+      tenantId,
+      email: companyPartner.emailAddress?.address,
     });
   } catch (err) {
     return {

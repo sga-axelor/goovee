@@ -86,6 +86,8 @@ export async function subscribe(data: InviteSubscribe) {
     await updatePartner({
       data: updateData,
       client,
+      tenantId,
+      email: user.email,
     });
 
     revalidatePath('/', 'layout');

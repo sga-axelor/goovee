@@ -10,7 +10,11 @@ import {generateOTP as coreGenerateOTP} from '@/otp/actions';
 import {Scope} from '@/otp/constants';
 import {create as createOTP, findOne, isValid, markUsed} from '@/otp/orm';
 import NotificationManager, {NotificationType} from '@/notification';
-import {findGooveeUserByEmail} from '@/orm/partner';
+import {
+  findGooveeUserByEmail,
+  invalidateGooveeUser,
+  updatePartner,
+} from '@/orm/partner';
 import {
   findDefaultPartnerWorkspaceConfig,
   findWorkspace,
@@ -663,13 +667,13 @@ const credentials = {
         }
 
         await client.$transaction(async txClient => {
-          await txClient.aOSPartner.update({
+          await updatePartner({
             data: {
               id: String(user.id),
               version: user.version,
               password: hashedPassword,
             },
-            select: {id: true},
+            client: txClient,
           });
 
           await txClient.otp.update({
@@ -681,6 +685,8 @@ const credentials = {
             select: {id: true},
           });
         });
+
+        invalidateGooveeUser(tenantId, user.emailAddress?.address || email);
 
         return {
           success: true,

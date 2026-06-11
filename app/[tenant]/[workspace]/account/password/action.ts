@@ -7,7 +7,7 @@ import {z} from 'zod';
 import {getSession} from '@/auth';
 import {compare, hash} from '@/auth/utils';
 import {t} from '@/locale/server';
-import {findGooveeUserByEmail} from '@/orm/partner';
+import {findGooveeUserByEmail, updatePartner} from '@/orm/partner';
 import {TENANT_HEADER} from '@/proxy';
 import {manager} from '@/tenant';
 import {withMattermostSync} from '@/lib/core/mattermost';
@@ -89,13 +89,15 @@ export async function changePassword(data: ChangePassword) {
   const hashedNewPassword = await hash(newPassword);
 
   try {
-    await client.aOSPartner.update({
+    await updatePartner({
       data: {
         id: partner.id,
         version: partner.version,
         password: hashedNewPassword,
       },
-      select: {id: true},
+      client,
+      tenantId,
+      email: user.email,
     });
   } catch (err) {
     return {

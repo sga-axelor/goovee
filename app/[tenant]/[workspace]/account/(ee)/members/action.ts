@@ -8,7 +8,12 @@ import {t} from '@/locale/server';
 import {getSession} from '@/auth';
 import {TENANT_HEADER} from '@/proxy';
 import {findWorkspace, findWorkspaceMembers} from '@/orm/workspace';
-import {isAdminContact, isPartner, updatePartner} from '@/orm/partner';
+import {
+  invalidateGooveeUser,
+  isAdminContact,
+  isPartner,
+  updatePartner,
+} from '@/orm/partner';
 import {manager} from '@/tenant';
 import {clone} from '@/utils';
 
@@ -341,6 +346,8 @@ export async function deleteMember(input: DeleteMember) {
         } as any,
       },
       client,
+      tenantId,
+      email: $member.emailAddress?.address,
     }).then(clone);
 
     return {
@@ -457,6 +464,8 @@ export async function updateMemberApplication(input: UpdateMemberApplication) {
       })
       .then(clone);
 
+    invalidateGooveeUser(tenantId, $member.emailAddress?.address);
+
     return {
       success: true,
       data: updatedConfig,
@@ -563,6 +572,8 @@ export async function updateMemberAuthentication(
         select: {id: true},
       })
       .then(clone);
+
+    invalidateGooveeUser(tenantId, $member.emailAddress?.address);
 
     return {
       success: true,

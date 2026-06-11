@@ -102,6 +102,8 @@ export async function removeWorkpace(data: RemoveWorkspace) {
           } as any,
         },
         client,
+        tenantId,
+        email: user.email,
       });
     } else {
       const partnerWorkspace: any = await client.aOSPartner
@@ -126,18 +128,18 @@ export async function removeWorkpace(data: RemoveWorkspace) {
         return {error: true, message: await t('Bad request')};
       }
 
-      result = await client.aOSPartner
-        .update({
-          data: {
-            id: $user.id as any,
-            version: $user.version,
-            partnerWorkspaceSet: {
-              remove: [partnerWorkspace?.id],
-            },
+      result = await updatePartner({
+        data: {
+          id: $user.id as any,
+          version: $user.version,
+          partnerWorkspaceSet: {
+            remove: [partnerWorkspace?.id],
           },
-          select: {id: true},
-        })
-        .then(clone);
+        },
+        client,
+        tenantId,
+        email: user.email,
+      }).then(clone);
     }
     revalidatePath(`${workspaceURI}/${SUBAPP_PAGE.account}`);
     return {

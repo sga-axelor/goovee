@@ -17,6 +17,7 @@ import {
   PartnerTypeMap,
   findGooveeUserByEmail,
   findPartnerById,
+  invalidateGooveeUser,
   updatePartner,
 } from '@/orm/partner';
 import {UserType} from '@/auth/types';
@@ -127,6 +128,8 @@ export async function updateProfileImage(formData: FormData) {
             }),
       },
       client,
+      tenantId,
+      email: user.email,
     });
   } catch (err) {
     return error(await t('Error updating profile picture. Try again.'));
@@ -350,6 +353,14 @@ export async function update(data: UpdatePersonal) {
         });
       }
     });
+
+    if (partner.emailAddress?.address) {
+      invalidateGooveeUser(tenantId, partner.emailAddress.address);
+    }
+
+    if (isEmailChanging) {
+      invalidateGooveeUser(tenantId, email);
+    }
 
     return {
       success: true,

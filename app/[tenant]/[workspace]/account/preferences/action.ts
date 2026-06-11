@@ -106,6 +106,8 @@ export async function updatePreference(data: UpdatePreference) {
     const updatedPartner = await updatePartner({
       data: updateData,
       client,
+      tenantId,
+      email: user.email,
     });
 
     if (!updatedPartner?.id) {
