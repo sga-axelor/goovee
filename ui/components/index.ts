@@ -23,6 +23,12 @@ export {Avatar, AvatarImage, AvatarFallback} from './avatar';
 export {Alert, AlertDescription, AlertTitle, StyledAlert} from './alert';
 export {Badge, badgeVariants} from './badge';
 export {
+  ButtonGroup,
+  ButtonGroupSeparator,
+  ButtonGroupText,
+  buttonGroupVariants,
+} from './button-group';
+export {
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
@@ -96,7 +102,16 @@ export {
   FormMessage,
   useFormField,
 } from './form';
+export {HoverCard, HoverCardTrigger, HoverCardContent} from './hover-card';
 export {Input} from './input';
+export {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupText,
+  InputGroupInput,
+  InputGroupTextarea,
+} from './input-group';
 export {Label} from './label';
 export {
   Menubar,
@@ -161,6 +176,7 @@ export {
 } from './sheet';
 export {ScrollArea} from './scroll-area';
 export {Skeleton} from './skeleton';
+export {Switch} from './switch';
 export {
   Table,
   TableBody,
