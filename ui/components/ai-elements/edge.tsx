@@ -1,11 +1,11 @@
-import type { EdgeProps, InternalNode, Node } from "@xyflow/react";
+import type {EdgeProps, InternalNode, Node} from '@xyflow/react';
 import {
   BaseEdge,
   getBezierPath,
   getSimpleBezierPath,
   Position,
   useInternalNode,
-} from "@xyflow/react";
+} from '@xyflow/react';
 
 const Temporary = ({
   id,
@@ -31,7 +31,7 @@ const Temporary = ({
       id={id}
       path={edgePath}
       style={{
-        strokeDasharray: "5, 5",
+        strokeDasharray: '5, 5',
       }}
     />
   );
@@ -39,13 +39,13 @@ const Temporary = ({
 
 const getHandleCoordsByPosition = (
   node: InternalNode<Node>,
-  handlePosition: Position
+  handlePosition: Position,
 ) => {
   // Choose the handle type based on position - Left is for target, Right is for source
-  const handleType = handlePosition === Position.Left ? "target" : "source";
+  const handleType = handlePosition === Position.Left ? 'target' : 'source';
 
   const handle = node.internals.handleBounds?.[handleType]?.find(
-    (h) => h.position === handlePosition
+    h => h.position === handlePosition,
   );
 
   if (!handle) {
@@ -88,7 +88,7 @@ const getHandleCoordsByPosition = (
 
 const getEdgeParams = (
   source: InternalNode<Node>,
-  target: InternalNode<Node>
+  target: InternalNode<Node>,
 ) => {
   const sourcePos = Position.Right;
   const [sx, sy] = getHandleCoordsByPosition(source, sourcePos);
@@ -105,7 +105,7 @@ const getEdgeParams = (
   };
 };
 
-const Animated = ({ id, source, target, markerEnd, style }: EdgeProps) => {
+const Animated = ({id, source, target, markerEnd, style}: EdgeProps) => {
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
 
@@ -113,9 +113,9 @@ const Animated = ({ id, source, target, markerEnd, style }: EdgeProps) => {
     return null;
   }
 
-  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
+  const {sx, sy, tx, ty, sourcePos, targetPos} = getEdgeParams(
     sourceNode,
-    targetNode
+    targetNode,
   );
 
   const [edgePath] = getBezierPath({
