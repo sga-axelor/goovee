@@ -44,6 +44,22 @@ const CardTitle = React.forwardRef<
 ));
 CardTitle.displayName = 'CardTitle';
 
+const CardAction = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({className, ...props}, ref) => (
+  <div
+    ref={ref}
+    data-slot="card-action"
+    className={cn(
+      'col-start-2 row-span-2 row-start-1 self-start justify-self-end',
+      className,
+    )}
+    {...props}
+  />
+));
+CardAction.displayName = 'CardAction';
+
 const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
@@ -76,4 +92,12 @@ const CardFooter = React.forwardRef<
 ));
 CardFooter.displayName = 'CardFooter';
 
-export {Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent};
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+};
