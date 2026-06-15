@@ -29,6 +29,7 @@ import {cn} from '@/utils/css';
 import {SUBAPP_CODES, CHAT_TYPE} from '@/constants';
 import {useEnvironment} from '@/lib/core/environment';
 import {Notification} from './notification';
+import {AiAssistant} from '@/ui/components/ai-assistant';
 import {withBasePath} from '@/lib/core/path/base-path';
 import {toWorkspaceURI} from '@/utils/workspace';
 
@@ -143,6 +144,7 @@ export default function Header({
                     </Link>
                   );
                 })}
+            {user && <AiAssistant />}
             {user && <Notification />}
             {showCartIcon && <Cart />}
             <Account baseURL={workspaceURI} tenant={tenant} />
